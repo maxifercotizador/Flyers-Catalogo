@@ -246,6 +246,39 @@ body {
   font-size: 13px; font-weight: 700; cursor: pointer; width: 100%;
   text-decoration: none;
 }
+
+/* ── PANTALLA VENDEDOR ── */
+.vend-screen {
+  display: none; position: fixed; inset: 0;
+  background: #f0f2f7; z-index: 200;
+  flex-direction: column; overflow: hidden;
+}
+.vend-screen.open { display: flex; }
+.vend-header {
+  background: #1a3a7a; padding: 18px 16px;
+  display: flex; align-items: center; gap: 12px;
+  color: white; flex-shrink: 0;
+}
+.vend-back {
+  background: rgba(255,255,255,.15); border: none; color: white;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.vend-header-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 900;
+}
+.vend-body {
+  flex: 1; overflow-y: auto; padding: 24px 16px 40px;
+  max-width: 480px; margin: 0 auto; width: 100%;
+}
+.vend-section { margin-bottom: 24px; }
+.vend-label {
+  font-size: 11px; font-weight: 700; color: #888;
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 10px; display: block;
+}
 </style>
 </head>
 <body>
@@ -338,6 +371,9 @@ body {
     <div class="nov-badge">¡VER!</div>
   </button>
 
+
+
+
   <div class="carousel-section">
     <div class="section-title">Así quedamos en los negocios</div>
     <div class="carousel-wrap">
@@ -365,6 +401,29 @@ hash.split('&').forEach(function(p) {
   var kv = p.split('=');
   if (kv[0] === 'wa' && kv[1]) waKey = kv[1];
 });
+var descKey = 0;
+var tipoKey = '';
+hash.split('&').forEach(function(p) {
+  var kv = p.split('=');
+  if (kv[0] === 'desc' && kv[1]) descKey = parseInt(kv[1]) || 0;
+  if (kv[0] === 'tipo' && kv[1]) tipoKey = kv[1];
+});
+
+// Leer modo precio del hash
+var precioKey = '';
+hash.split('&').forEach(function(p) {
+  var kv = p.split('=');
+  if (kv[0] === 'precio' && kv[1]) precioKey = kv[1];
+});
+
+// Si el link viene con parámetros de vendedor → redirigir directo al catálogo
+if (waKey && tipoKey) {
+  var catHash = '#wa=' + waKey;
+  if (descKey > 0) catHash += '&desc=' + descKey;
+  if (precioKey) catHash += '&precio=' + precioKey;
+  window.location.replace('catalogo_actualizado.html?tipo=' + tipoKey + catHash);
+}
+
 var waSuffix = (waKey && VENDEDORES[waKey]) ? '#wa=' + waKey : '';
 document.getElementById('linkCompleto').href   = 'catalogo_actualizado.html?tipo=completo'  + waSuffix;
 document.getElementById('linkFerretero').href  = 'catalogo_actualizado.html?tipo=ferretero' + waSuffix;
@@ -437,6 +496,80 @@ if (carTotal > 0) {
   wrap.closest('.carousel-section').querySelector('.section-title').style.display = 'none';
 }
 </script>
+
+
+<!-- ── PANTALLA VENDEDOR ── -->
+<div class="vend-screen" id="vendScreen">
+  <div class="vend-header">
+    <button class="vend-back" onclick="cerrarVendedor()">‹</button>
+    <div class="vend-header-title">🔗 Generar Link para Cliente</div>
+  </div>
+  <div class="vend-body">
+
+    <!-- 1. Vendedor -->
+    <div class="vend-section">
+      <span class="vend-label">1 · Seleccioná tu nombre</span>
+      <div class="vend-grid" id="vendGrid"></div>
+    </div>
+
+    <!-- 2. Descuento -->
+    <div class="vend-section">
+      <span class="vend-label">2 · Descuento para este cliente</span>
+      <div class="vend-desc-field">
+        <input class="vend-desc-input" id="vendDesc" type="number"
+          min="0" max="99" placeholder="0" inputmode="numeric"
+          oninput="actualizarLinkVendedor()">
+        <span class="vend-desc-pct">%</span>
+        <span class="vend-desc-hint">El cliente verá los precios ya calculados</span>
+      </div>
+    </div>
+
+    <!-- 3. Catálogo destino -->
+    <div class="vend-section">
+      <span class="vend-label">3 · ¿Qué catálogo le querés mostrar?</span>
+      <div class="vend-dest-grid">
+        <button class="vend-dest-btn sel" data-tipo="completo" onclick="selDest(this)">
+          <span class="vend-dest-icon">📚</span>
+          <div class="vend-dest-info">
+            <div class="vend-dest-title">Catálogo Completo</div>
+            <div class="vend-dest-sub">Todos los surtidos MAXIFER</div>
+          </div>
+        </button>
+        <button class="vend-dest-btn" data-tipo="ferretero" onclick="selDest(this)">
+          <span class="vend-dest-icon">🔧</span>
+          <div class="vend-dest-info">
+            <div class="vend-dest-title">Catálogo Ferretero</div>
+            <div class="vend-dest-sub">Ferreterías y buloneras</div>
+          </div>
+        </button>
+        <button class="vend-dest-btn" data-tipo="automotor" onclick="selDest(this)">
+          <span class="vend-dest-icon">🚗</span>
+          <div class="vend-dest-info">
+            <div class="vend-dest-title">Catálogo Repuestero</div>
+            <div class="vend-dest-sub">Autopartes y repuestos</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. Link generado -->
+    <div class="vend-section" id="vendLinkSection" style="display:none">
+      <span class="vend-label">4 · Tu link listo</span>
+      <div class="vend-link-box">
+        <div class="vend-link-url" id="vendLinkUrl"></div>
+        <div class="vend-link-btns">
+          <button class="vend-link-btn copy" onclick="copiarLink()">📋 Copiar</button>
+          <button class="vend-link-btn wa" onclick="compartirWa()">💬 WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="vend-generate-btn" onclick="generarLink()">
+      Generar Link →
+    </button>
+
+  </div>
+</div>
 
 <!-- ── PANTALLA NOVEDADES ── -->
 <div class="nov-screen" id="novScreen">
@@ -518,6 +651,44 @@ if (carTotal > 0) {
 </div>
 
 <script>
+
+// ── PANTALLA VENDEDOR ─────────────────────────────────────────
+var vendTipo = 'completo';
+var vendLinkGenerado = '';
+
+
+
+function construirChipsVendedor() {
+  var grid = document.getElementById('vendGrid');
+  if (grid.children.length > 0) return; // ya construido
+  Object.keys(VENDEDORES).forEach(function(key) {
+    var num = VENDEDORES[key].replace('549', '+549 ').replace(/(\d{2})(\d{4})(\d{4})$/, '$1 $2-$3');
+    var chip = document.createElement('div');
+    chip.className = 'vend-chip' + (key === vendSelKey ? ' sel' : '');
+    chip.innerHTML = '<span class="vend-chip-name">' + key + '</span>'
+      + '<span class="vend-chip-num">' + num + '</span>';
+    chip.onclick = function() {
+      document.querySelectorAll('.vend-chip').forEach(function(c){ c.classList.remove('sel'); });
+      chip.classList.add('sel');
+      vendSelKey = key;
+      actualizarLinkVendedor();
+    };
+    grid.appendChild(chip);
+  });
+}
+
+
+
+function actualizarLinkVendedor() {
+  // Solo actualiza si ya fue generado
+  if (document.getElementById('vendLinkSection').style.display !== 'none') {
+    generarLink();
+  }
+}
+
+
+
+
 function abrirNovedades() {
   document.getElementById('novScreen').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -550,5 +721,7 @@ window.addEventListener('load', function() {
   if (wa3) wa3.href = buildWaLink('Hola MAXIFER, quiero información sobre el sistema de exhibidores para mi negocio.');
 });
 </script>
+
+
 </body>
 </html>
