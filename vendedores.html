@@ -312,7 +312,7 @@ function generarLink() {
     alert('Ingresá el descuento para este cliente');
     return;
   }
-  var base = window.location.href.replace('vendedores.html', 'index.html');
+  var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + 'index.html';
   var hash = '#wa=' + vendedorActual.nombre;
   if (precioSel === 'descuento')    hash += '&desc=' + desc;
   else if (precioSel === 'lista')   hash += '&precio=lista';
