@@ -417,11 +417,13 @@ hash.split('&').forEach(function(p) {
 });
 
 // Si el link viene con parámetros de vendedor → redirigir directo al catálogo
-if (waKey && tipoKey) {
+if (waKey && (descKey > 0 || precioKey)) {
+  // Cliente llegó con link de vendedor — redirigir directo al catálogo
+  var catTipo = tipoKey || 'completo';
   var catHash = '#wa=' + waKey;
   if (descKey > 0) catHash += '&desc=' + descKey;
-  if (precioKey) catHash += '&precio=' + precioKey;
-  window.location.replace('catalogo_actualizado.html?tipo=' + tipoKey + catHash);
+  if (precioKey)   catHash += '&precio=' + precioKey;
+  window.location.replace('catalogo_actualizado.html?tipo=' + catTipo + catHash);
 }
 
 var waSuffix = (waKey && VENDEDORES[waKey]) ? '#wa=' + waKey : '';
