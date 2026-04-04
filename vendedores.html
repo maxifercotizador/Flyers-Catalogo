@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXIFER — Vendedores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #f0f2f7;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+.header {
+  background: linear-gradient(135deg, #374151, #1a3a7a);
+  padding: 24px 16px;
+  text-align: center; color: white;
+}
+.brand-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px; font-weight: 900;
+}
+.brand-sub { font-size: 12px; opacity: .65; margin-top: 3px; }
+
+/* PIN */
+.pin-screen {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 24px;
+}
+.pin-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px; font-weight: 800; color: #1a2740;
+  margin-bottom: 6px;
+}
+.pin-sub { font-size: 13px; color: #888; margin-bottom: 28px; text-align: center; }
+.pin-field {
+  display: flex; align-items: center;
+  background: white; border-radius: 16px;
+  padding: 16px 22px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  margin-bottom: 16px; width: 100%; max-width: 260px;
+}
+.pin-input {
+  font-size: 32px; font-weight: 800; color: #1a3a7a;
+  width: 100%; border: none; outline: none;
+  text-align: center; background: transparent;
+  letter-spacing: 10px;
+}
+.pin-btn {
+  width: 100%; max-width: 260px; padding: 15px;
+  border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #1a3a7a, #3a6cd8);
+  color: white; font-size: 16px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(26,58,122,.3);
+}
+.pin-btn:active { opacity: .9; }
+.pin-error {
+  margin-top: 14px; font-size: 13px;
+  color: #e63946; font-weight: 600; display: none;
+}
+
+/* GENERADOR */
+.gen-screen {
+  flex: 1; display: none; flex-direction: column;
+  padding: 24px 16px 40px;
+  max-width: 480px; margin: 0 auto; width: 100%;
+}
+.gen-screen.open { display: flex; }
+
+.gen-bienvenida {
+  background: linear-gradient(135deg, #1a3a7a, #3a6cd8);
+  border-radius: 16px; padding: 16px 18px;
+  color: white; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.gen-bienvenida-icon { font-size: 32px; }
+.gen-bienvenida-nombre {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 900;
+}
+.gen-bienvenida-sub { font-size: 12px; opacity: .8; }
+
+.section-title {
+  font-size: 11px; font-weight: 700; color: #888;
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 12px; margin-top: 20px;
+}
+
+.opt-grid { display: flex; flex-direction: column; gap: 8px; }
+.opt-btn {
+  display: flex; align-items: center; gap: 12px;
+  background: white; border: 2px solid #e5e7eb;
+  border-radius: 12px; padding: 14px 16px;
+  cursor: pointer; text-align: left;
+  -webkit-tap-highlight-color: transparent; transition: all .15s;
+}
+.opt-btn.sel { border-color: #1a3a7a; background: #eef2ff; }
+.opt-icon { font-size: 26px; flex-shrink: 0; }
+.opt-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 800; color: #1a2740;
+}
+.opt-sub { font-size: 11px; color: #888; }
+
+.desc-field {
+  display: flex; align-items: center; gap: 10px;
+  background: white; border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  margin-top: 12px;
+}
+.desc-input {
+  font-size: 36px; font-weight: 800; color: #1a3a7a;
+  width: 80px; border: none; outline: none;
+  border-bottom: 3px solid #1a3a7a;
+  text-align: center; background: transparent;
+  -moz-appearance: textfield;
+}
+.desc-input::-webkit-outer-spin-button,
+.desc-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.desc-pct { font-size: 28px; font-weight: 800; color: #1a3a7a; }
+.desc-hint { font-size: 12px; color: #999; }
+
+.gen-btn {
+  width: 100%; padding: 16px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #1a3a7a, #3a6cd8);
+  color: white; font-size: 16px; font-weight: 700;
+  cursor: pointer; margin-top: 24px;
+  box-shadow: 0 4px 14px rgba(26,58,122,.3);
+  -webkit-tap-highlight-color: transparent;
+}
+.gen-btn:active { opacity: .9; }
+
+.link-box {
+  background: #1a3a7a; border-radius: 14px;
+  padding: 16px; margin-top: 16px; display: none;
+}
+.link-label {
+  font-size: 10px; color: rgba(255,255,255,.6);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.link-url {
+  font-size: 11px; color: rgba(255,255,255,.85);
+  word-break: break-all; font-family: monospace; line-height: 1.5;
+  background: rgba(0,0,0,.2); border-radius: 8px;
+  padding: 10px; margin-bottom: 14px;
+}
+.link-btns { display: flex; gap: 8px; }
+.link-btn {
+  flex: 1; padding: 13px 8px; border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.link-btn.copy { background: white; color: #1a3a7a; }
+.link-btn.wa   { background: #25d366; color: white; }
+
+.salir-btn {
+  background: none; border: none; color: #aaa;
+  font-size: 12px; cursor: pointer; margin-top: 24px;
+  text-decoration: underline; text-align: center; display: block; width: 100%;
+}
+
+.footer {
+  text-align: center; font-size: 11px; color: #aaa;
+  padding: 16px; border-top: 1px solid #e5e7eb;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand-name">MAXIFER</div>
+  <div class="brand-sub">Panel de Vendedores · Uso interno</div>
+</div>
+
+<!-- INGRESO CON PIN -->
+<div class="pin-screen" id="pinScreen">
+  <div class="pin-title">Ingresá tu PIN</div>
+  <div class="pin-sub">Cada vendedor tiene el suyo.<br>No lo compartás.</div>
+  <div class="pin-field">
+    <input class="pin-input" id="pinInput" type="password"
+      inputmode="numeric" maxlength="6"
+      onkeydown="if(event.key==='Enter') verificarPin()">
+  </div>
+  <button class="pin-btn" onclick="verificarPin()">Ingresar →</button>
+  <div class="pin-error" id="pinError">PIN incorrecto. Intentá de nuevo.</div>
+</div>
+
+<!-- GENERADOR -->
+<div class="gen-screen" id="genScreen">
+
+  <div class="gen-bienvenida">
+    <div class="gen-bienvenida-icon">👋</div>
+    <div>
+      <div class="gen-bienvenida-nombre" id="genNombre"></div>
+      <div class="gen-bienvenida-sub">Generá el link para tu cliente</div>
+    </div>
+  </div>
+
+  <div class="section-title">¿Cómo mostrás los precios?</div>
+  <div class="opt-grid">
+    <button class="opt-btn sel" data-precio="descuento" onclick="selPrecio(this)">
+      <span class="opt-icon">🏷️</span>
+      <div>
+        <div class="opt-title">Con descuento</div>
+        <div class="opt-sub">El cliente ve el precio final, no el %</div>
+      </div>
+    </button>
+    <button class="opt-btn" data-precio="lista" onclick="selPrecio(this)">
+      <span class="opt-icon">💲</span>
+      <div>
+        <div class="opt-title">Precio de lista</div>
+        <div class="opt-sub">Sin descuento, precio público</div>
+      </div>
+    </button>
+    <button class="opt-btn" data-precio="sin" onclick="selPrecio(this)">
+      <span class="opt-icon">🙈</span>
+      <div>
+        <div class="opt-title">Sin precios</div>
+        <div class="opt-sub">Solo catálogo visual, sin números</div>
+      </div>
+    </button>
+  </div>
+
+  <div id="descWrap">
+    <div class="section-title">↳ Descuento para este cliente</div>
+    <div class="desc-field">
+      <input class="desc-input" id="descInput" type="number"
+        min="0" max="99" placeholder="0" inputmode="numeric">
+      <span class="desc-pct">%</span>
+      <span class="desc-hint">Cada cliente puede tener el suyo</span>
+    </div>
+  </div>
+
+  <button class="gen-btn" onclick="generarLink()">Generar Link →</button>
+
+  <div class="link-box" id="linkBox">
+    <div class="link-label">Link listo para compartir</div>
+    <div class="link-url" id="linkUrl"></div>
+    <div class="link-btns">
+      <button class="link-btn copy" onclick="copiarLink()">📋 Copiar</button>
+      <button class="link-btn wa"   onclick="compartirWa()">💬 WhatsApp</button>
+    </div>
+  </div>
+
+  <button class="salir-btn" onclick="salir()">Cerrar sesión</button>
+
+</div>
+
+<div class="footer">MAXIFER · Solo para uso interno del equipo de ventas</div>
+
+<script>
+// ── VENDEDORES ────────────────────────────────────────────────
+// Para agregar un vendedor: copiá una línea y completá los datos
+// Para cambiar un PIN: editá el campo pin
+var VENDEDORES = [
+  { nombre: 'Maxi',   wa: '5491150408378', pin: '1001' },
+  { nombre: 'Micky',  wa: '5491164865752', pin: '2002' },
+  { nombre: 'Victor', wa: '5491149367336', pin: '3003' },
+  { nombre: 'Nadia',  wa: '5491128243870', pin: '4004' },
+];
+
+var vendedorActual = null;
+var precioSel    = 'descuento';
+var linkGenerado = '';
+
+// ── PIN ───────────────────────────────────────────────────────
+function verificarPin() {
+  var pin = document.getElementById('pinInput').value.trim();
+  var match = VENDEDORES.find(function(v) { return v.pin === pin; });
+  if (match) {
+    vendedorActual = match;
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('genScreen').classList.add('open');
+    document.getElementById('genNombre').textContent = match.nombre;
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinError').style.display = 'none';
+  } else {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinInput').focus();
+  }
+}
+
+function salir() {
+  vendedorActual = null;
+  document.getElementById('genScreen').classList.remove('open');
+  document.getElementById('pinScreen').style.display = 'flex';
+  document.getElementById('linkBox').style.display = 'none';
+  document.getElementById('descInput').value = '';
+  setTimeout(function() { document.getElementById('pinInput').focus(); }, 100);
+}
+
+// ── GENERADOR ─────────────────────────────────────────────────
+function selPrecio(btn) {
+  document.querySelectorAll('[data-precio]').forEach(function(b) { b.classList.remove('sel'); });
+  btn.classList.add('sel');
+  precioSel = btn.dataset.precio;
+  document.getElementById('descWrap').style.display =
+    precioSel === 'descuento' ? 'block' : 'none';
+  document.getElementById('linkBox').style.display = 'none';
+}
+
+function generarLink() {
+  var desc = parseInt(document.getElementById('descInput').value) || 0;
+  if (precioSel === 'descuento' && desc === 0) {
+    alert('Ingresá el descuento para este cliente');
+    return;
+  }
+  var base = window.location.href.replace('vendedores.html', 'index.html');
+  var hash = '#wa=' + vendedorActual.nombre;
+  if (precioSel === 'descuento')    hash += '&desc=' + desc;
+  else if (precioSel === 'lista')   hash += '&precio=lista';
+  else if (precioSel === 'sin')     hash += '&precio=sin';
+  linkGenerado = base + hash;
+  document.getElementById('linkUrl').textContent = linkGenerado;
+  document.getElementById('linkBox').style.display = 'block';
+  document.getElementById('descInput').value = '';
+}
+
+function copiarLink() {
+  navigator.clipboard.writeText(linkGenerado).then(function() {
+    var btn = document.querySelector('.link-btn.copy');
+    btn.textContent = '✅ Copiado';
+    setTimeout(function() { btn.textContent = '📋 Copiar'; }, 2000);
+  });
+}
+
+function compartirWa() {
+  var texto = '¡Hola! Te comparto el catálogo MAXIFER: ' + linkGenerado;
+  window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+}
+
+window.addEventListener('load', function() {
+  document.getElementById('pinInput').focus();
+});
+</script>
+</body>
+</html>
