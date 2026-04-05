@@ -4184,6 +4184,94 @@ window.addEventListener('load', function() {
   }, 400);
 });
 
+// ── HISTORY API — botón atrás del celular ─────────────────────
+// Niveles de profundidad (de más profundo a más superficial):
+//   lightbox > modal > carrito/favoritos > revista/libro > grilla
+//
+// Al abrir cada capa hacemos pushState con un tag que identifica qué cerrar.
+// Al presionar atrás, popstate recibe ese tag y cierra la capa correcta.
+
+var _histPushed = false; // evitar doble push en la misma apertura
+
+function hPush(tag) {
+  history.pushState({ mxf: tag }, '');
+  _histPushed = true;
+}
+
+// Wrappers de apertura — inyectamos pushState sin tocar la lógica original
+var _origAbrirModal = abrirModal;
+abrirModal = function(id) {
+  _origAbrirModal(id);
+  hPush('modal');
+};
+
+var _origAbrirCarrito = abrirCarrito;
+abrirCarrito = function() {
+  _origAbrirCarrito();
+  hPush('carrito');
+};
+
+var _origAbrirFavoritos = abrirFavoritos;
+abrirFavoritos = function() {
+  _origAbrirFavoritos();
+  hPush('favoritos');
+};
+
+var _origAbrirLightbox = abrirLightbox;
+abrirLightbox = function(fotos, idx, titulo) {
+  _origAbrirLightbox(fotos, idx, titulo);
+  hPush('lightbox');
+};
+
+var _origCambiarVista = cambiarVista;
+cambiarVista = function(vista) {
+  _origCambiarVista(vista);
+  if (vista === 'revista' || vista === 'libro') {
+    hPush('vista_' + vista);
+  }
+};
+
+// Listener del botón atrás
+window.addEventListener('popstate', function(e) {
+  var tag = (e.state && e.state.mxf) ? e.state.mxf : null;
+
+  // Cerrar según la capa activa más profunda, independientemente del tag
+  // (por si el estado no coincide exactamente)
+
+  // 1. Lightbox abierto
+  if (document.getElementById('lightbox').classList.contains('open')) {
+    cerrarLightbox();
+    return;
+  }
+
+  // 2. Modal detalle abierto
+  if (document.getElementById('modalOverlay').classList.contains('open')) {
+    cerrarModalBtn();
+    return;
+  }
+
+  // 3. Carrito abierto
+  if (document.getElementById('carritoOverlay').classList.contains('open')) {
+    cerrarCarritoBtn();
+    return;
+  }
+
+  // 4. Favoritos abierto
+  if (document.getElementById('favOverlay').classList.contains('open')) {
+    cerrarFavoritos();
+    return;
+  }
+
+  // 5. Vista revista o libro → volver a grilla
+  if (vistaActual === 'revista' || vistaActual === 'libro') {
+    _origCambiarVista('grilla'); // sin pushState
+    return;
+  }
+
+  // 6. Ya estamos en la grilla → dejar que el navegador salga normalmente
+  // No hacemos nada, el popstate ya consumió el estado
+});
+
 </script>
 
 <!-- ── MODAL DESCUENTO BLOQUEANTE ── -->
