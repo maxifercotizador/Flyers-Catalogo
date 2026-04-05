@@ -394,9 +394,11 @@ let slotFoco = null;           // { sId, campo } — slot seleccionado para pega
 let dragOrigen = null;         // { sId, campo, dataUrl, nombre, ruta, esExterno }
 
 const TIPOS_SLOT = [
-  { key: 'foto_card',      label: 'Card (portada)', emoji: '🖼️' },
-  { key: 'foto_exhibidor', label: 'Exhibidor',      emoji: '🏪' },
-  { key: 'foto_gavetas',   label: 'Gavetas',        emoji: '📦' },
+  { key: 'foto_card',        label: 'Card (portada)', emoji: '🖼️', opcional: false },
+  { key: 'foto_exhibidor',   label: 'Exhibidor',      emoji: '🏪', opcional: false },
+  { key: 'foto_exhibidor_2', label: 'Exhibidor 2',    emoji: '🏪', opcional: true  },
+  { key: 'foto_exhibidor_3', label: 'Exhibidor 3',    emoji: '🏪', opcional: true  },
+  { key: 'foto_gavetas',     label: 'Gavetas',        emoji: '📦', opcional: false },
 ];
 
 const GRUPOS_DEF = [
@@ -523,7 +525,8 @@ function renderSlot(s, tipo) {
   }
 
   const tieneImagen = !!(cambio || rutaOriginal);
-  const claseSlot = tieneImagen ? 'has-img' : 'missing';
+  // Clase del slot: opcional vacío → neutro (no rojo pulsante)
+  const claseSlot = tieneImagen ? 'has-img' : (tipo.opcional ? '' : 'missing');
   const esFoco = slotFoco && slotFoco.sId === s.id && slotFoco.campo === tipo.key;
 
   let thumb;
@@ -546,7 +549,11 @@ function renderSlot(s, tipo) {
   const labelColor = cambio && !esExterno ? 'color:#4ade80' : '';
   const labelTexto = tieneImagen
     ? `<span class="slot-filename" style="${labelColor}">${esc(nombreMostrar)}</span>`
-    : `<span class="slot-filename empty">Falta · esperado: ${esperado}</span>`;
+    : tipo.opcional
+      ? `<span class="slot-filename" style="color:var(--muted);font-style:italic">Opcional · tocá para agregar</span>`
+      : `<span class="slot-filename empty">Falta · esperado: ${esperado}</span>`;
+
+  const labelBadge = tipo.opcional ? ' <span style="font-size:9px;background:#1e3a5f;color:#93c5fd;padding:1px 5px;border-radius:6px;font-weight:700">OPC</span>' : '';
 
   return `
     <div class="img-slot ${claseSlot}${esFoco ? ' slot-focus' : ''}"
@@ -558,7 +565,7 @@ function renderSlot(s, tipo) {
       <span class="slot-paste-hint">Ctrl+V para pegar</span>
       ${thumb}
       <div class="slot-info">
-        <div class="slot-label">${tipo.label}</div>
+        <div class="slot-label">${tipo.label}${labelBadge}</div>
         ${labelTexto}
       </div>
       <div class="slot-actions" onclick="event.stopPropagation()">
@@ -603,7 +610,7 @@ function agruparSurtidos() {
   return resultado;
 }
 function tieneFaltantes(s) {
-  return TIPOS_SLOT.some(t => !getValorSlot(s, t.key));
+  return TIPOS_SLOT.some(t => !t.opcional && !getValorSlot(s, t.key));
 }
 function getValorSlot(s, key) {
   const ck = ckImg(s.id, key);
@@ -922,7 +929,7 @@ function guardarSurtido() {
     cerrarModalForm(); renderPanel(); toast('✅ Surtido actualizado');
   } else {
     const nuevoId = Math.max(0, ...surtidos.map(x => x.id)) + 1;
-    surtidos.push({ id: nuevoId, nombre, codigo, precio, piezas, foto_card: '', foto_exhibidor: '', foto_gavetas: '', incluye, tabla: null, cant_uniforme: cantUniforme, _grupo: grupoKey });
+    surtidos.push({ id: nuevoId, nombre, codigo, precio, piezas, foto_card: '', foto_exhibidor: '', foto_exhibidor_2: '', foto_exhibidor_3: '', foto_gavetas: '', incluye, tabla: null, cant_uniforme: cantUniforme, _grupo: grupoKey });
     surtidosNuevos.add(nuevoId);
     cerrarModalForm(); renderPanel(); actualizarFabs();
     toast('✅ Surtido S' + nuevoId + ' creado');
