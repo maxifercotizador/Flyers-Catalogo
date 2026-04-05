@@ -778,10 +778,9 @@ function moverSlotInterno(destSId, destCampo) {
 
   // ── Asignar origen → destino ──
   if (dataUrl) {
-    // Imagen nueva (en memoria) → renombrar según slot destino
-    const ext    = nombre.split('.').pop();
+    // Imagen nueva (en memoria) → renombrar según slot destino, siempre .webp
     const tipo   = destCampo.replace('foto_', '');
-    const nuevoNombre = `s${destSId}_${tipo}.${ext}`;
+    const nuevoNombre = `s${destSId}_${tipo}.webp`;
     cambiosImg[ckImg(destSId, destCampo)] = {
       dataUrl, nombre: nuevoNombre, ruta: `./img/${nuevoNombre}`, esExterno: false
     };
@@ -789,14 +788,13 @@ function moverSlotInterno(destSId, destCampo) {
   } else {
     // Imagen externa (solo ruta) → apuntar al archivo existente tal cual
     delete cambiosImg[ckImg(destSId, destCampo)];
-    sDest[destCampo] = ruta; // el HTML apuntará a esa ruta directamente
+    sDest[destCampo] = ruta;
   }
 
   // ── Asignar estado previo del destino → origen (swap) ──
   if (cambioDestPrev) {
-    const ext2  = cambioDestPrev.nombre.split('.').pop();
     const tipo2 = origCampo.replace('foto_', '');
-    const nom2  = `s${origSId}_${tipo2}.${ext2}`;
+    const nom2  = `s${origSId}_${tipo2}.webp`;
     cambiosImg[ckImg(origSId, origCampo)] = {
       dataUrl: cambioDestPrev.dataUrl, nombre: nom2,
       ruta: `./img/${nom2}`, esExterno: false
@@ -829,9 +827,8 @@ function procesarImagen(file, sId, campo) {
   return new Promise(resolve => {
     const reader = new FileReader();
     reader.onload = e => {
-      const ext    = file.name.split('.').pop().toLowerCase();
       const tipo   = campo.replace('foto_', '');
-      const nombre = `s${sId}_${tipo}.${ext}`;
+      const nombre = `s${sId}_${tipo}.webp`;
       cambiosImg[ckImg(sId, campo)] = {
         dataUrl: e.target.result, nombre, ruta: `./img/${nombre}`, esExterno: false
       };
