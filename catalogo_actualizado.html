@@ -1818,6 +1818,49 @@
 .rel-card:hover, .rel-card:active { background: #dce8f8; border-color: var(--azul-dark); }
 .rel-nombre { font-size: 12px; font-weight: 600; color: #1a2e4a; line-height: 1.3; margin-bottom: 4px; }
 .rel-codigo { font-size: 10px; color: var(--gris-muted); }
+
+/* ── BADGES ── */
+.card-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 6;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 5px;
+  pointer-events: none;
+  line-height: 1.3;
+}
+.card-badge.badge-top    { background: var(--naranja); color: white; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #1a2740;
+  color: white;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 30px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+  z-index: 9000;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 </style>
 </head>
 <body>
@@ -2989,11 +3032,16 @@ function cardHTML(s) {
   const foto = s.foto_card || s.foto_exhibidor;
   const enCarrito = carrito.some(c => c.id === s.id);
   const esFav = esFavorito(s.id);
+  const badge = BADGES[s.id];
+  const badgeHtml = badge
+    ? `<div class="card-badge badge-${badge}">${badge === 'top' ? '⭐ Más vendido' : '✨ Nuevo'}</div>`
+    : '';
   return `<div class="surtido-card">
     <div class="card-img-wrap" onclick="abrirModal(${s.id})">
       ${foto
         ? `<img src="${foto}" alt="${s.nombre}" loading="lazy">`
         : `<div class="card-img-placeholder">📦</div>`}
+      ${badgeHtml}
       <div class="card-precio-badge">${formatPrecio(precioConDescuento(s.precio))}</div>
       <button class="btn-fav ${esFav ? 'fav-on' : ''}" data-id="${s.id}"
         onclick="toggleFavorito(${s.id}, event)">${esFav ? '❤️' : '🤍'}</button>
@@ -3392,9 +3440,8 @@ function toggleCarritoCard(id, event) {
   const s = SURTIDOS.find(x => x.id === id);
   if (!s) return;
   const idx = carrito.findIndex(c => c.id === id);
-  if (idx >= 0) { carrito.splice(idx, 1); } else { carrito.push(s); vibrar(); }
+  if (idx >= 0) { carrito.splice(idx, 1); } else { carrito.push(s); vibrar(); mostrarToast('✅ ' + s.nombre + ' agregado'); }
   actualizarFab();
-  // Actualizar botón en la card
   const enCarrito = carrito.some(c => c.id === id);
   const btn = document.getElementById('cardBtn' + id);
   if (btn) {
@@ -3429,9 +3476,9 @@ function toggleCarrito(id) {
   } else {
     carrito.push(s);
     vibrar();
+    mostrarToast('✅ ' + s.nombre + ' agregado');
   }
   actualizarFab();
-  // Actualizar botón si el modal está abierto
   const btn = document.getElementById('btnAgregar');
   if (btn) {
     const enCarrito = carrito.some(c => c.id === id);
@@ -4079,6 +4126,30 @@ function libroFiltrar() {
   libroInit(lista);
 }
 
+// ── BADGES ───────────────────────────────────────────────────
+// Editá este objeto para asignar badges a los surtidos por ID.
+// Tipo disponible: 'top' (naranja "Más vendido")
+var BADGES = {
+  1:  'top',    // Regatones Plásticos y de Goma
+  61: 'top',    // Terminales para Cable Línea Inicial
+  2:  'top',    // Anillos O'Ring Nitrilo 70 Línea Completa
+  3:  'top',    // Resortes Línea Ferretera
+  49: 'top',    // Perillas de Cocina N°1
+};
+
+// ── TOAST ────────────────────────────────────────────────────
+var _toastTimer = null;
+function mostrarToast(txt) {
+  var el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = txt;
+  el.classList.add('visible');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() {
+    el.classList.remove('visible');
+  }, 1600);
+}
+
 // ── INIT: renderizar grilla con SURTIDOS_ACTIVOS ──────────
 renderGrid(SURTIDOS_ACTIVOS);
 actualizarFavBadge();
@@ -4088,7 +4159,7 @@ function toggleCarritoVista(id) {
   var s = SURTIDOS.find(function(x){ return x.id === id; });
   if (!s) return;
   var idx = carrito.findIndex(function(c){ return c.id === id; });
-  if (idx >= 0) { carrito.splice(idx, 1); } else { carrito.push(s); vibrar(); }
+  if (idx >= 0) { carrito.splice(idx, 1); } else { carrito.push(s); vibrar(); mostrarToast('✅ ' + s.nombre + ' agregado'); }
   actualizarFab();
   var enCarrito = carrito.some(function(c){ return c.id === id; });
   // Actualizar btn revista
@@ -4307,6 +4378,9 @@ window.addEventListener('popstate', function(e) {
 });
 
 </script>
+
+<!-- TOAST -->
+<div id="toast"></div>
 
 <!-- ── MODAL DESCUENTO BLOQUEANTE ── -->
 <div class="modal-descuento-overlay open" id="modalDescuentoOverlay">
