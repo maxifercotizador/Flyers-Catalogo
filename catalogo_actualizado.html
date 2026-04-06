@@ -2244,7 +2244,7 @@ const SURTIDOS = [
     piezas: 348,
     foto_exhibidor: "./img/s3_exhibidor.webp",
     foto_card: "./img/s3_card.webp",
-    foto_gavetas: "./img/s3_gavetas.webp",
+    foto_gavetas: "",
     incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "348 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "4 piezas de c/u"
@@ -2402,7 +2402,7 @@ const SURTIDOS = [
     piezas: 152,
     foto_exhibidor: "./img/s43_exhibidor.webp",
     foto_card: "./img/s43_card.webp",
-    foto_gavetas: "./img/s43_gavetas.webp",
+    foto_gavetas: "",
     incluye: ["2 exhibidores con su protector", "3 gavetas codificadas", "152 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
@@ -2454,7 +2454,7 @@ const SURTIDOS = [
     piezas: 380,
     foto_exhibidor: "./img/s44_exhibidor.webp",
     foto_card: "./img/s44_card.webp",
-    foto_gavetas: "./img/s44_gavetas.webp",
+    foto_gavetas: "",
     incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "380 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "5 piezas de c/u"
@@ -2493,7 +2493,7 @@ const SURTIDOS = [
     piezas: 380,
     foto_exhibidor: "./img/s33_exhibidor.webp",
     foto_card: "./img/s33_card.webp",
-    foto_gavetas: "./img/s33_gavetas.webp",
+    foto_gavetas: "",
     incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "380 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "3 - 10 - 5 - 2 piezas de c/u"
@@ -2978,21 +2978,6 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "660 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 62,
-    nombre: "Arandelas de Goma Línea Completa",
-    codigo: "ARAND. COMP.",
-    precio: 0,
-    piezas: 77,
-    foto_card: "./img/s62_card.webp",
-    foto_exhibidor: "./img/s62_exhibidor.webp",
-    foto_exhibidor_2: "",
-    foto_exhibidor_3: "",
-    foto_gavetas: "./img/s62_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "21 de c/u", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "21"
   }
 ];
 // ── ESTADO ───────────────────────────────────────────────────
@@ -3111,8 +3096,16 @@ function vibrar(ms) {
   if (navigator.vibrate) navigator.vibrate(ms || 40);
 }
 
-function precioConDescuento(precio) {
+// Descuento fijo para CONC. COMB. Red — siempre 22%, independiente del descuento global
+const DESCUENTOS_FIJOS = {
+  'CONC. COMB. Red': 22
+};
+
+function precioConDescuento(precio, codigo) {
   if (!precio) return 0;
+  if (codigo && DESCUENTOS_FIJOS[codigo]) {
+    return Math.round(precio * (1 - DESCUENTOS_FIJOS[codigo] / 100));
+  }
   if (descuentoPct <= 0) return precio;
   return Math.round(precio * (1 - descuentoPct / 100));
 }
@@ -3194,7 +3187,7 @@ function cardHTML(s) {
         ? `<img src="${foto}" alt="${s.nombre}" loading="lazy">`
         : `<div class="card-img-placeholder">📦</div>`}
       ${badgeHtml}
-      <div class="card-precio-badge">${formatPrecio(precioConDescuento(s.precio))}</div>
+      <div class="card-precio-badge">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
       <button class="btn-fav ${esFav ? 'fav-on' : ''}" data-id="${s.id}"
         onclick="toggleFavorito(${s.id}, event)">${esFav ? '❤️' : '🤍'}</button>
     </div>
@@ -3327,12 +3320,12 @@ function abrirModal(id) {
   // Precio
   const pd = PIEZAS_DATA[String(s.id)];
   const precioPzLista = (s.precio && pd && pd.pzs) ? Math.round(s.precio / pd.pzs) : null;
-  const precioPzDesc  = (precioPzLista && descuentoPct > 0) ? Math.round(precioConDescuento(s.precio) / pd.pzs) : null;
+  const precioPzDesc  = (precioPzLista && descuentoPct > 0) ? Math.round(precioConDescuento(s.precio, s.codigo) / pd.pzs) : null;
 
   const precioHtml = `
     <div class="precio-modal">
       <div class="precio-label">${descuentoPct > 0 ? 'Precio con descuento' : 'Precio de Lista'}</div>
-      <div class="precio-valor">${formatPrecio(precioConDescuento(s.precio))}</div>
+      <div class="precio-valor">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
       <div class="precio-iva">+ IVA</div>
     </div>`;
 
@@ -3390,7 +3383,7 @@ function abrirModal(id) {
     const filas = comp.map(item => {
       const numTd = `<td class="comp-col-n" style="color:var(--gris-muted);font-size:11px;white-space:nowrap">${item.n || ''}</td>`;
       const precioLista = item.p ? Math.round(item.p) : 0;
-      const precioDesc  = (precioLista && descuentoPct > 0) ? Math.round(precioConDescuento(item.p)) : precioLista;
+      const precioDesc  = (precioLista && (descuentoPct > 0 || DESCUENTOS_FIJOS[s.codigo])) ? Math.round(precioConDescuento(item.p, s.codigo)) : precioLista;
       const precioStr   = precioLista ? `<span class="comp-p-lista">$${precioLista.toLocaleString('es-AR')}</span>${precioDesc && precioDesc !== precioLista ? `<br><span class="comp-p-desc">$${precioDesc.toLocaleString('es-AR')}</span>` : ''}` : '';
       return `<tr>
         ${numTd}
@@ -3598,13 +3591,13 @@ function renderCarritoBody() {
     return;
   }
   const spClass = mostrarPrecios ? 'show-precios' : '';
-  const total = carrito.reduce((s, c) => s + precioConDescuento(c.precio), 0);
+  const total = carrito.reduce((s, c) => s + precioConDescuento(c.precio, c.codigo), 0);
   const items = carrito.map(c => `
     <div class="carrito-item">
       <div class="carrito-item-info">
         <div class="carrito-item-nombre">${c.nombre}</div>
         <div class="carrito-item-cod">Cód: ${c.codigo}</div>
-        <div class="carrito-item-precio">${formatPrecio(precioConDescuento(c.precio))} + IVA${descuentoPct > 0 ? ' <span style="color:var(--naranja);font-size:10px">(-' + descuentoPct + '%)</span>' : ''}</div>
+        <div class="carrito-item-precio">${formatPrecio(precioConDescuento(c.precio, c.codigo))} + IVA${descuentoPct > 0 ? ' <span style="color:var(--naranja);font-size:10px">(-' + descuentoPct + '%)</span>' : ''}</div>
       </div>
       <button class="btn-rm" onclick="quitarItem(${c.id})">✕</button>
     </div>`).join('');
@@ -3725,7 +3718,7 @@ function enviarWhatsApp() {
     msg += '   📦 Cód: `' + c.codigo + '`\n';
     if (c.piezas) msg += '   📌 ' + c.piezas + ' piezas\n';
     if (mostrarPrecios && c.precio) {
-      var pDesc = precioConDescuento(c.precio);
+      var pDesc = precioConDescuento(c.precio, c.codigo);
       if (descuentoPct > 0) {
         msg += '   💲 Lista: $ ' + formatPrecio(c.precio) + '  →  *$ ' + formatPrecio(pDesc) + '* + IVA\n';
       } else {
@@ -3738,7 +3731,7 @@ function enviarWhatsApp() {
   msg += '━━━━━━━━━━━━━━━━━━━━━━\n';
   msg += '🛒 *' + carrito.length + ' surtido' + (carrito.length > 1 ? 's' : '') + ' seleccionado' + (carrito.length > 1 ? 's' : '') + '*\n';
   if (mostrarPrecios) {
-    var totalDesc = carrito.reduce(function(s, c){ return s + precioConDescuento(c.precio); }, 0);
+    var totalDesc = carrito.reduce(function(s, c){ return s + precioConDescuento(c.precio, c.codigo); }, 0);
     if (descuentoPct > 0) {
       var totalLista = carrito.reduce(function(s, c){ return s + c.precio; }, 0);
       msg += '💰 Lista: $ ' + formatPrecio(totalLista) + ' + IVA\n';
@@ -3949,7 +3942,7 @@ function revConstruir(lista) {
   lista.forEach(function(s, i) {
     var foto = s.foto_exhibidor || s.foto_card || '';
     var incluyeHTML = (s.incluye || []).slice(0,3).map(function(it){ return '<div>• ' + it + '</div>'; }).join('');
-    var precioHTML  = (mostrarPrecios && s.precio) ? '<div class="rev-precio">$ ' + formatPrecio(precioConDescuento(s.precio)) + '</div>' : '';
+    var precioHTML  = (mostrarPrecios && s.precio) ? '<div class="rev-precio">$ ' + formatPrecio(precioConDescuento(s.precio, s.codigo)) + '</div>' : '';
     var piezasHTML  = s.piezas ? '<div class="rev-piezas">' + s.piezas + ' piezas</div>' : '';
     var enCarrito   = carrito.some(function(c){ return c.id === s.id; });
     // Fotos extra disponibles?
@@ -4059,7 +4052,7 @@ function libroHacerCard(idx, cls) {
   var foto = noFoto(s);
   var colIdx = idx % 10;
   var incluyeHTML = (s.incluye || []).slice(0,3).map(function(it){ return '<div>• ' + it + '</div>'; }).join('');
-  var precioHTML  = (mostrarPrecios && s.precio) ? '<span class="libro-price">$' + formatPrecio(precioConDescuento(s.precio)) + '</span>' : '<span></span>';
+  var precioHTML  = (mostrarPrecios && s.precio) ? '<span class="libro-price">$' + formatPrecio(precioConDescuento(s.precio, s.codigo)) + '</span>' : '<span></span>';
   var enCarrito   = carrito.some(function(c){ return c.id === s.id; });
   var fotosExtra  = [s.foto_exhibidor_2, s.foto_exhibidor_3, s.foto_gavetas].filter(Boolean);
   var btnFotosHTML = fotosExtra.length
@@ -4224,8 +4217,8 @@ function abrirComparador(idA, idB) {
   var b = SURTIDOS.find(function(x){ return x.id === idB; });
   if (!a || !b) return;
 
-  var precioA = precioConDescuento(a.precio) || 0;
-  var precioB = precioConDescuento(b.precio) || 0;
+  var precioA = precioConDescuento(a.precio, a.codigo) || 0;
+  var precioB = precioConDescuento(b.precio, b.codigo) || 0;
   var pzA = a.piezas || 0;
   var pzB = b.piezas || 0;
   var gavA = extraerGavetas(a);
