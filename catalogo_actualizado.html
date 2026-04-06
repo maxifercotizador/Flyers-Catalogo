@@ -2944,7 +2944,7 @@ function renderGrid(lista) {
   noRes.style.display = 'none';
 
   // Verificar si hay búsqueda activa — si hay, mostrar sin grupos
-  const q = document.getElementById('searchInput')?.value?.trim();
+  const q = normalizar(document.getElementById('searchInput')?.value?.trim() || '');
   if (q && q.length > 0) {
     grid.innerHTML = `<div class="grupo-grid">${lista.map(cardHTML).join('')}</div>`;
     return;
@@ -3004,12 +3004,18 @@ function cardHTML(s) {
 }
 
 // ── FILTRO ───────────────────────────────────────────────────
+// ── NORMALIZAR para búsqueda sin acentos ni mayúsculas ───────
+function normalizar(s) {
+  return String(s).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function filtrar() {
-  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const q = normalizar(document.getElementById('searchInput').value.trim());
   const lista = q
     ? SURTIDOS.filter(s =>
-        s.nombre.toLowerCase().includes(q) ||
-        s.codigo.toLowerCase().includes(q))
+        normalizar(s.nombre).includes(q) ||
+        normalizar(s.codigo).includes(q))
     : SURTIDOS;
   renderGrid(lista);
 }
@@ -3052,14 +3058,14 @@ function togglePreciosVista() { togglePrecios(); }
 
 function refrescarVistaActiva() {
   if (vistaActual === 'revista') {
-    var q = document.getElementById('revBuscar').value.trim().toLowerCase();
-    var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return s.nombre.toLowerCase().includes(q) || s.codigo.toLowerCase().includes(q); }) : SURTIDOS_ACTIVOS;
+    var q = normalizar(document.getElementById('revBuscar').value.trim());
+    var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
     document.getElementById('revScroll').removeEventListener('scroll', revOnScroll);
     revConstruir(lista);
   } else if (vistaActual === 'libro') {
     var idxGuardado = libroActual;
-    var q = document.getElementById('libroBuscar').value.trim().toLowerCase();
-    var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return s.nombre.toLowerCase().includes(q) || s.codigo.toLowerCase().includes(q); }) : SURTIDOS_ACTIVOS;
+    var q = normalizar(document.getElementById('libroBuscar').value.trim());
+    var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
     libroInit(lista);
     if (idxGuardado < lista.length) {
       libroActual = idxGuardado;
@@ -3854,8 +3860,8 @@ function revOnScroll() {
 }
 
 function revFiltrar() {
-  var q = document.getElementById('revBuscar').value.trim().toLowerCase();
-  var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return s.nombre.toLowerCase().includes(q) || s.codigo.toLowerCase().includes(q); }) : SURTIDOS_ACTIVOS;
+  var q = normalizar(document.getElementById('revBuscar').value.trim());
+  var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
   document.getElementById('revScroll').removeEventListener('scroll', revOnScroll);
   revConstruir(lista);
 }
@@ -4043,8 +4049,8 @@ function libroNav(dir) {
 }
 
 function libroFiltrar() {
-  var q = document.getElementById('libroBuscar').value.trim().toLowerCase();
-  var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return s.nombre.toLowerCase().includes(q) || s.codigo.toLowerCase().includes(q); }) : SURTIDOS_ACTIVOS;
+  var q = normalizar(document.getElementById('libroBuscar').value.trim());
+  var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
   libroInit(lista);
 }
 
