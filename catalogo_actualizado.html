@@ -3096,7 +3096,7 @@ function vibrar(ms) {
   if (navigator.vibrate) navigator.vibrate(ms || 40);
 }
 
-// Descuento fijo para CONC. COMB. Red — siempre 22%, independiente del descuento global
+// CONC. COMB. Red tiene 22% fijo de base, al que se suma el descuento global del vendedor
 const DESCUENTOS_FIJOS = {
   'CONC. COMB. Red': 22
 };
@@ -3104,7 +3104,9 @@ const DESCUENTOS_FIJOS = {
 function precioConDescuento(precio, codigo) {
   if (!precio) return 0;
   if (codigo && DESCUENTOS_FIJOS[codigo]) {
-    return Math.round(precio * (1 - DESCUENTOS_FIJOS[codigo] / 100));
+    var base = precio * (1 - DESCUENTOS_FIJOS[codigo] / 100);
+    if (descuentoPct > 0) base = base * (1 - descuentoPct / 100);
+    return Math.round(base);
   }
   if (descuentoPct <= 0) return precio;
   return Math.round(precio * (1 - descuentoPct / 100));
