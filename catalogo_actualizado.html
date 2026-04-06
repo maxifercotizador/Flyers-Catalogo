@@ -3326,7 +3326,7 @@ function abrirModal(id) {
 
   const precioHtml = `
     <div class="precio-modal">
-      <div class="precio-label">${descuentoPct > 0 ? 'Precio con descuento' : 'Precio de Lista'}</div>
+      <div class="precio-label">Precio</div>
       <div class="precio-valor">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
       <div class="precio-iva">+ IVA</div>
     </div>`;
@@ -3386,7 +3386,7 @@ function abrirModal(id) {
       const numTd = `<td class="comp-col-n" style="color:var(--gris-muted);font-size:11px;white-space:nowrap">${item.n || ''}</td>`;
       const precioLista = item.p ? Math.round(item.p) : 0;
       const precioDesc  = (precioLista && (descuentoPct > 0 || DESCUENTOS_FIJOS[s.codigo])) ? Math.round(precioConDescuento(item.p, s.codigo)) : precioLista;
-      const precioStr   = precioLista ? `<span class="comp-p-lista">$${precioLista.toLocaleString('es-AR')}</span>${precioDesc && precioDesc !== precioLista ? `<br><span class="comp-p-desc">$${precioDesc.toLocaleString('es-AR')}</span>` : ''}` : '';
+      const precioStr   = precioLista ? `<span class="comp-p-desc">$${precioDesc.toLocaleString('es-AR')}</span>` : '';
       return `<tr>
         ${numTd}
         <td style="font-size:12px">${item.d}</td>
@@ -3599,7 +3599,7 @@ function renderCarritoBody() {
       <div class="carrito-item-info">
         <div class="carrito-item-nombre">${c.nombre}</div>
         <div class="carrito-item-cod">Cód: ${c.codigo}</div>
-        <div class="carrito-item-precio">${formatPrecio(precioConDescuento(c.precio, c.codigo))} + IVA${descuentoPct > 0 ? ' <span style="color:var(--naranja);font-size:10px">(-' + descuentoPct + '%)</span>' : ''}</div>
+        <div class="carrito-item-precio">${formatPrecio(precioConDescuento(c.precio, c.codigo))} + IVA</div>
       </div>
       <button class="btn-rm" onclick="quitarItem(${c.id})">✕</button>
     </div>`).join('');
@@ -4278,7 +4278,7 @@ function abrirComparador(idA, idB) {
     var cP = celda(precioA, precioB,
       function(v){ return '$ ' + Math.round(v).toLocaleString('es-AR'); },
       function(d){ return (d > 0 ? '+' : '-') + '$ ' + Math.round(Math.abs(d)).toLocaleString('es-AR'); },
-      true, descuentoPct > 0 ? 'con desc. + IVA' : 'lista + IVA');
+      true, '+ IVA');
     rows.push(['💰 Inversión total', cP[0], cP[1]]);
   }
 
