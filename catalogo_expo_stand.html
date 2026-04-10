@@ -4657,16 +4657,19 @@ window.addEventListener('popstate', function(e) {
 </script>
 
 <!-- TOAST -->
-<div id="toast"></div>
-
 <!-- ═══════════════════════════════════════════════════════════
-     MODO AUTOPILOT EXPO — MAXIFER  (versión mouse)
-     • Se activa/detiene SOLO con el botón ▶ / ⏹
-     • Click normal en el catálogo NO lo interrumpe
-     • Auto-reinicio si hay inactividad de mouse > 2 min
+     MODO AUTOPILOT EXPO — MAXIFER  v3 (full showcase)
+     Control: SOLO el botón ▶/⏹  (mouse normal no interrumpe)
+     Auto-reinicio tras 1 min sin mover el mouse
+     Escenarios rotativos:
+       1. Navegar grilla → abrir modal → expandir precios →
+          scroll → lightbox fotos → agregar carrito → cerrar
+       2. Abrir carrito → ver items → vaciar
+       3. Vista Revista → hojear varios productos
+       4. Vista Libro → pasar páginas
+       5. Búsqueda con texto → ver resultados → limpiar
 ══════════════════════════════════════════════════════════════ -->
 <style>
-  /* ── Panel de control flotante ── */
   #apPanel {
     position: fixed;
     bottom: 88px;
@@ -4677,24 +4680,25 @@ window.addEventListener('popstate', function(e) {
     align-items: flex-end;
     gap: 8px;
     font-family: 'Barlow Condensed', sans-serif;
+    pointer-events: none;
   }
+  #apPanel > * { pointer-events: auto; }
 
-  /* Contador regresivo inactividad */
   #apIdleBar {
-    background: rgba(26,58,122,0.85);
-    color: rgba(255,255,255,0.8);
+    background: rgba(26,58,122,0.9);
+    color: rgba(255,255,255,0.85);
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.5px;
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 20px;
     display: none;
     backdrop-filter: blur(6px);
     white-space: nowrap;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
   }
   #apIdleBar.visible { display: block; }
 
-  /* Botón principal */
   #apBtn {
     background: #1a3a7a;
     color: white;
@@ -4735,23 +4739,25 @@ window.addEventListener('popstate', function(e) {
     50%      { opacity:.4; transform:scale(.6); }
   }
 
-  /* ── Cursor fantasma ── */
+  /* Cursor fantasma */
   #apCursor {
     position: fixed;
-    width: 26px; height: 26px;
+    width: 24px; height: 24px;
     border-radius: 50%;
-    background: rgba(232,81,10,0.8);
+    background: rgba(232,81,10,0.82);
     border: 3px solid white;
-    box-shadow: 0 2px 14px rgba(0,0,0,0.45);
+    box-shadow: 0 2px 14px rgba(0,0,0,0.5);
     pointer-events: none;
     z-index: 99998;
     transform: translate(-50%,-50%);
-    transition: left .55s cubic-bezier(.4,0,.2,1), top .55s cubic-bezier(.4,0,.2,1), opacity .3s;
+    transition: left .5s cubic-bezier(.4,0,.2,1),
+                top  .5s cubic-bezier(.4,0,.2,1),
+                opacity .3s;
     opacity: 0;
   }
   #apCursor.visible { opacity: 1; }
 
-  /* ── Banner superior ── */
+  /* Banner superior */
   #apBanner {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -4768,7 +4774,28 @@ window.addEventListener('popstate', function(e) {
   }
   #apBanner.visible { display: block; }
 
-  /* ── Ripple de click ── */
+  /* Etiqueta de escenario */
+  #apScenarioLabel {
+    position: fixed;
+    top: 32px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 9996;
+    background: rgba(0,0,0,0.55);
+    color: rgba(255,255,255,0.85);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 3px 14px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    display: none;
+    white-space: nowrap;
+  }
+  #apScenarioLabel.visible { display: block; }
+
+  /* Ripple de click */
   .ap-ripple {
     position: fixed;
     width: 34px; height: 34px;
@@ -4785,15 +4812,12 @@ window.addEventListener('popstate', function(e) {
   }
 </style>
 
-<!-- Banner -->
 <div id="apBanner">🎬 DEMO AUTOMÁTICO — Usá el botón ⏹ para tomar el control</div>
-
-<!-- Cursor fantasma -->
+<div id="apScenarioLabel"></div>
 <div id="apCursor"></div>
 
-<!-- Panel control -->
 <div id="apPanel">
-  <div id="apIdleBar">▶ auto-demo en <span id="apIdleSecs">120</span>s</div>
+  <div id="apIdleBar">▶ auto-demo en <span id="apIdleSecs">60</span>s</div>
   <button id="apBtn" onclick="apToggle()">
     <span class="ap-dot"></span>
     <span id="apBtnLabel">▶ DEMO</span>
@@ -4801,77 +4825,74 @@ window.addEventListener('popstate', function(e) {
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════════════
-   AUTOPILOT EXPO — MAXIFER  (mouse-friendly)
-   Control: SOLO el botón ▶ / ⏹  (mouse normal no interrumpe)
-   Auto-reinicio tras 2 min sin mover el mouse
-══════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
 
-// ── Config ──────────────────────────────────────────────────
-var IDLE_SECONDS   = 120;   // segundos sin mover mouse → auto-demo
-var CYCLE_PAUSE    = 1400;  // ms entre ciclos
+// ── Config ─────────────────────────────────────────────────
+var IDLE_START_SECS = 60;   // seg sin mouse → empieza countdown
+var IDLE_COUNT_SECS = 60;   // seg de countdown antes de arrancar
 
-// ── Estado ──────────────────────────────────────────────────
-var AP = {
-  running:   false,
-  timers:    [],
-  idleTimer: null,
-  idleCount: 0,
-  idleTick:  null,
-};
+// ── Estado ─────────────────────────────────────────────────
+var AP = { running:false, timers:[], idleTimer:null, idleTick:null };
 
-// ── Refs (se asignan en DOMContentLoaded) ───────────────────
-var $cursor, $banner, $btn, $label, $idleBar, $idleSecs;
+// ── Refs ───────────────────────────────────────────────────
+var $cur, $ban, $btn, $lbl, $idle, $secs, $scene;
 
-// ── Utilidades ──────────────────────────────────────────────
+// ── Await helper ───────────────────────────────────────────
 function wait(ms){
   return new Promise(function(res){
-    var t = setTimeout(res, ms);
+    if(!AP.running){ res(); return; }
+    var t=setTimeout(res,ms);
     AP.timers.push(t);
   });
 }
 
-function shuffle(arr){
-  var a = arr.slice();
-  for(var i=a.length-1;i>0;i--){
+// ── Shuffle ────────────────────────────────────────────────
+function shuffle(a){
+  var b=a.slice();
+  for(var i=b.length-1;i>0;i--){
     var j=Math.floor(Math.random()*(i+1));
-    var tmp=a[i];a[i]=a[j];a[j]=tmp;
+    var tmp=b[i];b[i]=b[j];b[j]=tmp;
   }
-  return a;
+  return b;
 }
 
-var _queue=[], _qi=0;
-function nextId(){
-  var src = (window.SURTIDOS_ACTIVOS||window.SURTIDOS||[]);
-  if(!_queue.length||_qi>=_queue.length){
-    _queue=shuffle(src.map(function(s){return s.id;}));
-    _qi=0;
-  }
-  return _queue[_qi++];
+// ── Productos barajados ────────────────────────────────────
+var _q=[], _qi=0;
+function nextSurtido(){
+  var src=window.SURTIDOS_ACTIVOS||window.SURTIDOS||[];
+  if(!_q.length||_qi>=_q.length){ _q=shuffle(src.slice()); _qi=0; }
+  return _q[_qi++];
+}
+function nextSurtidoConFoto(){
+  // Preferir surtidos con foto_exhibidor
+  var src=(window.SURTIDOS_ACTIVOS||window.SURTIDOS||[]).filter(function(s){return s.foto_exhibidor;});
+  if(!src.length) src=window.SURTIDOS_ACTIVOS||window.SURTIDOS||[];
+  return src[Math.floor(Math.random()*src.length)];
 }
 
-// ── Cursor fantasma ─────────────────────────────────────────
-function cursorTo(x,y){
-  $cursor.style.left=x+'px';
-  $cursor.style.top =y+'px';
-  $cursor.classList.add('visible');
-}
-function cursorHide(){ $cursor.classList.remove('visible'); }
-
+// ── Cursor ─────────────────────────────────────────────────
+function cursorTo(x,y){ $cur.style.left=x+'px'; $cur.style.top=y+'px'; $cur.classList.add('visible'); }
+function cursorHide(){ $cur.classList.remove('visible'); }
 function ripple(x,y){
   var r=document.createElement('div');
-  r.className='ap-ripple';
-  r.style.left=x+'px'; r.style.top=y+'px';
+  r.className='ap-ripple'; r.style.left=x+'px'; r.style.top=y+'px';
   document.body.appendChild(r);
   setTimeout(function(){r.parentNode&&r.parentNode.removeChild(r);},600);
 }
 
-// ── Scroll suave ────────────────────────────────────────────
-function scrollTo2(y,ms){
+// ── Escenario label ────────────────────────────────────────
+function setScene(txt){
+  $scene.textContent = txt;
+  $scene.classList.add('visible');
+}
+function hideScene(){ $scene.classList.remove('visible'); }
+
+// ── Scroll suave ───────────────────────────────────────────
+function smoothScroll(y,ms){
   return new Promise(function(res){
     var s0=window.scrollY, d=y-s0, t0=null;
+    if(Math.abs(d)<2){res();return;}
     function step(ts){
       if(!AP.running){res();return;}
       if(!t0)t0=ts;
@@ -4884,179 +4905,456 @@ function scrollTo2(y,ms){
   });
 }
 
-// ── Cerrar todo ──────────────────────────────────────────────
+// ── Cerrar todo ────────────────────────────────────────────
 function closeAll(){
-  try{ if(typeof cerrarModalBtn==='function') cerrarModalBtn(); }catch(e){}
-  try{ if(typeof cerrarCarritoBtn==='function') cerrarCarritoBtn(); }catch(e){}
-  try{ if(typeof cerrarCompBtn==='function') cerrarCompBtn(); }catch(e){}
-  try{ if(typeof cerrarFavoritos==='function') cerrarFavoritos(); }catch(e){}
-  // cerrar modal descuento inicial
-  var d=document.getElementById('modalDescuentoOverlay');
-  if(d&&d.classList.contains('open')){
-    try{ saltarDescuento(); }catch(e){ d.classList.remove('open'); }
-  }
+  try{ if(document.getElementById('lightbox').classList.contains('open')) cerrarLightbox(); }catch(e){}
+  try{ cerrarModalBtn(); }catch(e){}
+  try{ cerrarCarritoBtn(); }catch(e){}
+  try{ cerrarCompBtn(); }catch(e){}
+  try{ cerrarFavoritos(); }catch(e){}
+  try{
+    var d=document.getElementById('modalDescuentoOverlay');
+    if(d&&d.classList.contains('open')) saltarDescuento();
+  }catch(e){}
+  // Volver a grilla si estamos en revista/libro
+  try{
+    if(typeof vistaActual!=='undefined' && (vistaActual==='revista'||vistaActual==='libro')){
+      cambiarVista('grilla');
+    }
+  }catch(e){}
 }
 
-// ── Demo principal ───────────────────────────────────────────
-async function runDemo(){
+// ════════════════════════════════════════════════════════════
+//  ESCENARIO 1 — Modal completo
+//  Grilla → scroll → click card → modal → precio pieza →
+//  scroll → fotos lightbox → cerrar → (a veces agregar carrito)
+// ════════════════════════════════════════════════════════════
+async function escenarioModal(){
   if(!AP.running) return;
-  closeAll();
-  await wait(1200);
+  setScene('📋 Explorando el catálogo...');
 
-  while(AP.running){
+  // Scroll a una posición aleatoria de la grilla
+  await smoothScroll(100+Math.random()*500, 900);
+  await wait(500); if(!AP.running) return;
 
-    // 1. Scroll aleatorio por la grilla
-    var scrollY = 150 + Math.random()*400;
-    await scrollTo2(scrollY, 950);
-    await wait(600);
-    if(!AP.running) return;
+  // Elegir una card visible
+  var card = cardVisible();
+  if(!card){ await wait(800); return; }
 
-    // 2. Mover cursor a una card visible
-    var cards = Array.from(document.querySelectorAll('.surtido-card'));
-    var visible = cards.filter(function(c){
-      var r=c.getBoundingClientRect();
-      return r.top>60 && r.bottom<window.innerHeight-20 && r.width>0;
-    });
-    if(!visible.length) visible=cards.slice(0,4);
-    if(!visible.length){ await wait(1000); continue; }
+  var cr = card.getBoundingClientRect();
+  var cx = cr.left+cr.width/2, cy = cr.top+cr.height/2;
+  cursorTo(cx,cy);
+  await wait(600); if(!AP.running) return;
 
-    var card = visible[Math.floor(Math.random()*visible.length)];
-    var cr   = card.getBoundingClientRect();
-    var cx   = cr.left+cr.width/2;
-    var cy   = cr.top+cr.height/2;
+  ripple(cx,cy);
+  await wait(150);
 
-    cursorTo(cx,cy);
-    await wait(650);
-    if(!AP.running) return;
+  // Obtener surtido de la card
+  var sid = getSurtidoIdFromCard(card);
+  if(!sid) sid = nextSurtido().id;
 
-    // 3. Click → abrir modal
-    ripple(cx,cy);
-    await wait(180);
+  setScene('🔍 Viendo detalle del producto...');
+  try{ abrirModal(sid); }catch(e){}
+  await wait(2000); if(!AP.running) return;
 
-    // Obtener id del producto
-    var sid = parseInt(card.dataset.id||card.getAttribute('data-id')||'0');
-    if(!sid){
-      var nm = card.querySelector('.card-nombre');
-      if(nm){
-        var found=(window.SURTIDOS_ACTIVOS||window.SURTIDOS||[]).find(function(s){
-          return s.nombre===nm.textContent.trim();
-        });
-        if(found) sid=found.id;
+  // Mover cursor al modal
+  var sheet = document.querySelector('.modal-sheet');
+
+  // Expandir "¿Cuánto sale cada pieza?"
+  var btnPpp = document.getElementById('btnPPP');
+  if(btnPpp){
+    var pr = btnPpp.getBoundingClientRect();
+    if(pr.width>0){
+      cursorTo(pr.left+pr.width/2, pr.top+pr.height/2);
+      await wait(500); if(!AP.running) return;
+      ripple(pr.left+pr.width/2, pr.top+pr.height/2);
+      try{ btnPpp.click(); }catch(e){}
+      await wait(1200); if(!AP.running) return;
+    }
+  }
+
+  // Expandir composición / precios
+  var btnComp = document.getElementById('btnToggleComp');
+  if(btnComp){
+    var bcr = btnComp.getBoundingClientRect();
+    if(bcr.width>0){
+      cursorTo(bcr.left+bcr.width/2, bcr.top+bcr.height/2);
+      await wait(400); if(!AP.running) return;
+      ripple(bcr.left+bcr.width/2, bcr.top+bcr.height/2);
+      try{ btnComp.click(); }catch(e){}
+      await wait(1000); if(!AP.running) return;
+    }
+  }
+
+  // Scroll hacia abajo dentro del modal
+  if(sheet){
+    setScene('📖 Leyendo el detalle...');
+    sheet.scrollTo({top: sheet.scrollHeight*0.5, behavior:'smooth'});
+    await wait(1400); if(!AP.running) return;
+  }
+
+  // Abrir lightbox con foto exhibidor
+  setScene('📸 Viendo fotos del exhibidor...');
+  var s = (window.SURTIDOS||[]).find(function(x){return x.id===sid;});
+  if(s && s.foto_exhibidor){
+    try{
+      abrirLightbox(fotosDelSurtido(s), 0, s.nombre);
+    }catch(e){}
+    await wait(1800); if(!AP.running) return;
+
+    // Si hay más de 1 foto, navegar a la siguiente
+    if((fotosDelSurtido(s)).length > 1){
+      try{ lightboxNav(1); }catch(e){}
+      await wait(1200); if(!AP.running) return;
+    }
+
+    // Cerrar lightbox
+    var lbClose = document.querySelector('.lightbox-close');
+    if(lbClose){
+      var lcr=lbClose.getBoundingClientRect();
+      cursorTo(lcr.left+lcr.width/2, lcr.top+lcr.height/2);
+      await wait(400); if(!AP.running) return;
+      ripple(lcr.left+lcr.width/2, lcr.top+lcr.height/2);
+    }
+    try{ cerrarLightbox(); }catch(e){}
+    await wait(700); if(!AP.running) return;
+  }
+
+  // Scroll hasta el fondo del modal
+  if(sheet){
+    sheet.scrollTo({top: sheet.scrollHeight, behavior:'smooth'});
+    await wait(900); if(!AP.running) return;
+  }
+
+  // A veces agregar al carrito
+  if(Math.random()<0.5){
+    setScene('🛒 Agregando al pedido...');
+    var btnAgregar = document.getElementById('btnAgregar');
+    if(btnAgregar){
+      var bar=btnAgregar.getBoundingClientRect();
+      if(bar.width>0){
+        cursorTo(bar.left+bar.width/2, bar.top+bar.height/2);
+        await wait(500); if(!AP.running) return;
+        ripple(bar.left+bar.width/2, bar.top+bar.height/2);
+        try{ toggleCarrito(sid); }catch(e){}
+        await wait(800); if(!AP.running) return;
       }
     }
-    if(!sid) sid=nextId();
-
-    try{ abrirModal(sid); }catch(e){}
-    await wait(2400);
-    if(!AP.running) return;
-
-    // 4. Scroll dentro del modal (simula lectura)
-    var sheet = document.querySelector('.modal-sheet');
-    if(sheet){
-      sheet.scrollTo({top: sheet.scrollHeight*0.45, behavior:'smooth'});
-      await wait(1300);
-      if(!AP.running) return;
-      sheet.scrollTo({top:0, behavior:'smooth'});
-      await wait(500);
-      if(!AP.running) return;
-    }
-
-    // 5. Cursor al botón cerrar → cerrar
-    var closeBtn = document.querySelector('.modal-close');
-    if(closeBtn){
-      var br=closeBtn.getBoundingClientRect();
-      cursorTo(br.left+br.width/2, br.top+br.height/2);
-      await wait(500);
-      if(!AP.running) return;
-      ripple(br.left+br.width/2, br.top+br.height/2);
-    }
-    try{ cerrarModalBtn(); }catch(e){}
-    await wait(800);
-    if(!AP.running) return;
-
-    // 6. A veces simula búsqueda
-    if(Math.random()<0.3){
-      await simulateSearch();
-      if(!AP.running) return;
-    }
-
-    // 7. Pausa entre ciclos
-    await wait(CYCLE_PAUSE + Math.random()*600);
   }
+
+  // Cerrar modal
+  setScene('↩️ Volviendo al catálogo...');
+  var closeBtn = document.querySelector('.modal-close');
+  if(closeBtn){
+    var ccr=closeBtn.getBoundingClientRect();
+    cursorTo(ccr.left+ccr.width/2, ccr.top+ccr.height/2);
+    await wait(400); if(!AP.running) return;
+    ripple(ccr.left+ccr.width/2, ccr.top+ccr.height/2);
+  }
+  try{ cerrarModalBtn(); }catch(e){}
+  await wait(800);
 }
 
-// ── Simular búsqueda ────────────────────────────────────────
-async function simulateSearch(){
-  var inp = document.getElementById('buscarInput')||document.querySelector('.search-input');
+// ════════════════════════════════════════════════════════════
+//  ESCENARIO 2 — Carrito
+//  Agrega 2-3 productos → abre carrito → mira → vacía
+// ════════════════════════════════════════════════════════════
+async function escenarioCarrito(){
+  if(!AP.running) return;
+  setScene('🛒 Armando un pedido de ejemplo...');
+
+  // Asegurar que el carrito esté vacío al empezar
+  try{ vaciarCarrito(); }catch(e){}
+
+  // Agregar 3 productos
+  var src = shuffle((window.SURTIDOS_ACTIVOS||window.SURTIDOS||[]).slice()).slice(0,3);
+  for(var i=0;i<src.length;i++){
+    if(!AP.running) return;
+    var s2=src[i];
+    try{ abrirModal(s2.id); }catch(e){}
+    await wait(1600); if(!AP.running) return;
+
+    var btnA = document.getElementById('btnAgregar');
+    if(btnA){
+      var bar2=btnA.getBoundingClientRect();
+      if(bar2.width>0){
+        cursorTo(bar2.left+bar2.width/2, bar2.top+bar2.height/2);
+        await wait(400); if(!AP.running) return;
+        ripple(bar2.left+bar2.width/2, bar2.top+bar2.height/2);
+        try{ toggleCarrito(s2.id); }catch(e){}
+        await wait(600); if(!AP.running) return;
+      }
+    }
+    try{ cerrarModalBtn(); }catch(e){}
+    await wait(500); if(!AP.running) return;
+  }
+
+  // Abrir carrito
+  setScene('🛒 Revisando el pedido...');
+  var fab = document.getElementById('carritoFab');
+  if(fab && fab.style.display!=='none'){
+    var fr=fab.getBoundingClientRect();
+    cursorTo(fr.left+fr.width/2, fr.top+fr.height/2);
+    await wait(500); if(!AP.running) return;
+    ripple(fr.left+fr.width/2, fr.top+fr.height/2);
+  }
+  try{ abrirCarrito(); }catch(e){}
+  await wait(2500); if(!AP.running) return;
+
+  // Scroll dentro del carrito
+  var cBody = document.getElementById('carritoBody');
+  if(cBody){
+    cBody.scrollTo({top:cBody.scrollHeight, behavior:'smooth'});
+    await wait(1000); if(!AP.running) return;
+  }
+
+  // Vaciar carrito
+  setScene('🗑️ Vaciando el pedido...');
+  var btnVaciar = document.querySelector('.btn-vaciar');
+  if(btnVaciar){
+    var vr=btnVaciar.getBoundingClientRect();
+    cursorTo(vr.left+vr.width/2, vr.top+vr.height/2);
+    await wait(500); if(!AP.running) return;
+    ripple(vr.left+vr.width/2, vr.top+vr.height/2);
+    try{ vaciarCarrito(); }catch(e){}
+    await wait(800); if(!AP.running) return;
+  }
+
+  // Cerrar carrito
+  var cerrarCarritoBtn2 = document.querySelector('.carrito-close, [onclick="cerrarCarritoBtn()"]');
+  try{ cerrarCarritoBtn(); }catch(e){}
+  await wait(600);
+}
+
+// ════════════════════════════════════════════════════════════
+//  ESCENARIO 3 — Vista Revista
+//  Cambia a revista → hojea 4-6 páginas → vuelve a grilla
+// ════════════════════════════════════════════════════════════
+async function escenarioRevista(){
+  if(!AP.running) return;
+  setScene('📰 Vista Revista...');
+
+  // Click en tab Revista
+  var tabRev = document.getElementById('tabRevista');
+  if(!tabRev) return;
+  var tr=tabRev.getBoundingClientRect();
+  cursorTo(tr.left+tr.width/2, tr.top+tr.height/2);
+  await wait(500); if(!AP.running) return;
+  ripple(tr.left+tr.width/2, tr.top+tr.height/2);
+  try{ cambiarVista('revista'); }catch(e){}
+  await wait(1200); if(!AP.running) return;
+
+  // Navegar páginas con el botón siguiente
+  var pasos = 4+Math.floor(Math.random()*3);
+  for(var p=0;p<pasos;p++){
+    if(!AP.running) return;
+    var btnSig = document.getElementById('revSiguiente') || document.querySelector('[onclick="revNav(1)"]');
+    if(!btnSig || btnSig.disabled) break;
+    var bsr=btnSig.getBoundingClientRect();
+    if(bsr.width>0){
+      cursorTo(bsr.left+bsr.width/2, bsr.top+bsr.height/2);
+      await wait(400); if(!AP.running) return;
+      ripple(bsr.left+bsr.width/2, bsr.top+bsr.height/2);
+    }
+    try{ revNav(1); }catch(e){}
+    await wait(1400); if(!AP.running) return;
+  }
+
+  // Volver a grilla
+  setScene('↩️ Volviendo al catálogo...');
+  var tabGrilla = document.getElementById('tabGrilla');
+  if(tabGrilla){
+    var tgr=tabGrilla.getBoundingClientRect();
+    cursorTo(tgr.left+tgr.width/2, tgr.top+tgr.height/2);
+    await wait(400); if(!AP.running) return;
+    ripple(tgr.left+tgr.width/2, tgr.top+tgr.height/2);
+  }
+  try{ cambiarVista('grilla'); }catch(e){}
+  await wait(800);
+}
+
+// ════════════════════════════════════════════════════════════
+//  ESCENARIO 4 — Vista Libro
+//  Cambia a libro → pasa 4-6 páginas → vuelve a grilla
+// ════════════════════════════════════════════════════════════
+async function escenarioLibro(){
+  if(!AP.running) return;
+  setScene('📖 Vista Libro...');
+
+  var tabLib = document.getElementById('tabLibro');
+  if(!tabLib) return;
+  var tl=tabLib.getBoundingClientRect();
+  cursorTo(tl.left+tl.width/2, tl.top+tl.height/2);
+  await wait(500); if(!AP.running) return;
+  ripple(tl.left+tl.width/2, tl.top+tl.height/2);
+  try{ cambiarVista('libro'); }catch(e){}
+  await wait(1400); if(!AP.running) return;
+
+  var pasos = 4+Math.floor(Math.random()*4);
+  for(var p=0;p<pasos;p++){
+    if(!AP.running) return;
+    var btnNext = document.getElementById('libroSiguiente');
+    if(!btnNext || btnNext.disabled) break;
+    var bnr=btnNext.getBoundingClientRect();
+    if(bnr.width>0){
+      cursorTo(bnr.left+bnr.width/2, bnr.top+bnr.height/2);
+      await wait(350); if(!AP.running) return;
+      ripple(bnr.left+bnr.width/2, bnr.top+bnr.height/2);
+    }
+    try{ libroNav(1); }catch(e){}
+    await wait(1500); if(!AP.running) return;
+  }
+
+  setScene('↩️ Volviendo al catálogo...');
+  var tabG2 = document.getElementById('tabGrilla');
+  if(tabG2){
+    var tg2=tabG2.getBoundingClientRect();
+    cursorTo(tg2.left+tg2.width/2, tg2.top+tg2.height/2);
+    await wait(400); if(!AP.running) return;
+    ripple(tg2.left+tg2.width/2, tg2.top+tg2.height/2);
+  }
+  try{ cambiarVista('grilla'); }catch(e){}
+  await wait(800);
+}
+
+// ════════════════════════════════════════════════════════════
+//  ESCENARIO 5 — Búsqueda
+//  Escribe un término → espera resultados → borra
+// ════════════════════════════════════════════════════════════
+async function escenarioBusqueda(){
+  if(!AP.running) return;
+  var terms=['resorte','arand','bulón','seeger','tapón','regat','goma','alemite','conector','abrazadera'];
+  var term=terms[Math.floor(Math.random()*terms.length)];
+  setScene('🔎 Buscando "'+term+'"...');
+
+  var inp=document.getElementById('buscarInput')||document.querySelector('.search-input');
   if(!inp) return;
-  var terms=['resorte','arand','bulón','seeger','tapón','regat','goma','clips','conc','tornillo'];
-  var term = terms[Math.floor(Math.random()*terms.length)];
 
   var ir=inp.getBoundingClientRect();
   cursorTo(ir.left+ir.width/2, ir.top+ir.height/2);
-  await wait(500);
-  if(!AP.running) return;
+  await wait(500); if(!AP.running) return;
   ripple(ir.left+ir.width/2, ir.top+ir.height/2);
-  inp.focus();
-  inp.value='';
+  inp.focus(); inp.value='';
   inp.dispatchEvent(new Event('input',{bubbles:true}));
-  await wait(250);
+  await wait(250); if(!AP.running) return;
 
   for(var i=0;i<term.length;i++){
     if(!AP.running) return;
     inp.value+=term[i];
     inp.dispatchEvent(new Event('input',{bubbles:true}));
-    await wait(85+Math.random()*75);
+    await wait(80+Math.random()*70);
   }
-  await wait(1100);
-  if(!AP.running) return;
+  await wait(1400); if(!AP.running) return;
+
+  // Scroll por los resultados
+  await smoothScroll(300+Math.random()*300, 800);
+  await wait(800); if(!AP.running) return;
+
+  // Limpiar
+  setScene('↩️ Limpiando búsqueda...');
   inp.value='';
   inp.dispatchEvent(new Event('input',{bubbles:true}));
-  await wait(350);
+  await smoothScroll(0, 500);
+  await wait(400);
 }
 
-// ── Inactividad de mouse ─────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────
+function cardVisible(){
+  var cards=Array.from(document.querySelectorAll('.surtido-card'));
+  var vis=cards.filter(function(c){
+    var r=c.getBoundingClientRect();
+    return r.top>60&&r.bottom<window.innerHeight-20&&r.width>0;
+  });
+  if(!vis.length) vis=cards.slice(0,4);
+  if(!vis.length) return null;
+  return vis[Math.floor(Math.random()*vis.length)];
+}
+
+function getSurtidoIdFromCard(card){
+  var id=parseInt(card.dataset.id||card.getAttribute('data-id')||'0');
+  if(id) return id;
+  var nm=card.querySelector('.card-nombre');
+  if(nm){
+    var found=(window.SURTIDOS_ACTIVOS||window.SURTIDOS||[]).find(function(s){
+      return s.nombre===nm.textContent.trim();
+    });
+    if(found) return found.id;
+  }
+  return 0;
+}
+
+// ── Lista de escenarios y pesos ─────────────────────────────
+// modal aparece más seguido, carrito y búsqueda ocasional
+var SCENARIOS = [
+  escenarioModal,   // 0
+  escenarioModal,   // 1  (doble peso)
+  escenarioModal,   // 2
+  escenarioCarrito, // 3
+  escenarioRevista, // 4
+  escenarioLibro,   // 5
+  escenarioBusqueda,// 6
+];
+var _scenIdx=0, _scenQueue=[];
+
+function nextScenario(){
+  if(!_scenQueue.length||_scenIdx>=_scenQueue.length){
+    var idx=[0,1,2,3,4,5,6];
+    _scenQueue=shuffle(idx);
+    _scenIdx=0;
+  }
+  return SCENARIOS[_scenQueue[_scenIdx++]];
+}
+
+// ── Loop principal ─────────────────────────────────────────
+async function runLoop(){
+  closeAll();
+  await wait(1000);
+  while(AP.running){
+    var fn=nextScenario();
+    try{ await fn(); }catch(e){ console.warn('AP escenario error',e); }
+    if(!AP.running) break;
+    hideScene();
+    await wait(1200+Math.random()*600);
+  }
+  hideScene();
+}
+
+// ── Inactividad de mouse ───────────────────────────────────
 function resetIdleTimer(){
   clearTimeout(AP.idleTimer);
   clearInterval(AP.idleTick);
-  $idleBar.classList.remove('visible');
-  AP.idleCount=IDLE_SECONDS;
+  $idle.classList.remove('visible');
+  if(AP.running) return;
 
-  if(AP.running) return; // ya está corriendo, no contar
-
-  // Empezar cuenta regresiva a los 60s de inactividad
   AP.idleTimer=setTimeout(function(){
-    // Mostrar barra y contar
-    AP.idleCount=IDLE_SECONDS;
-    $idleSecs.textContent=AP.idleCount;
-    $idleBar.classList.add('visible');
+    var cnt=IDLE_COUNT_SECS;
+    $secs.textContent=cnt;
+    $idle.classList.add('visible');
     AP.idleTick=setInterval(function(){
-      AP.idleCount--;
-      $idleSecs.textContent=AP.idleCount;
-      if(AP.idleCount<=0){
+      cnt--;
+      $secs.textContent=cnt;
+      if(cnt<=0){
         clearInterval(AP.idleTick);
-        $idleBar.classList.remove('visible');
+        $idle.classList.remove('visible');
         startDemo();
       }
     },1000);
-  }, 60000); // empieza a contar visible después de 1 min quieto
+  }, IDLE_START_SECS*1000);
 }
 
-// ── Toggle público ────────────────────────────────────────────
-window.apToggle=function(){
-  if(AP.running) stopDemo(); else startDemo();
-};
+// ── Toggle público ─────────────────────────────────────────
+window.apToggle=function(){ AP.running ? stopDemo() : startDemo(); };
 
 function startDemo(){
   AP.running=true;
   $btn.classList.add('running');
-  $label.textContent='⏹ DETENER';
-  $banner.classList.add('visible');
+  $lbl.textContent='⏹ DETENER';
+  $ban.classList.add('visible');
   clearTimeout(AP.idleTimer);
   clearInterval(AP.idleTick);
-  $idleBar.classList.remove('visible');
+  $idle.classList.remove('visible');
   cursorTo(window.innerWidth/2, window.innerHeight/2);
-  runDemo();
+  runLoop();
 }
 
 function stopDemo(){
@@ -5064,40 +5362,28 @@ function stopDemo(){
   AP.timers.forEach(clearTimeout);
   AP.timers=[];
   $btn.classList.remove('running');
-  $label.textContent='▶ DEMO';
-  $banner.classList.remove('visible');
+  $lbl.textContent='▶ DEMO';
+  $ban.classList.remove('visible');
   cursorHide();
+  hideScene();
   resetIdleTimer();
 }
 
-// ── Init ──────────────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',function(){
-  $cursor  = document.getElementById('apCursor');
-  $banner  = document.getElementById('apBanner');
-  $btn     = document.getElementById('apBtn');
-  $label   = document.getElementById('apBtnLabel');
-  $idleBar = document.getElementById('apIdleBar');
-  $idleSecs= document.getElementById('apIdleSecs');
-
-  // Escuchar movimiento de mouse para timer de inactividad
+  $cur  = document.getElementById('apCursor');
+  $ban  = document.getElementById('apBanner');
+  $btn  = document.getElementById('apBtn');
+  $lbl  = document.getElementById('apBtnLabel');
+  $idle = document.getElementById('apIdleBar');
+  $secs = document.getElementById('apIdleSecs');
+  $scene= document.getElementById('apScenarioLabel');
   document.addEventListener('mousemove', resetIdleTimer);
   resetIdleTimer();
 });
 
 })();
 </script>
-
-<!-- MODAL COMPARADOR -->
-<div class="comp-overlay" id="compOverlay" onclick="cerrarComp(event)">
-  <div class="comp-modal">
-    <div class="comp-header">
-      <h2>⚖️ Comparar surtidos</h2>
-      <button class="modal-close" onclick="cerrarCompBtn()">✕</button>
-    </div>
-    <div class="comp-body" id="compBody"></div>
-  </div>
-</div>
-
 <!-- ── MODAL DESCUENTO BLOQUEANTE ── -->
 <div class="modal-descuento-overlay open" id="modalDescuentoOverlay">
   <div class="modal-descuento-box">
