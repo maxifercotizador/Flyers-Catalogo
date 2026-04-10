@@ -3384,8 +3384,9 @@ function abrirModal(id) {
     const tienePrecios = comp.some(item => item.p > 0);
     const filas = comp.map(item => {
       const numTd = `<td class="comp-col-n" style="color:var(--gris-muted);font-size:11px;white-space:nowrap">${item.n || ''}</td>`;
-      const precioLista = item.p ? Math.round(item.p) : 0;
-      const precioDesc  = (precioLista && (descuentoPct > 0 || DESCUENTOS_FIJOS[s.codigo])) ? Math.round(precioConDescuento(item.p, s.codigo)) : precioLista;
+      const precioUnitario = (item.p && item.cant) ? item.p / item.cant : (item.p || 0);
+      const precioLista = precioUnitario ? Math.round(precioUnitario) : 0;
+      const precioDesc  = (precioLista && (descuentoPct > 0 || DESCUENTOS_FIJOS[s.codigo])) ? Math.round(precioConDescuento(precioUnitario, s.codigo)) : precioLista;
       const precioStr   = precioLista ? `<span class="comp-p-desc">$${precioDesc.toLocaleString('es-AR')}</span>` : '';
       return `<tr>
         ${numTd}
