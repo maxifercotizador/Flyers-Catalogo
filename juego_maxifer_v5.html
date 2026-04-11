@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MAXIFER RUNNER</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Press+Start+2P&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#07071a;overflow:hidden;width:100vw;height:100vh;font-family:'Bebas Neue',sans-serif;}
+
+.scr{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .3s;}
+.scr.off{opacity:0;pointer-events:none;}
+
+/* INICIO */
+#s0{background:radial-gradient(ellipse at 50% 40%,#101840,#040410);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,8rem);color:#fff;letter-spacing:8px;line-height:1;text-align:center;}
+.logo em{color:#e63946;font-style:normal;}
+.logo::after{content:'';display:block;height:5px;background:linear-gradient(90deg,transparent,#e63946,#ffd60a,#e63946,transparent);margin-top:8px;border-radius:3px;}
+.game-title{font-family:'Press Start 2P',monospace;font-size:clamp(.8rem,2vw,1.3rem);color:#ffd60a;letter-spacing:2px;margin:18px 0 8px;text-align:center;}
+.instbox{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:20px 32px;max-width:500px;margin:20px 0 30px;text-align:center;}
+.instbox p{color:rgba(255,255,255,.8);font-size:clamp(.95rem,2.5vw,1.2rem);line-height:2;}
+.instbox b{color:#ffd60a;}
+.btn{background:#e63946;color:#fff;border:none;font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:6px;padding:15px 65px;border-radius:8px;cursor:pointer;box-shadow:0 6px 28px rgba(230,57,70,.5);transition:.15s;}
+.btn:active{transform:scale(.96);}
+
+/* HUD */
+#hud{position:fixed;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(0,0,0,.85);border-bottom:2px solid rgba(230,57,70,.3);z-index:100;}
+.hlogo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:5px;color:#fff;}
+.hlogo em{color:#e63946;font-style:normal;}
+.hstats{display:flex;gap:28px;}
+.hs{text-align:center;}
+.hs-l{font-size:.55rem;letter-spacing:3px;color:rgba(255,255,255,.3);text-transform:uppercase;}
+.hs-v{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;line-height:1.05;}
+#hpts{color:#ffd60a;}
+.hearts{display:flex;gap:5px;margin-top:2px;}
+.heart{width:16px;height:16px;background:#e63946;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);transition:.3s;}
+.heart.dead{opacity:.15;transform:scale(.6);}
+
+/* CANVAS */
+#gc{display:block;}
+
+/* FIN */
+#s2{background:radial-gradient(ellipse at 50% 30%,#1a0308,#050510);}
+.end-t{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,9vw,7rem);color:#e63946;letter-spacing:6px;}
+.end-sl{font-size:.85rem;letter-spacing:4px;color:rgba(255,255,255,.3);text-transform:uppercase;margin:10px 0 4px;}
+.end-sv{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,14vw,10rem);color:#ffd60a;line-height:1;margin-bottom:18px;}
+.end-msg{font-size:clamp(.95rem,2.5vw,1.2rem);color:rgba(255,255,255,.65);text-align:center;max-width:440px;line-height:1.7;margin-bottom:36px;}
+.end-btns{display:flex;gap:14px;}
+.btn2{background:transparent;border:2px solid rgba(255,255,255,.25);color:rgba(255,255,255,.6);font-family:'Bebas Neue',sans-serif;font-size:clamp(1.2rem,3vw,1.7rem);letter-spacing:4px;padding:12px 30px;border-radius:8px;cursor:pointer;transition:.2s;}
+.btn2:hover{border-color:#fff;color:#fff;}
+</style>
+</head>
+<body>
+
+<!-- INICIO -->
+<div class="scr" id="s0">
+  <div class="logo">MAXI<em>FER</em></div>
+  <div class="game-title">⚡ EXHIBIDOR RUNNER ⚡</div>
+  <div class="instbox">
+    <p>
+      <b>← →</b> Mover &nbsp;|&nbsp; <b>ESPACIO</b> Saltar<br>
+      <b>Z / X</b> Disparar<br><br>
+      ¡Destruí los exhibidores con carita<br>
+      antes de que te aplasten!
+    </p>
+  </div>
+  <button class="btn" onclick="startGame()">▶ JUGAR</button>
+</div>
+
+<!-- HUD -->
+<div id="hud" style="display:none;">
+  <div class="hlogo">MAXI<em>FER</em></div>
+  <div class="hstats">
+    <div class="hs"><div class="hs-l">Puntos</div><div class="hs-v" id="hpts">0</div></div>
+    <div class="hs"><div class="hs-l">Nivel</div><div class="hs-v" id="hniv">1</div></div>
+    <div class="hs"><div class="hs-l">Vidas</div>
+      <div class="hearts"><div class="heart" id="hv1"></div><div class="heart" id="hv2"></div><div class="heart" id="hv3"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CANVAS -->
+<canvas id="gc" style="display:none;position:fixed;top:50px;left:0;"></canvas>
+
+<!-- FIN -->
+<div class="scr off" id="s2">
+  <div class="end-t">GAME OVER</div>
+  <div class="end-sl">Tu puntaje</div>
+  <div class="end-sv" id="escore">0</div>
+  <div class="end-msg" id="emsg"></div>
+  <div class="end-btns">
+    <button class="btn2" onclick="showScr('s0')">INICIO</button>
+    <button class="btn" onclick="startGame()">JUGAR DE NUEVO</button>
+  </div>
+</div>
+
+<script>
+// ══ IMÁGENES EXHIBIDORES DESDE GITHUB ══════════════════════
+const BASE = "https://raw.githubusercontent.com/maxifercotizador/Flyers-Catalogo/main/img/";
+const EXHIB_IMGS_NAMES = [
+  "file_0000000071d471f5abc6187948cdf5e1.png",
+  "file_000000007d5071f59c008710c038ad5e.png",
+  "file_0000000072e071f5aff3d78a3e3958b1.png",
+  "file_00000000a0e4720eac7fc327b43f1ba8.png",
+  "file_00000000a2d071f58d546a77100ba608.png",
+  "file_00000000c4ac720eb5f46bb421088f19.png",
+  "1774141342841.png",
+  "1774141878241.png",
+  "a_3d_rendered_digital_illustration_features_an_ant-1.png",
+  "1774141956795.png",
+  "1774141816193.png",
+  "1774142774002.png",
+  "1774142613942.png",
+  "a_3d_rendered_digital_illustration_features_an_ant-3.png",
+  "exhibidor_arandelas_de_inyeccion.png",
+  "file_000000001ed471f5a1240b29ce8cc6ef.png",
+  "file_0000000003034720e8eef2606a52079d5.png",
+  "file_0000000000706871f5a7c0379461a031e9.png",
+];
+
+// Precargar imágenes
+const exhibImgs = EXHIB_IMGS_NAMES.map(n=>{
+  const img=new Image(); img.src=BASE+n;
+  img.crossOrigin="anonymous"; return img;
+});
+
+// ══ CANVAS ════════════════════════════════════════════════
+const canvas = document.getElementById("gc");
+const ctx    = canvas.getContext("2d");
+const HUD_H  = 50;
+
+function resize(){
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight - HUD_H;
+}
+resize();
+window.addEventListener("resize", resize);
+
+// ══ CONSTANTES ════════════════════════════════════════════
+const GROUND   = () => canvas.height - 80;
+const GRAVITY  = 0.55;
+const JUMP_V   = -13;
+const PLAYER_W = 36;
+const PLAYER_H = 52;
+const BULLET_SPEED = 14;
+const COLORS = {
+  sky1:"#0a0a20", sky2:"#0f0f35",
+  ground:"#1a1a3a", groundTop:"#e63946",
+  player:"#ffd60a", playerDark:"#c8a800",
+  bullet:"#ffd60a",
+};
+
+// ══ ESTADO ════════════════════════════════════════════════
+let running=false, score=0, vidas=3, nivel=1;
+let rafId=null, lastTs=0, elapsed=0;
+let spawnTimer=0, spawnInterval=2200;
+let scrollX=0, scrollSpeed=2;
+let invincTimer=0; // parpadeo tras golpe
+
+// Jugador
+const player = {
+  x:80, y:0,
+  vy:0, onGround:false,
+  facing:1, // 1=derecha
+  animFrame:0, animTimer:0,
+  shooting:false, shootTimer:0,
+};
+
+// Balas, enemigos, partículas, estrellas
+let bullets=[], enemies=[], particles=[], stars=[];
+
+// Teclas
+const keys={};
+document.addEventListener("keydown",e=>{keys[e.code]=true; e.preventDefault();});
+document.addEventListener("keyup",  e=>{keys[e.code]=false;});
+
+// ══ ESTRELLAS FONDO ═══════════════════════════════════════
+function initStars(){
+  stars=[];
+  for(let i=0;i<60;i++) stars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*(canvas.height*.6),
+    r:Math.random()*1.5+.3,
+    spd:Math.random()*.4+.1,
+    alpha:Math.random()*.6+.2,
+  });
+}
+
+// ══ DIBUJAR JUGADOR (pixel art style con canvas) ══════════
+function drawPlayer(){
+  const px = player.x;
+  const py = player.y;
+  const f  = player.facing; // 1 o -1
+  const running_ = keys["ArrowLeft"]||keys["ArrowRight"];
+  const frame = Math.floor(player.animFrame/6)%4;
+
+  ctx.save();
+  // Parpadeo invincible
+  if(invincTimer>0 && Math.floor(invincTimer/4)%2===0){ ctx.restore(); return; }
+
+  ctx.translate(px + PLAYER_W/2, py);
+  ctx.scale(f, 1);
+
+  // Sombra
+  ctx.fillStyle="rgba(0,0,0,.3)";
+  ctx.ellipse(0, PLAYER_H+2, 14, 4, 0, 0, Math.PI*2); ctx.fill();
+
+  // Piernas animadas
+  const legAng = running_ && player.onGround ? Math.sin(player.animFrame*.35)*.3 : 0;
+  // Pierna izq
+  ctx.fillStyle="#2255cc";
+  ctx.save(); ctx.rotate(-legAng);
+  ctx.fillRect(-10, PLAYER_H*.6, 9, 20);
+  // Zapato izq
+  ctx.fillStyle="#111";
+  ctx.fillRect(-12, PLAYER_H*.6+18, 14, 6);
+  ctx.restore();
+  // Pierna der
+  ctx.fillStyle="#2255cc";
+  ctx.save(); ctx.rotate(legAng);
+  ctx.fillRect(1, PLAYER_H*.6, 9, 20);
+  // Zapato der
+  ctx.fillStyle="#111";
+  ctx.fillRect(-1, PLAYER_H*.6+18, 14, 6);
+  ctx.restore();
+
+  // Cuerpo
+  const bodyGrad = ctx.createLinearGradient(-13,PLAYER_H*.18,13,PLAYER_H*.6);
+  bodyGrad.addColorStop(0,"#e63946"); bodyGrad.addColorStop(1,"#9a1520");
+  ctx.fillStyle=bodyGrad;
+  ctx.beginPath(); ctx.roundRect(-13,PLAYER_H*.18,26,PLAYER_H*.45,4); ctx.fill();
+
+  // Brazo con arma
+  const armAng = player.shooting ? -.2 : (running_&&player.onGround ? Math.sin(player.animFrame*.35)*.4 : 0);
+  ctx.save(); ctx.translate(10, PLAYER_H*.32); ctx.rotate(armAng);
+  ctx.fillStyle="#c8a800";
+  ctx.fillRect(0,-3,18,7); // cuerpo arma
+  ctx.fillStyle="#888";
+  ctx.fillRect(14,-2,10,4); // cañón
+  ctx.fillRect(4,3,7,8); // mango
+  ctx.restore();
+
+  // Brazo izq
+  ctx.save(); ctx.translate(-13,PLAYER_H*.32); ctx.rotate(-armAng*.5);
+  ctx.fillStyle="#e63946"; ctx.fillRect(-8,-4,8,14); ctx.restore();
+
+  // Cabeza
+  const headGrad=ctx.createRadialGradient(-2,-2,2,0,0,16);
+  headGrad.addColorStop(0,"#ffe0a0"); headGrad.addColorStop(1,"#c8903a");
+  ctx.fillStyle=headGrad;
+  ctx.beginPath(); ctx.arc(0,PLAYER_H*.14,15,0,Math.PI*2); ctx.fill();
+
+  // Ojos
+  ctx.fillStyle="#222";
+  ctx.beginPath(); ctx.arc(5,PLAYER_H*.12,3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#fff";
+  ctx.beginPath(); ctx.arc(6,PLAYER_H*.11,1.2,0,Math.PI*2); ctx.fill();
+
+  // Casco
+  ctx.fillStyle="#1a1a80";
+  ctx.beginPath(); ctx.ellipse(0,PLAYER_H*.04,16,10,0,Math.PI,0); ctx.fill();
+  ctx.fillStyle="#e63946";
+  ctx.fillRect(-4,PLAYER_H*.04-10,8,4);
+
+  ctx.restore();
+}
+
+// ══ ENEMIGO (exhibidor con carita y piernas) ══════════════
+function createEnemy(){
+  const imgIdx = Math.floor(Math.random()*exhibImgs.length);
+  const hp = 1 + Math.floor(nivel/2);
+  const spd = (scrollSpeed*.6) + Math.random()*.8 + nivel*.15;
+  // tamaño del exhibidor: más pequeño para que quepan varios
+  const ew = 70 + Math.random()*30;
+  const eh = ew * 1.2;
+  return {
+    x: canvas.width + 60,
+    y: GROUND() - eh,
+    w: ew, h: eh,
+    imgIdx,
+    hp, maxHp: hp,
+    spd,
+    animFrame:0,
+    // piernitas animadas
+    legPhase: Math.random()*Math.PI*2,
+    hit:false, hitTimer:0,
+    // salto ocasional
+    vy:0, onGround:true,
+    jumpTimer: 80 + Math.floor(Math.random()*120),
+  };
+}
+
+function drawEnemy(e){
+  ctx.save();
+  const cx = e.x + e.w/2;
+  const by = e.y + e.h;
+  const legAng = Math.sin(e.legPhase)*.35;
+  const legLen = 22;
+  const shoeW  = 18;
+
+  // Flash de hit
+  if(e.hitTimer>0){
+    ctx.filter="brightness(3) saturate(0)";
+  }
+
+  // Sombra
+  ctx.fillStyle="rgba(0,0,0,.25)";
+  ctx.beginPath(); ctx.ellipse(cx, by+legLen+4, e.w*.4, 6, 0, 0, Math.PI*2); ctx.fill();
+
+  // Pierna izq
+  ctx.filter="none";
+  ctx.fillStyle="#222";
+  ctx.save(); ctx.translate(cx-e.w*.18, by); ctx.rotate(-legAng);
+  ctx.fillRect(-5,0,10,legLen);
+  // Zapato
+  ctx.fillStyle="#1a4aff";
+  ctx.beginPath(); ctx.roundRect(-shoeW/2,legLen-2,shoeW,10,4); ctx.fill();
+  ctx.fillStyle="#fff"; ctx.fillRect(-shoeW/2+2,legLen+2,8,4);
+  ctx.restore();
+
+  // Pierna der
+  ctx.fillStyle="#222";
+  ctx.save(); ctx.translate(cx+e.w*.18, by); ctx.rotate(legAng);
+  ctx.fillRect(-5,0,10,legLen);
+  ctx.fillStyle="#1a4aff";
+  ctx.beginPath(); ctx.roundRect(-shoeW/2,legLen-2,shoeW,10,4); ctx.fill();
+  ctx.fillStyle="#fff"; ctx.fillRect(-shoeW/2+2,legLen+2,8,4);
+  ctx.restore();
+
+  // Brazo izq (agitándose)
+  ctx.fillStyle="#8a6020";
+  ctx.save(); ctx.translate(e.x+4, e.y+e.h*.35); ctx.rotate(.4+Math.sin(e.legPhase*.8)*.3);
+  ctx.fillRect(-6,-4,10,24); ctx.restore();
+  // Brazo der
+  ctx.save(); ctx.translate(e.x+e.w-4, e.y+e.h*.35); ctx.rotate(-.4-Math.sin(e.legPhase*.8)*.3);
+  ctx.fillRect(-4,-4,10,24); ctx.restore();
+
+  // Imagen del exhibidor
+  if(e.hitTimer>0) ctx.filter="brightness(3) saturate(0)";
+  const img = exhibImgs[e.imgIdx];
+  if(img && img.complete && img.naturalWidth>0){
+    ctx.drawImage(img, e.x, e.y, e.w, e.h);
+  } else {
+    // Fallback si no cargó
+    ctx.fillStyle="#c8a84b";
+    ctx.beginPath(); ctx.roundRect(e.x,e.y,e.w,e.h,6); ctx.fill();
+    ctx.fillStyle="#333"; ctx.font=`bold ${e.w*.15}px Bebas Neue`;
+    ctx.textAlign="center"; ctx.fillText("MAXIFER",cx,e.y+e.h*.5);
+  }
+
+  // Barra de vida
+  if(e.maxHp>1){
+    const bw=e.w-8, bh=5;
+    const bx=e.x+4, by2=e.y-10;
+    ctx.fillStyle="rgba(0,0,0,.5)"; ctx.fillRect(bx,by2,bw,bh);
+    ctx.fillStyle="#2dc653"; ctx.fillRect(bx,by2,bw*(e.hp/e.maxHp),bh);
+    ctx.strokeStyle="rgba(255,255,255,.2)"; ctx.strokeRect(bx,by2,bw,bh);
+  }
+
+  ctx.filter="none";
+  ctx.restore();
+}
+
+// ══ BALA ══════════════════════════════════════════════════
+function drawBullet(b){
+  ctx.save();
+  ctx.fillStyle="#ffd60a";
+  ctx.shadowColor="#ffd60a"; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.ellipse(b.x,b.y,10,4,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#fff";
+  ctx.beginPath(); ctx.arc(b.x+4,b.y,2,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+// ══ PARTÍCULAS ════════════════════════════════════════════
+function burst(x,y,color,n=16){
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, sp=3+Math.random()*7;
+    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-3,
+      life:1,decay:.025+Math.random()*.04,size:3+Math.random()*7,color});
+  }
+}
+
+function starBurst(x,y){
+  const cols=["#ffd60a","#e63946","#2dc653","#fff","#f4a261"];
+  cols.forEach(c=>burst(x,y,c,6));
+}
+
+// ══ DIBUJAR FONDO ════════════════════════════════════════
+function drawBG(){
+  // Cielo
+  const sky=ctx.createLinearGradient(0,0,0,canvas.height*.7);
+  sky.addColorStop(0,"#07071a"); sky.addColorStop(1,"#0f0f35");
+  ctx.fillStyle=sky; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Estrellas
+  stars.forEach(s=>{
+    s.x -= s.spd;
+    if(s.x<0) s.x=canvas.width;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${s.alpha})`; ctx.fill();
+  });
+
+  // Ciudad silueta (paralax lento)
+  const cx2 = (scrollX * .15) % canvas.width;
+  ctx.fillStyle="#0d0d28";
+  for(let i=0;i<8;i++){
+    const bx=((i*140 - cx2 % (8*140)) + canvas.width*2) % (canvas.width+200) - 100;
+    const bh=40+((i*37)%80);
+    ctx.fillRect(bx,GROUND()-bh,60+((i*23)%60),bh);
+    // ventanas
+    ctx.fillStyle="rgba(255,220,100,.15)";
+    for(let wy=GROUND()-bh+8;wy<GROUND()-8;wy+=14){
+      for(let wx=bx+6;wx<bx+60;wx+=14){
+        if(Math.random()>.4) ctx.fillRect(wx,wy,8,8);
+      }
+    }
+    ctx.fillStyle="#0d0d28";
+  }
+
+  // Suelo
+  const gGrad=ctx.createLinearGradient(0,GROUND(),0,canvas.height);
+  gGrad.addColorStop(0,"#1a1a4a"); gGrad.addColorStop(1,"#0d0d28");
+  ctx.fillStyle=gGrad;
+  ctx.fillRect(0,GROUND(),canvas.width,canvas.height-GROUND());
+
+  // Línea de suelo roja
+  ctx.fillStyle="#e63946"; ctx.fillRect(0,GROUND(),canvas.width,4);
+
+  // Líneas en el suelo (scroll)
+  ctx.strokeStyle="rgba(230,57,70,.15)"; ctx.lineWidth=1;
+  const lineOff=(scrollX*1.2)%80;
+  for(let x=-80+lineOff%80;x<canvas.width+80;x+=80){
+    ctx.beginPath(); ctx.moveTo(x,GROUND()+4); ctx.lineTo(x,canvas.height); ctx.stroke();
+  }
+}
+
+// ══ UPDATE ════════════════════════════════════════════════
+function update(dt){
+  scrollX += scrollSpeed;
+
+  // ── PLAYER ──
+  // Movimiento horizontal
+  if(keys["ArrowLeft"])  player.x = Math.max(20,           player.x-5), player.facing=-1;
+  if(keys["ArrowRight"]) player.x = Math.min(canvas.width*.45, player.x+5), player.facing= 1;
+
+  // Salto
+  if((keys["Space"]||keys["ArrowUp"]) && player.onGround){
+    player.vy=JUMP_V;
+    player.onGround=false;
+    burst(player.x+PLAYER_W/2, player.y+PLAYER_H,"#ffd60a",6);
+  }
+
+  // Gravedad
+  player.vy += GRAVITY;
+  player.y  += player.vy;
+  if(player.y >= GROUND()-PLAYER_H){
+    player.y = GROUND()-PLAYER_H;
+    player.vy=0; player.onGround=true;
+  }
+
+  // Disparo Z o X
+  player.shootTimer--;
+  if((keys["KeyZ"]||keys["KeyX"]) && player.shootTimer<=0){
+    player.shootTimer=12;
+    player.shooting=true;
+    bullets.push({
+      x: player.x+PLAYER_W+(player.facing>0?18:0),
+      y: player.y+PLAYER_H*.38,
+      vx: BULLET_SPEED*player.facing
+    });
+  } else if(player.shootTimer<0) player.shooting=false;
+
+  // Animación
+  player.animFrame++;
+  if(invincTimer>0) invincTimer--;
+
+  // ── BALAS ──
+  for(let i=bullets.length-1;i>=0;i--){
+    const b=bullets[i];
+    b.x+=b.vx;
+    if(b.x<0||b.x>canvas.width){ bullets.splice(i,1); continue; }
+
+    // Colisión con enemigos
+    let hit=false;
+    for(let j=enemies.length-1;j>=0;j--){
+      const e=enemies[j];
+      if(b.x>e.x&&b.x<e.x+e.w&&b.y>e.y&&b.y<e.y+e.h){
+        e.hp--;
+        e.hitTimer=8;
+        burst(b.x,b.y,"#ffd60a",8);
+        bullets.splice(i,1); hit=true;
+        if(e.hp<=0){
+          starBurst(e.x+e.w/2, e.y+e.h/2);
+          score += 10 + nivel*5;
+          updateHUD();
+          enemies.splice(j,1);
+        }
+        break;
+      }
+    }
+    if(hit) continue;
+  }
+
+  // ── ENEMIGOS ──
+  spawnTimer+=dt;
+  if(spawnTimer>=spawnInterval){
+    spawnTimer=0;
+    enemies.push(createEnemy());
+    // A veces spawnear 2
+    if(nivel>=3&&Math.random()<.3) setTimeout(()=>{ if(running) enemies.push(createEnemy());},600);
+    spawnInterval = Math.max(900, 2200 - nivel*150);
+  }
+
+  for(let i=enemies.length-1;i>=0;i--){
+    const e=enemies[i];
+    e.x -= e.spd;
+    e.legPhase += .08;
+    e.animFrame++;
+    if(e.hitTimer>0) e.hitTimer--;
+
+    // Salto ocasional del enemigo
+    e.jumpTimer--;
+    if(e.jumpTimer<=0&&e.onGround){
+      e.vy = JUMP_V*.7;
+      e.onGround=false;
+      e.jumpTimer=80+Math.floor(Math.random()*120);
+    }
+    e.vy+=GRAVITY*.8;
+    e.y+=e.vy;
+    const eg=GROUND()-e.h;
+    if(e.y>=eg){ e.y=eg; e.vy=0; e.onGround=true; }
+
+    // Salió por la izquierda
+    if(e.x+e.w<-20){ enemies.splice(i,1); continue; }
+
+    // Colisión con jugador
+    if(invincTimer<=0){
+      const ex1=e.x, ex2=e.x+e.w, ey1=e.y, ey2=e.y+e.h;
+      const px1=player.x, px2=player.x+PLAYER_W, py1=player.y, py2=player.y+PLAYER_H;
+      if(px2>ex1&&px1<ex2&&py2>ey1&&py1<ey2){
+        vidas--;
+        invincTimer=90;
+        burst(player.x+PLAYER_W/2,player.y+PLAYER_H/2,"#e63946",14);
+        updateHUD();
+        if(vidas<=0){ endGame(); return; }
+      }
+    }
+  }
+
+  // Subir nivel cada 30s
+  elapsed+=dt;
+  if(elapsed>30000){ nivel++; elapsed=0; scrollSpeed+=.4; updateHUD(); }
+
+  // ── PARTÍCULAS ──
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx; p.y+=p.vy; p.vy+=.25; p.life-=p.decay;
+    if(p.life<=0) particles.splice(i,1);
+  }
+}
+
+// ══ DRAW ══════════════════════════════════════════════════
+function draw(){
+  drawBG();
+
+  // Partículas
+  particles.forEach(p=>{
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+    ctx.fillStyle=p.color; ctx.globalAlpha=p.life; ctx.fill(); ctx.globalAlpha=1;
+  });
+
+  // Enemigos
+  enemies.forEach(drawEnemy);
+
+  // Balas
+  bullets.forEach(drawBullet);
+
+  // Jugador
+  drawPlayer();
+
+  // Score flotante
+  ctx.fillStyle="rgba(255,255,255,.12)";
+  ctx.font="bold 13px 'Barlow Condensed'";
+  ctx.textAlign="left";
+  ctx.fillText("Z / X = DISPARAR  |  ESPACIO = SALTAR  |  ← → = MOVER", 12, canvas.height-12);
+}
+
+// ══ LOOP ══════════════════════════════════════════════════
+function loop(ts){
+  if(!running) return;
+  const dt = ts-lastTs; lastTs=ts;
+  update(dt);
+  draw();
+  rafId=requestAnimationFrame(loop);
+}
+
+// ══ HUD ═══════════════════════════════════════════════════
+function updateHUD(){
+  document.getElementById("hpts").textContent=score;
+  document.getElementById("hniv").textContent=nivel;
+  for(let i=1;i<=3;i++)
+    document.getElementById(`hv${i}`).className="heart"+(i>vidas?" dead":"");
+}
+
+// ══ CONTROL ═══════════════════════════════════════════════
+function showScr(id){
+  ["s0","s2"].forEach(s=>
+    document.getElementById(s).classList.toggle("off",s!==id));
+  const inGame = id==="game";
+  document.getElementById("hud").style.display=inGame?"flex":"none";
+  canvas.style.display=inGame?"block":"none";
+}
+
+function startGame(){
+  score=0; vidas=3; nivel=1; elapsed=0; scrollX=0; scrollSpeed=2; spawnTimer=0; spawnInterval=2200;
+  bullets=[]; enemies=[]; particles=[];
+  player.x=80; player.y=GROUND()-PLAYER_H; player.vy=0; player.onGround=true;
+  player.animFrame=0; player.facing=1; player.shootTimer=0; invincTimer=0;
+  initStars();
+  running=true;
+  document.getElementById("s0").classList.add("off");
+  document.getElementById("s2").classList.add("off");
+  document.getElementById("hud").style.display="flex";
+  canvas.style.display="block";
+  updateHUD();
+  if(rafId) cancelAnimationFrame(rafId);
+  rafId=requestAnimationFrame(ts=>{ lastTs=ts; loop(ts); });
+}
+
+function endGame(){
+  running=false;
+  if(rafId) cancelAnimationFrame(rafId);
+  canvas.style.display="none";
+  document.getElementById("hud").style.display="none";
+  document.getElementById("escore").textContent=score;
+  const msg=
+    score>=500?"¡HÉROE MAXIFER! Limpiaste todos los exhibidores. 🏆":
+    score>=200?"¡Muy bien! Sos un crack destruyendo exhibidores.":
+    score>=80 ?"¡Buen intento! Los exhibidores te ganaron esta vez.":
+               "¡Gracias por jugar! Vení a conocer el catálogo MAXIFER.";
+  document.getElementById("emsg").textContent=msg;
+  document.getElementById("s0").classList.add("off");
+  document.getElementById("s2").classList.remove("off");
+}
+</script>
+</body>
+</html>
