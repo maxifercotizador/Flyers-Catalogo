@@ -1178,14 +1178,17 @@
       background: rgba(255,255,255,0.88);
       border: none;
       border-radius: 50%;
-      width: 32px; height: 32px;
-      font-size: 17px;
+      width: 38px; height: 38px;
+      font-size: 18px;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 1px 4px rgba(0,0,0,0.15);
       transition: transform 0.15s;
       z-index: 5;
       -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 640px) {
+      .btn-fav { width: 44px; height: 44px; font-size: 20px; }
     }
     .btn-fav:active { transform: scale(1.25); }
     .btn-fav.fav-on { background: #fff0f0; }
@@ -2145,6 +2148,87 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* ── FOOTER con señales de confianza ─────────────────────── */
+.footer {
+  margin: 24px 0 80px;
+  padding: 22px 16px 18px;
+  background: #fff;
+  border-top: 3px solid var(--naranja);
+  border-radius: 12px 12px 0 0;
+  text-align: center;
+}
+.footer-trust {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  max-width: 560px;
+  margin: 0 auto 18px;
+}
+.trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--gris-text);
+  line-height: 1.35;
+}
+.trust-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+.trust-txt strong {
+  color: var(--azul);
+  font-weight: 700;
+}
+.footer-social {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 13px;
+  background: var(--azul-pale);
+  color: var(--azul);
+  border-radius: 18px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+  min-height: 36px;
+}
+.footer-social a:active {
+  background: #d3defa;
+}
+.footer-brand {
+  font-size: 11px;
+  color: var(--gris-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+@media (max-width: 640px) {
+  .footer-trust { gap: 6px; }
+  .trust-item { font-size: 10.5px; }
+  .trust-icon { font-size: 22px; }
+}
+
+/* ── TAP TARGETS MÍNIMOS EN MOBILE (WCAG 2.5.5 / Apple HIG: 44×44) ─── */
+@media (max-width: 640px) {
+  .modal-close { width: 44px; height: 44px; font-size: 20px; }
+  .lightbox-close { width: 44px; height: 44px; font-size: 22px; }
+  .fotos-panel-close { min-width: 44px; min-height: 44px; }
+  .btn-rm { padding: 10px; min-width: 44px; min-height: 44px; font-size: 22px; }
+  .btn-fav-rm { padding: 8px; min-width: 44px; min-height: 44px; }
+  .btn-card-ver { min-width: 44px; min-height: 44px; }
+  .tab-btn { min-height: 44px; }
+  .lightbox-arrow { width: 48px; height: 72px; }
+}
 </style>
 </head>
 <body>
@@ -2168,7 +2252,7 @@
 <!-- HEADER -->
 <div class="header">
   <div class="header-inner">
-    <a href="index.html" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio">
+    <a href="#" id="btnVolverHome" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio" onclick="volverInicio(event)">
       <span class="btn-volver-icon">🏠</span>
       <span class="btn-volver-txt">Inicio</span>
     </a>
@@ -2205,7 +2289,7 @@
     <button class="btn-back" onclick="cambiarVista('grilla')">← Volver</button>
     <input  class="vista-search" id="revBuscar" type="text" placeholder="Buscar..." oninput="revFiltrar()">
     <span   class="vista-counter" id="revCounter">1 / 0</span>
-    <button class="btn-precio-vista" id="btnPrecioRev" onclick="togglePreciosVista()">👁️</button>
+    <button class="btn-precio-vista" id="btnPrecioRev" onclick="togglePreciosVista()" aria-label="Mostrar u ocultar precios" title="Mostrar u ocultar precios">👁️</button>
   </div>
 </div>
 
@@ -2213,14 +2297,14 @@
 <div class="vista-fs" id="vistaLibro">
   <div class="libro-stage" id="libroStage"></div>
   <div class="libro-nav">
-    <button class="libro-arrow" id="libroAnterior" onclick="libroNav(-1)">‹</button>
-    <button class="libro-arrow" id="libroSiguiente" onclick="libroNav(1)">›</button>
+    <button class="libro-arrow" id="libroAnterior" onclick="libroNav(-1)" aria-label="Página anterior">‹</button>
+    <button class="libro-arrow" id="libroSiguiente" onclick="libroNav(1)" aria-label="Página siguiente">›</button>
   </div>
   <div class="vista-topbar oculta" id="libroTopbar">
     <button class="btn-back" onclick="cambiarVista('grilla')">← Volver</button>
     <input  class="vista-search" id="libroBuscar" type="text" placeholder="Buscar..." oninput="libroFiltrar()">
     <span   class="vista-counter" id="libroCounter">1 / 0</span>
-    <button class="btn-precio-vista" id="btnPrecioLibro" onclick="togglePreciosVista()">👁️</button>
+    <button class="btn-precio-vista" id="btnPrecioLibro" onclick="togglePreciosVista()" aria-label="Mostrar u ocultar precios" title="Mostrar u ocultar precios">👁️</button>
   </div>
 </div>
 
@@ -2235,7 +2319,20 @@
     <div class="nr-icon">🔎</div>
     <div>No se encontraron surtidos</div>
   </div>
-  <div class="footer">MAXIFER · Catálogo de Surtidos · Fábrica Importadora</div>
+  <div class="footer">
+    <div class="footer-trust">
+      <div class="trust-item"><span class="trust-icon">🏭</span><span class="trust-txt">Fabricado en<br><strong>Punta Alta, BA</strong></span></div>
+      <div class="trust-item"><span class="trust-icon">🚚</span><span class="trust-txt">Envíos a<br><strong>todo el país</strong></span></div>
+      <div class="trust-item"><span class="trust-icon">🔄</span><span class="trust-txt">Libre<br><strong>reposición</strong></span></div>
+      <div class="trust-item"><span class="trust-icon">📦</span><span class="trust-txt">Stock<br><strong>permanente</strong></span></div>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/maxifer.srl" target="_blank" rel="noopener" aria-label="Instagram MAXIFER">📷 Instagram</a>
+      <a href="https://www.tiktok.com/@maxifer.srl" target="_blank" rel="noopener" aria-label="TikTok MAXIFER">🎵 TikTok</a>
+      <a href="https://wa.me/5491150408378" target="_blank" rel="noopener" aria-label="WhatsApp MAXIFER">💬 WhatsApp</a>
+    </div>
+    <div class="footer-brand">MAXIFER · Fábrica Importadora · Catálogo de Surtidos</div>
+  </div>
 </div>
 
 <!-- MODAL DETALLE -->
@@ -2246,7 +2343,7 @@
         <h2 id="modalNombre"></h2>
         <div class="modal-cod" id="modalCod"></div>
       </div>
-      <button class="modal-close" onclick="cerrarModalBtn()">✕</button>
+      <button class="modal-close" onclick="cerrarModalBtn()" aria-label="Cerrar detalle">✕</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
   </div>
@@ -2257,7 +2354,7 @@
   <div class="carrito-modal">
     <div class="carrito-header">
       <h2>🛒 Mi Pedido</h2>
-      <button class="modal-close" onclick="cerrarCarritoBtn()">✕</button>
+      <button class="modal-close" onclick="cerrarCarritoBtn()" aria-label="Cerrar carrito">✕</button>
     </div>
     <div class="carrito-body" id="carritoBody"></div>
   </div>
@@ -2268,7 +2365,7 @@
   <div class="comp-modal">
     <div class="comp-header">
       <h2>⚖️ Comparar surtidos</h2>
-      <button class="modal-close" onclick="cerrarCompBtn()">✕</button>
+      <button class="modal-close" onclick="cerrarCompBtn()" aria-label="Cerrar comparador">✕</button>
     </div>
     <div class="comp-body" id="compBody"></div>
   </div>
@@ -2279,7 +2376,7 @@
   <div class="fav-modal">
     <div class="fav-header">
       <h2>♡ Guardados</h2>
-      <button class="modal-close" onclick="cerrarFavoritos()">✕</button>
+      <button class="modal-close" onclick="cerrarFavoritos()" aria-label="Cerrar favoritos">✕</button>
     </div>
     <div class="fav-body" id="favBody"></div>
   </div>
@@ -2290,11 +2387,11 @@
   <div class="lightbox-topbar">
     <div class="lightbox-titulo" id="lightboxTitulo"></div>
     <span class="lightbox-counter" id="lightboxCounter"></span>
-    <button class="lightbox-close" onclick="cerrarLightbox()">✕</button>
+    <button class="lightbox-close" onclick="cerrarLightbox()" aria-label="Cerrar galería">✕</button>
   </div>
   <div class="lightbox-scroll" id="lightboxScroll"></div>
-  <button class="lightbox-arrow prev" id="lightboxPrev" onclick="lightboxNav(-1)">‹</button>
-  <button class="lightbox-arrow next" id="lightboxNext" onclick="lightboxNav(1)">›</button>
+  <button class="lightbox-arrow prev" id="lightboxPrev" onclick="lightboxNav(-1)" aria-label="Foto anterior">‹</button>
+  <button class="lightbox-arrow next" id="lightboxNext" onclick="lightboxNav(1)" aria-label="Foto siguiente">›</button>
   <div class="lightbox-bottombar">
     <div class="lightbox-label" id="lightboxLabel"></div>
     <div class="lightbox-dots" id="lightboxDots"></div>
@@ -2308,7 +2405,7 @@
       <div class="fotos-panel-titulo" id="fotosPanelTitulo"></div>
       <div class="fotos-panel-sub" id="fotosPanelSub"></div>
     </div>
-    <button class="fotos-panel-close" onclick="cerrarFotosPanelBtn()">✕</button>
+    <button class="fotos-panel-close" onclick="cerrarFotosPanelBtn()" aria-label="Cerrar fotos">✕</button>
   </div>
   <div class="fotos-panel-scroll" id="fotosPanelScroll"></div>
   <div class="fotos-panel-footer" id="fotosPanelFooter"></div>
@@ -2351,6 +2448,7 @@ const MODELOS_DIFERENTES = {
   "CONC. COMB. Red": 31,
   "CON. NEU.": 69,
   "CON. NEU. COMPL.": 116,
+  "CON. NEU. NUEV.": 47,
   "BRONCE": 33,
   "RAC. CH.": 35,
   "RAC. GR.": 61,
@@ -2363,10 +2461,6 @@ const MODELOS_DIFERENTES = {
   "ARAND. CH.": 48,
   "ARAND. LP.": 28,
   "ARAN. CO-FI-AL": 75,
-  "ARAND. INYEC.": 40,
-  "UN. ORIENT.": 29,
-  "ABRA. GOMA": 36,
-  "REGAT.": 62,
   "TOP. TAP. GOMA": 26,
   "SEEG.": 59,
   "ALEM.": 23,
@@ -2385,7 +2479,10 @@ const MODELOS_DIFERENTES = {
   "PER. 1": 30,
   "PER. 2": 30,
   "PER. COMP.": 60,
-  "CON. NEU. NUEV.": 47,
+  "ARAND. INYEC.": 40,
+  "UN. ORIENT.": 29,
+  "REGAT.": 62,
+  "ABRA. GOMA": 36,
 };
 
 // ── VERSIÓN REDUCIDA POR SURTIDO ──────────────────────────────
@@ -2417,6 +2514,7 @@ const VERSION_REDUCIDA = {
   "CONC. COMB. Red": { piezas: 62, precio: 752074 },
   "CON. NEU.": { piezas: 150, precio: 571028 },
   "CON. NEU. COMPL.": { piezas: 256, precio: 1175810 },
+  "CON. NEU. NUEV.": { piezas: 106, precio: 634781 },
   "BRONCE": { piezas: 92, precio: 240812 },
   "RAC. CH.": { piezas: 105, precio: 501440 },
   "RAC. GR.": { piezas: 122, precio: 659933 },
@@ -2429,10 +2527,6 @@ const VERSION_REDUCIDA = {
   "ARAND. CH.": { piezas: 480, precio: 169736 },
   "ARAND. LP.": { piezas: 168, precio: 178709 },
   "ARAN. CO-FI-AL": { piezas: 375, precio: 475069 },
-  "ARAND. INYEC.": { piezas: 240, precio: 246628 },
-  "UN. ORIENT.": { piezas: 58, precio: 347650 },
-  "ABRA. GOMA": { piezas: 144, precio: 312672 },
-  "REGAT.": { piezas: 372, precio: 272054 },
   "TOP. TAP. GOMA": { piezas: 78, precio: 204765 },
   "SEEG.": { piezas: 295, precio: 238351 },
   "ALEM.": { piezas: 92, precio: 181273 },
@@ -2451,7 +2545,10 @@ const VERSION_REDUCIDA = {
   "PER. 1": { piezas: 60, precio: 399848 },
   "PER. 2": { piezas: 60, precio: 414714 },
   "PER. COMP.": { piezas: 120, precio: 797762 },
-  "CON. NEU. NUEV.": { piezas: 106, precio: 634781 },
+  "ARAND. INYEC.": { piezas: 240, precio: 246628 },
+  "UN. ORIENT.": { piezas: 58, precio: 347650 },
+  "REGAT.": { piezas: 372, precio: 272054 },
+  "ABRA. GOMA": { piezas: 144, precio: 312672 },
 };
 
 // Estado del modal detalle: indica si el surtido actual se está
@@ -2525,7 +2622,7 @@ const SURTIDOS = [
     id: 41,
     nombre: "Clips Línea Importada",
     codigo: "CL. IMP COM",
-    precio: 1680521,
+    precio: 1650521,
     piezas: 1288,
     foto_exhibidor: "./img/s41_exhibidor.webp",
     foto_card: "./img/s41_card.webp",
@@ -2604,8 +2701,8 @@ const SURTIDOS = [
     id: 51,
     nombre: "Resortes Línea Completa",
     codigo: "RES. COMP.",
-    precio: 2424584,
-    piezas: 823,
+    precio: 2439584,
+    piezas: 810,
     foto_exhibidor: "./img/s51_exhibidor.webp",
     foto_card: "./img/s51_card.webp",
     foto_gavetas: "",
@@ -2827,7 +2924,7 @@ const SURTIDOS = [
     id: 18,
     nombre: "Racord Completo",
     codigo: "RAC. GR.",
-    precio: 870494,
+    precio: 870493,
     piezas: 169,
     foto_exhibidor: "./img/s18_exhibidor.webp",
     foto_card: "./img/s18_card.webp",
@@ -2840,7 +2937,7 @@ const SURTIDOS = [
     id: 45,
     nombre: "Tuercas Rápidas y Tornillería Especial",
     codigo: "TR Espec. + Torn.",
-    precio: 816792,
+    precio: 770602,
     piezas: 660,
     foto_exhibidor: "./img/s45_exhibidor.webp",
     foto_card: "./img/s45_card.webp",
@@ -2944,8 +3041,8 @@ const SURTIDOS = [
     id: 30,
     nombre: "Arandelas Aluminio/Cobre/Fibra",
     codigo: "ARAN. CO-FI-AL",
-    precio: 704112,
-    piezas: 1300,
+    precio: 1133220,
+    piezas: 1180,
     foto_exhibidor: "./img/s30_exhibidor.webp",
     foto_card: "./img/s30_card.webp",
     foto_gavetas: "",
@@ -2983,7 +3080,7 @@ const SURTIDOS = [
     id: 36,
     nombre: "Abrazaderas con Perfil de Goma",
     codigo: "ABRA. GOMA",
-    precio: 457958,
+    precio: 502176,
     piezas: 252,
     foto_exhibidor: "./img/s36_exhibidor.webp",
     foto_card: "./img/s36_card.webp",
@@ -3022,7 +3119,7 @@ const SURTIDOS = [
     id: 22,
     nombre: "Anillos Seeger DIN 471-472",
     codigo: "SEEG.",
-    precio: 252041,
+    precio: 281555,
     piezas: 440,
     foto_exhibidor: "./img/s22_exhibidor.webp",
     foto_card: "./img/s22_card.webp",
@@ -3269,7 +3366,7 @@ const SURTIDOS = [
     id: 58,
     nombre: "Tornillería Especial + TR Completo",
     codigo: "TR Espec. + Torn.",
-    precio: 816792,
+    precio: 770602,
     piezas: 660,
     foto_exhibidor: "./img/s58_exhibidor.webp",
     foto_card: "./img/s58_card.webp",
@@ -3288,8 +3385,42 @@ const RELACIONADOS = {"54": [4, 41], "4": [54, 41], "41": [54, 4], "3": [6, 8, 5
 const PIEZAS_DATA = {"36":{"pzs":255,"pzs_r":147},"29":{"pzs":140,"pzs_r":94},"30":{"pzs":1304,"pzs_r":379},"14":{"pzs":1011,"pzs_r":483},"15":{"pzs":283,"pzs_r":171},"25":{"pzs":102,"pzs_r":62},"9":{"pzs":150,"pzs_r":124},"10":{"pzs":962,"pzs_r":452},"41":{"pzs":1300,"pzs_r":978},"34":{"pzs":234,"pzs_r":154},"33":{"pzs":386,"pzs_r":262},"56":{"pzs":167,"pzs_r":109},"44":{"pzs":384,"pzs_r":232},"43":{"pzs":172,"pzs_r":116},"48":{"pzs":75,"pzs_r":75},"47":{"pzs":57,"pzs_r":29},"46":{"pzs":56,"pzs_r":56},"23":{"pzs":839,"pzs_r":265},"27":{"pzs":285,"pzs_r":144},"55":{"pzs":193,"pzs_r":126},"17":{"pzs":122,"pzs_r":74},"52":{"pzs":1334,"pzs_r":556},"2":{"pzs":1571,"pzs_r":736},"53":{"pzs":313,"pzs_r":165},"49":{"pzs":93,"pzs_r":63},"50":{"pzs":93,"pzs_r":63},"37":{"pzs":185,"pzs_r":125},"54":{"pzs":994,"pzs_r":547},"4":{"pzs":647,"pzs_r":327},"57":{"pzs":165,"pzs_r":107},"18":{"pzs":172,"pzs_r":125},"1":{"pzs":564,"pzs_r":377},"51":{"pzs":828,"pzs_r":790},"5":{"pzs":154,"pzs_r":104},"8":{"pzs":113,"pzs_r":113},"6":{"pzs":441,"pzs_r":332},"3":{"pzs":353,"pzs_r":179},"7":{"pzs":118,"pzs_r":80},"24":{"pzs":902,"pzs_r":527},"22":{"pzs":443,"pzs_r":298},"28":{"pzs":1742,"pzs_r":752},"20":{"pzs":1746,"pzs_r":527},"12":{"pzs":352,"pzs_r":202},"61":{"pzs":1491,"pzs_r":382},"21":{"pzs":137,"pzs_r":90},"16":{"pzs":132,"pzs_r":80},"58":{"pzs":666,"pzs_r":402},"59":{"pzs":327,"pzs_r":219},"11":{"pzs":557,"pzs_r":212}};
 
 let mostrarPrecios = false;
-let carrito = [];
-var descuentoPct = 0;
+
+// ── PERSISTENCIA (localStorage) ──────────────────────────────
+// Carrito expira en 7 días — evita arrastrar pedidos viejos si el vendedor
+// olvidó cerrar la pestaña.
+var CART_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
+
+function cargarCarrito() {
+  try {
+    var raw = localStorage.getItem('maxifer_cart');
+    if (!raw) return [];
+    var obj = JSON.parse(raw);
+    if (!obj || !obj.items || !Array.isArray(obj.items)) return [];
+    if (obj.ts && (Date.now() - obj.ts) > CART_EXPIRY_MS) {
+      localStorage.removeItem('maxifer_cart');
+      return [];
+    }
+    return obj.items;
+  } catch(e) { return []; }
+}
+function guardarCarrito() {
+  try {
+    localStorage.setItem('maxifer_cart', JSON.stringify({ items: carrito, ts: Date.now() }));
+  } catch(e) { /* quota o modo privado */ }
+}
+function cargarDescuento() {
+  try {
+    var v = parseInt(localStorage.getItem('maxifer_desc') || '0', 10);
+    return isNaN(v) ? 0 : v;
+  } catch(e) { return 0; }
+}
+function guardarDescuento() {
+  try { localStorage.setItem('maxifer_desc', String(descuentoPct)); } catch(e) {}
+}
+
+let carrito = cargarCarrito();
+var descuentoPct = cargarDescuento();
 
 // ── FAVORITOS ─────────────────────────────────────────────
 var favoritos = JSON.parse(localStorage.getItem('maxifer_favs') || '[]');
@@ -3374,8 +3505,8 @@ function renderFavBody() {
       +   '<div class="fav-item-cod">Cód: ' + s.codigo + (s.piezas ? ' · ' + s.piezas + ' piezas' : '') + '</div>'
       + '</div>'
       + '<div class="fav-item-actions">'
-      +   '<button class="btn-fav-carrito ' + (enCarrito ? 'agregado' : '') + '" id="favCart' + id + '" onclick="event.stopPropagation();toggleFavCarrito(' + id + ')">' + (enCarrito ? '✅' : '🛒') + '</button>'
-      +   '<button class="btn-fav-rm" onclick="event.stopPropagation();toggleFavorito(' + id + ',event);renderFavBody()">🗑️</button>'
+      +   '<button class="btn-fav-carrito ' + (enCarrito ? 'agregado' : '') + '" id="favCart' + id + '" aria-label="' + (enCarrito ? 'Quitar del pedido' : 'Agregar al pedido') + '" onclick="event.stopPropagation();toggleFavCarrito(' + id + ')">' + (enCarrito ? '✅' : '🛒') + '</button>'
+      +   '<button class="btn-fav-rm" aria-label="Quitar de favoritos" onclick="event.stopPropagation();toggleFavorito(' + id + ',event);renderFavBody()">🗑️</button>'
       + '</div>'
       + '</div>';
   }).join('');
@@ -3415,6 +3546,7 @@ function aplicarDescuento() {
   var val = parseFloat(document.getElementById('descuentoInput').value) || 0;
   val = Math.max(0, Math.min(99, val));
   descuentoPct = val;
+  guardarDescuento();
   var res = document.getElementById('descuentoResultado');
   if (val > 0) {
     res.innerHTML = ''; // texto eliminado
@@ -3485,11 +3617,13 @@ function cardHTML(s) {
   return `<div class="surtido-card">
     <div class="card-img-wrap" onclick="abrirModal(${s.id})">
       ${foto
-        ? `<img src="${foto}" alt="${s.nombre}" loading="lazy">`
+        ? `<img src="${foto}" alt="Surtido ${s.nombre} — MAXIFER ${s.codigo}" loading="lazy">`
         : `<div class="card-img-placeholder">📦</div>`}
       ${badgeHtml}
       <div class="card-precio-badge">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
       <button class="btn-fav ${esFav ? 'fav-on' : ''}" data-id="${s.id}"
+        aria-label="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
+        title="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
         onclick="toggleFavorito(${s.id}, event)">${esFav ? '❤️' : '🤍'}</button>
     </div>
     <div class="card-content" onclick="abrirModal(${s.id})">
@@ -3499,10 +3633,12 @@ function cardHTML(s) {
     </div>
     <div class="card-footer">
       <button class="btn-card-agregar ${enCarrito ? 'agregado' : ''}" id="cardBtn${s.id}"
+        aria-label="${enCarrito ? 'Quitar del pedido' : 'Agregar al pedido'}"
         onclick="toggleCarritoCard(${s.id}, event)">
         ${enCarrito ? '✅ En pedido' : '🛒 Agregar'}
       </button>
-      <button class="btn-card-ver" onclick="abrirModal(${s.id})" title="Ver detalle">🔍</button>
+      <button class="btn-card-ver" onclick="abrirModal(${s.id})"
+        aria-label="Ver detalle" title="Ver detalle">🔍</button>
     </div>
   </div>`;
 }
@@ -3514,13 +3650,95 @@ function normalizar(s) {
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+// Mapa de sinónimos — traducir términos comunes a lo que realmente está
+// en los nombres/códigos de surtidos. Se aplica SOLO si la búsqueda original
+// no arrojó resultados, para no ensuciar cuando la gente busca preciso.
+var SINONIMOS = {
+  'tornillo':     ['torn','tr'],
+  'tornillos':    ['torn','tr'],
+  'bulon':        ['tr'],
+  'bulones':      ['tr'],
+  'tuerca':       ['tuer','rem','rap'],
+  'tuercas':      ['tuer','rem','rap'],
+  'clip':         ['cl','pl'],
+  'clips':        ['cl','pl'],
+  'resorte':      ['res'],
+  'resortes':     ['res'],
+  'arandela':     ['arand','aran'],
+  'arandelas':    ['arand','aran'],
+  'oring':        ['or'],
+  'orings':       ['or'],
+  'anillo':       ['or','seeg'],
+  'anillos':      ['or','seeg'],
+  'terminal':     ['term','tem'],
+  'terminales':   ['term','tem'],
+  'carbon':       ['carb'],
+  'carbones':     ['carb'],
+  'conexion':     ['conex','conc','con'],
+  'conexiones':   ['conex','conc','con'],
+  'conector':     ['conc','con'],
+  'conectores':   ['conc','con'],
+  'chaveta':      ['cha'],
+  'chavetas':     ['cha'],
+  'goma':         ['goma','tap'],
+  'gomas':        ['goma','tap'],
+  'racor':        ['rac'],
+  'racord':       ['rac'],
+  'aluminio':     ['alum'],
+  'plastico':     ['pl','plast'],
+  'plasticos':    ['pl','plast'],
+  'perilla':      ['per'],
+  'perillas':     ['per'],
+  'pico':         ['inyec'],
+  'picos':        ['inyec'],
+  'gas':          ['inyec gas','gas env'],
+  'neumatico':    ['neu'],
+  'neumaticos':   ['neu'],
+  'abrazadera':   ['abra'],
+  'abrazaderas':  ['abra'],
+  'regaton':      ['regat'],
+  'regatones':    ['regat'],
+  'inserto':      ['ins'],
+  'insertos':     ['ins'],
+  'seeger':       ['seeg'],
+  'esparrago':    ['esparr'],
+  'esparragos':   ['esparr'],
+  'tarugo':       ['tar estr'],
+  'tarugos':      ['tar estr'],
+  'alemite':      ['alem'],
+  'alemites':     ['alem'],
+  'bronce':       ['bronce','poliam'],
+};
+
+// Devuelve true si el surtido matchea q, mirando nombre/código/composición.
+function surtidoMatchea(s, q) {
+  if (normalizar(s.nombre).includes(q)) return true;
+  if (normalizar(s.codigo).includes(q)) return true;
+  // Buscar también dentro de la composición (nombres de productos individuales)
+  var comp = COMPOSICION_DATA[s.codigo];
+  if (comp && comp.length) {
+    for (var i = 0; i < comp.length; i++) {
+      if (normalizar(comp[i].d || '').includes(q)) return true;
+    }
+  }
+  return false;
+}
+
 function filtrar() {
   const q = normalizar(document.getElementById('searchInput').value.trim());
-  const lista = q
-    ? SURTIDOS.filter(s =>
-        normalizar(s.nombre).includes(q) ||
-        normalizar(s.codigo).includes(q))
-    : SURTIDOS;
+  if (!q) { renderGrid(SURTIDOS); return; }
+
+  // Pase 1: búsqueda directa
+  var lista = SURTIDOS.filter(function(s){ return surtidoMatchea(s, q); });
+
+  // Pase 2: sinónimos — si el término es uno conocido y no hubo resultados (o pocos),
+  // expandir la búsqueda usando los términos alternativos.
+  if (lista.length === 0 && SINONIMOS[q]) {
+    var expandidos = SINONIMOS[q];
+    lista = SURTIDOS.filter(function(s){
+      return expandidos.some(function(alt){ return surtidoMatchea(s, normalizar(alt)); });
+    });
+  }
   renderGrid(lista);
 }
 
@@ -3607,7 +3825,7 @@ function abrirModal(id) {
       <div>
         <div class="foto-box" style="cursor:pointer" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">
           ${s.foto_exhibidor
-            ? `<img src="${s.foto_exhibidor}" alt="Exhibidor">`
+            ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
             : `<div class="foto-box-placeholder">🖼️<span style="font-size:10px;color:var(--gris-muted)">Foto surtido completo</span></div>`}
         </div>
         <div class="foto-label">Exhibidor ${todasFotos.length > 1 ? '<span style="color:var(--naranja);font-size:10px"> · ' + todasFotos.length + ' fotos</span>' : ''}</div>
@@ -3615,7 +3833,7 @@ function abrirModal(id) {
       <div>
         <div class="foto-box" style="${s.foto_gavetas ? 'cursor:pointer' : ''}" ${s.foto_gavetas ? `onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : ''}">
           ${s.foto_gavetas
-            ? `<img src="${s.foto_gavetas}" alt="Gaveteros">`
+            ? `<img src="${s.foto_gavetas}" alt="Gaveteros del surtido ${s.nombre}">`
             : `<div class="foto-box-placeholder">🗂️<span style="font-size:10px;color:var(--gris-muted)">Foto gaveteros</span></div>`}
         </div>
         <div class="foto-label">Gaveteros</div>
@@ -3930,6 +4148,7 @@ function actualizarFab() {
   const badge = document.getElementById('carritoBadge');
   badge.textContent = carrito.length;
   fab.style.display = carrito.length > 0 ? 'flex' : 'none';
+  guardarCarrito();
 }
 
 function abrirCarrito() {
@@ -3969,7 +4188,7 @@ function renderCarritoBody() {
         <div class="carrito-item-cod">Cód: ${c.codigo}</div>
         <div class="carrito-item-precio">${formatPrecio(precioConDescuento(precioBase, c.codigo))} + IVA</div>
       </div>
-      <button class="btn-rm" onclick="quitarItemIdx(${idx})">✕</button>
+      <button class="btn-rm" onclick="quitarItemIdx(${idx})" aria-label="Quitar del pedido">✕</button>
     </div>`;
   }).join('');
 
@@ -4315,6 +4534,33 @@ function cambiarVista(vista) {
     setTimeout(function(){ mostrarTopbar('libroTopbar'); }, 80);
     activarAutoOcultar('libroTopbar', 'vistaLibro');
   }
+}
+
+// ── Botón "Inicio" — preserva hash (#wa=Maxi&desc=46) ─────────
+// Si el cliente vino por link de vendedor, el hash lleva su contexto.
+// Queremos que el botón resetee la UI sin perder ese contexto.
+function volverInicio(event) {
+  if (event) event.preventDefault();
+  // Cerrar cualquier overlay abierto
+  try { cerrarModalBtn(); } catch(e) {}
+  try { cerrarCarritoBtn(); } catch(e) {}
+  try { cerrarFavoritos(); } catch(e) {}
+  try { cerrarCompBtn(); } catch(e) {}
+  try { cerrarLightbox(); } catch(e) {}
+  try { cerrarFotosPanelBtn(); } catch(e) {}
+  document.body.style.overflow = '';
+  // Limpiar búsqueda
+  var search = document.getElementById('searchInput');
+  if (search && search.value) { search.value = ''; filtrar(); }
+  // Volver a vista grilla
+  if (typeof vistaActual !== 'undefined' && vistaActual !== 'grilla') {
+    cambiarVista('grilla');
+  }
+  // Scroll al tope
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Asegurar que el hash se mantenga (por las dudas, si algún día alguien
+  // lo reemplaza por href real, esto no duele)
+  // window.location.hash ya está, no hace falta tocarlo.
 }
 
 // ╔══════════════════════════════════════════════════════════╗
@@ -4809,6 +5055,8 @@ function mostrarToast(txt) {
 // ── INIT: renderizar grilla con SURTIDOS_ACTIVOS ──────────
 renderGrid(SURTIDOS_ACTIVOS);
 actualizarFavBadge();
+// Si había carrito guardado en localStorage, mostrar el FAB
+actualizarFab();
 
 // ── CARRITO DESDE VISTAS ─────────────────────────────────
 function toggleCarritoVista(id) {
@@ -4996,6 +5244,8 @@ function confirmarDescuento() {
     descuentoPct = val;
     document.getElementById('descuentoInput').value = val;
     aplicarDescuento();
+  } else {
+    guardarDescuento(); // persistir el 0 también
   }
   sincronizarBotonesPrecio();
   refrescarVistaActiva();
@@ -5006,6 +5256,15 @@ function saltarDescuento() {
 }
 
 window.addEventListener('load', function() {
+  // Si había un descuento guardado de una sesión anterior, aplicarlo directamente
+  // y saltear el modal bloqueante.
+  if (descuentoPct > 0) {
+    var inp = document.getElementById('modalDescuentoInput');
+    if (inp) inp.value = descuentoPct;
+    // Invocar la misma lógica que "confirmar" para activar precios
+    confirmarDescuento();
+    return;
+  }
   setTimeout(function() {
     var inp = document.getElementById('modalDescuentoInput');
     if (inp) inp.focus();
