@@ -2288,7 +2288,7 @@
 <!-- HEADER -->
 <div class="header">
   <div class="header-inner">
-    <button type="button" id="btnVolverHome" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio" onclick="volverInicio(event)">
+    <button type="button" id="btnVolverHome" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio">
       <span class="btn-volver-icon">🏠</span>
       <span class="btn-volver-txt">Inicio</span>
     </button>
@@ -4592,41 +4592,82 @@ function cambiarVista(vista) {
 // Este botón sólo resetea la UI (vista, búsqueda, overlays) sin perder
 // vendedor, descuento ni carrito.
 function volverInicio(event) {
+  console.log('[MAXIFER] volverInicio disparado');
   if (event) { event.preventDefault(); event.stopPropagation(); }
 
   // Snapshot del descuento actual — por las dudas, lo restauramos al final.
-  var descGuardado = descuentoPct;
-  var preciosGuardados = mostrarPrecios;
+  var descGuardado = (typeof descuentoPct !== 'undefined') ? descuentoPct : 0;
+  var preciosGuardados = (typeof mostrarPrecios !== 'undefined') ? mostrarPrecios : false;
 
   // Cerrar cualquier overlay abierto
-  try { cerrarModalBtn(); } catch(e) {}
-  try { cerrarCarritoBtn(); } catch(e) {}
-  try { cerrarFavoritos(); } catch(e) {}
-  try { cerrarCompBtn(); } catch(e) {}
-  try { cerrarLightbox(); } catch(e) {}
-  try { cerrarFotosPanelBtn(); } catch(e) {}
+  try { if (typeof cerrarModalBtn === 'function') cerrarModalBtn(); } catch(e) {}
+  try { if (typeof cerrarCarritoBtn === 'function') cerrarCarritoBtn(); } catch(e) {}
+  try { if (typeof cerrarFavoritos === 'function') cerrarFavoritos(); } catch(e) {}
+  try { if (typeof cerrarCompBtn === 'function') cerrarCompBtn(); } catch(e) {}
+  try { if (typeof cerrarLightbox === 'function') cerrarLightbox(); } catch(e) {}
+  try { if (typeof cerrarFotosPanelBtn === 'function') cerrarFotosPanelBtn(); } catch(e) {}
   document.body.style.overflow = '';
 
+  // Cerrar overlays que puedan estar abiertos sin función propia
+  try {
+    var overlays = ['modalOverlay','carritoOverlay','favoritosOverlay','compOverlay','fotosPanelOverlay','lightbox'];
+    overlays.forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) { el.classList.remove('open'); el.classList.remove('show'); }
+    });
+  } catch(e) {}
+
   // Limpiar búsqueda sin tocar el descuento
-  var search = document.getElementById('searchInput');
-  if (search && search.value) { search.value = ''; }
+  try {
+    var search = document.getElementById('searchInput');
+    if (search && search.value) { search.value = ''; }
+  } catch(e) {}
 
   // Volver a vista grilla
-  if (typeof vistaActual !== 'undefined' && vistaActual !== 'grilla') {
-    cambiarVista('grilla');
-  }
+  try {
+    if (typeof vistaActual !== 'undefined' && vistaActual !== 'grilla' && typeof cambiarVista === 'function') {
+      cambiarVista('grilla');
+    }
+  } catch(e) {}
 
-  // Restaurar descuento (defensivo — ninguna de las operaciones de arriba
-  // debería tocarlo, pero lo aseguramos)
-  descuentoPct = descGuardado;
-  mostrarPrecios = preciosGuardados;
+  // Restaurar descuento (defensivo)
+  try {
+    descuentoPct = descGuardado;
+    mostrarPrecios = preciosGuardados;
+  } catch(e) {}
 
   // Re-renderizar con el descuento correcto
-  try { renderGrid(typeof SURTIDOS_ACTIVOS !== 'undefined' ? SURTIDOS_ACTIVOS : SURTIDOS); } catch(e) {}
+  try {
+    if (typeof renderGrid === 'function') {
+      renderGrid(typeof SURTIDOS_ACTIVOS !== 'undefined' ? SURTIDOS_ACTIVOS : SURTIDOS);
+    }
+  } catch(e) {}
 
-  // Scroll al tope
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Scroll al tope — siempre damos feedback visual
+  try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
+
+  console.log('[MAXIFER] volverInicio completado');
 }
+
+// Conectar el handler del botón Inicio por JS (más confiable que onclick inline
+// porque si alguien aprieta antes de que cargue todo el script, al menos
+// cuando dispare ya está registrado).
+(function conectarBotonInicio(){
+  function conectar() {
+    var btn = document.getElementById('btnVolverHome');
+    if (!btn) {
+      console.warn('[MAXIFER] No se encontró btnVolverHome');
+      return;
+    }
+    btn.addEventListener('click', volverInicio);
+    console.log('[MAXIFER] Botón Inicio conectado');
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', conectar);
+  } else {
+    conectar();
+  }
+})();
 
 // ╔══════════════════════════════════════════════════════════╗
 // ║  VISTA REVISTA                                          ║
