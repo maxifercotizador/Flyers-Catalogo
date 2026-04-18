@@ -63,6 +63,7 @@
       font-weight: 700;
       letter-spacing: 0.3px;
       flex-shrink: 0;
+      cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
     }
     .btn-volver-home:hover {
@@ -2252,10 +2253,10 @@
 <!-- HEADER -->
 <div class="header">
   <div class="header-inner">
-    <a href="#" id="btnVolverHome" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio" onclick="volverInicio(event)">
+    <button type="button" id="btnVolverHome" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio" onclick="volverInicio(event)">
       <span class="btn-volver-icon">🏠</span>
       <span class="btn-volver-txt">Inicio</span>
-    </a>
+    </button>
     <img src="./img/logo.webp" class="logo-img" alt="MAXIFER">
     <div class="header-title">
       <h1>Catálogo MAXIFER</h1>
@@ -4536,11 +4537,17 @@ function cambiarVista(vista) {
   }
 }
 
-// ── Botón "Inicio" — preserva hash (#wa=Maxi&desc=46) ─────────
+// ── Botón "Inicio" — preserva hash (#wa=Maxi&desc=46) y descuento actual ──
 // Si el cliente vino por link de vendedor, el hash lleva su contexto.
-// Queremos que el botón resetee la UI sin perder ese contexto.
+// Este botón sólo resetea la UI (vista, búsqueda, overlays) sin perder
+// vendedor, descuento ni carrito.
 function volverInicio(event) {
-  if (event) event.preventDefault();
+  if (event) { event.preventDefault(); event.stopPropagation(); }
+
+  // Snapshot del descuento actual — por las dudas, lo restauramos al final.
+  var descGuardado = descuentoPct;
+  var preciosGuardados = mostrarPrecios;
+
   // Cerrar cualquier overlay abierto
   try { cerrarModalBtn(); } catch(e) {}
   try { cerrarCarritoBtn(); } catch(e) {}
@@ -4549,18 +4556,26 @@ function volverInicio(event) {
   try { cerrarLightbox(); } catch(e) {}
   try { cerrarFotosPanelBtn(); } catch(e) {}
   document.body.style.overflow = '';
-  // Limpiar búsqueda
+
+  // Limpiar búsqueda sin tocar el descuento
   var search = document.getElementById('searchInput');
-  if (search && search.value) { search.value = ''; filtrar(); }
+  if (search && search.value) { search.value = ''; }
+
   // Volver a vista grilla
   if (typeof vistaActual !== 'undefined' && vistaActual !== 'grilla') {
     cambiarVista('grilla');
   }
+
+  // Restaurar descuento (defensivo — ninguna de las operaciones de arriba
+  // debería tocarlo, pero lo aseguramos)
+  descuentoPct = descGuardado;
+  mostrarPrecios = preciosGuardados;
+
+  // Re-renderizar con el descuento correcto
+  try { renderGrid(typeof SURTIDOS_ACTIVOS !== 'undefined' ? SURTIDOS_ACTIVOS : SURTIDOS); } catch(e) {}
+
   // Scroll al tope
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  // Asegurar que el hash se mantenga (por las dudas, si algún día alguien
-  // lo reemplaza por href real, esto no duele)
-  // window.location.hash ya está, no hace falta tocarlo.
 }
 
 // ╔══════════════════════════════════════════════════════════╗
