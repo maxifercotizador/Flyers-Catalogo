@@ -2159,6 +2159,71 @@
 
 <script>
 
+// ── MODELOS DIFERENTES POR SURTIDO ────────────────────────────
+// Fuente: Precio_Surtidos.xlsx (hoja RESUMEN). Cantidad de modelos
+// distintos que trae cada surtido. Se inyecta automáticamente en
+// la lista "Incluye" del detalle.
+const MODELOS_DIFERENTES = {
+  "PL CH.": 90,
+  "PL Nac. 160 M.": 160,
+  "CL. IMP COM": 322,
+  "RES. LF": 87,
+  "RES. LC": 109,
+  "RES. LB": 36,
+  "RES. LA": 50,
+  "RES. LP": 38,
+  "RES. COMP.": 275,
+  "CHA. PART.": 30,
+  "CHA. CH.": 30,
+  "GA+CH COMP.": 42,
+  "OR. CH.": 92,
+  "OR. GR.": 54,
+  "OR. COMP.": 146,
+  "CONEX. ALUM. 1": 76,
+  "CONEX. ALUM. 2": 55,
+  "Conex. Alum. L. Temp.": 27,
+  "Conex. Alum. Mayor Rot.": 27,
+  "CONC. PL": 76,
+  "CONC. COMB. Red": 31,
+  "CON. NEU.": 69,
+  "CON. NEU. COMPL.": 116,
+  "BRONCE": 33,
+  "RAC. CH.": 35,
+  "RAC. GR.": 61,
+  "TR Espec. + Torn.": 132,
+  "TR L. Compl.": 54,
+  "TR IMP.": 35,
+  "TER. REM.": 20,
+  "TUER. RAP.": 35,
+  "TAP. CAR.": 26,
+  "ARAND. CH.": 48,
+  "ARAND. LP.": 28,
+  "ARAN. CO-FI-AL": 75,
+  "ARAND. INYEC.": 40,
+  "UN. ORIENT.": 29,
+  "ABRA. GOMA": 36,
+  "REGAT.": 62,
+  "TOP. TAP. GOMA": 26,
+  "SEEG.": 59,
+  "ALEM.": 23,
+  "RET. ARAN.": 21,
+  "INTERR. PULSA.": 45,
+  "TERM. CH.": 40,
+  "TERM. NU.": 29,
+  "INS.": 24,
+  "TEM. COMP.": 81,
+  "TAR. ESTR.": 15,
+  "ESP. ELAS.": 54,
+  "ESPARR.": 47,
+  "CARB. 1": 40,
+  "CARB. COMPL.": 58,
+  "INYEC. GAS ENV.": 54,
+  "PER. 1": 30,
+  "PER. 2": 30,
+  "PER. COMP.": 60,
+  "CON. NEU. NUEV.": 47,
+};
+
 // ── GRUPOS ───────────────────────────────────────────────────
 const GRUPOS = [
   { key: 'clips',      label: "Clips Plásticos",         icono: "🔩", color: "#3b82f6",
@@ -3332,10 +3397,16 @@ function abrirModal(id) {
     </div>`;
 
   // Incluye
+  // Agregamos al final la cantidad de modelos diferentes (si está disponible)
+  const incluyeBase = Array.isArray(s.incluye) ? s.incluye.slice() : [];
+  const cantModelos = MODELOS_DIFERENTES[s.codigo];
+  if (cantModelos) {
+    incluyeBase.push('Contiene ' + cantModelos + ' modelos diferentes');
+  }
   const incluyeHtml = `
     <div class="incluye-list">
       <h4>Incluye</h4>
-      ${s.incluye.map(i => `
+      ${incluyeBase.map(i => `
         <div class="incluye-item">
           <div class="incluye-dot"></div>
           <span>${i}</span>
