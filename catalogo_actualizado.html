@@ -2288,10 +2288,10 @@
 <!-- HEADER -->
 <div class="header">
   <div class="header-inner">
-    <button type="button" id="btnVolverHome" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio">
+    <a href="index.html" id="btnVolverHome" class="btn-volver-home" title="Volver al inicio" aria-label="Volver al inicio">
       <span class="btn-volver-icon">🏠</span>
       <span class="btn-volver-txt">Inicio</span>
-    </button>
+    </a>
     <img src="./img/logo.webp" class="logo-img" alt="MAXIFER">
     <div class="header-title">
       <h1>Catálogo MAXIFER</h1>
@@ -4587,86 +4587,25 @@ function cambiarVista(vista) {
   }
 }
 
-// ── Botón "Inicio" — preserva hash (#wa=Maxi&desc=46) y descuento actual ──
-// Si el cliente vino por link de vendedor, el hash lleva su contexto.
-// Este botón sólo resetea la UI (vista, búsqueda, overlays) sin perder
-// vendedor, descuento ni carrito.
-function volverInicio(event) {
-  console.log('[MAXIFER] volverInicio disparado');
-  if (event) { event.preventDefault(); event.stopPropagation(); }
-
-  // Snapshot del descuento actual — por las dudas, lo restauramos al final.
-  var descGuardado = (typeof descuentoPct !== 'undefined') ? descuentoPct : 0;
-  var preciosGuardados = (typeof mostrarPrecios !== 'undefined') ? mostrarPrecios : false;
-
-  // Cerrar cualquier overlay abierto
-  try { if (typeof cerrarModalBtn === 'function') cerrarModalBtn(); } catch(e) {}
-  try { if (typeof cerrarCarritoBtn === 'function') cerrarCarritoBtn(); } catch(e) {}
-  try { if (typeof cerrarFavoritos === 'function') cerrarFavoritos(); } catch(e) {}
-  try { if (typeof cerrarCompBtn === 'function') cerrarCompBtn(); } catch(e) {}
-  try { if (typeof cerrarLightbox === 'function') cerrarLightbox(); } catch(e) {}
-  try { if (typeof cerrarFotosPanelBtn === 'function') cerrarFotosPanelBtn(); } catch(e) {}
-  document.body.style.overflow = '';
-
-  // Cerrar overlays que puedan estar abiertos sin función propia
-  try {
-    var overlays = ['modalOverlay','carritoOverlay','favoritosOverlay','compOverlay','fotosPanelOverlay','lightbox'];
-    overlays.forEach(function(id){
-      var el = document.getElementById(id);
-      if (el) { el.classList.remove('open'); el.classList.remove('show'); }
-    });
-  } catch(e) {}
-
-  // Limpiar búsqueda sin tocar el descuento
-  try {
-    var search = document.getElementById('searchInput');
-    if (search && search.value) { search.value = ''; }
-  } catch(e) {}
-
-  // Volver a vista grilla
-  try {
-    if (typeof vistaActual !== 'undefined' && vistaActual !== 'grilla' && typeof cambiarVista === 'function') {
-      cambiarVista('grilla');
-    }
-  } catch(e) {}
-
-  // Restaurar descuento (defensivo)
-  try {
-    descuentoPct = descGuardado;
-    mostrarPrecios = preciosGuardados;
-  } catch(e) {}
-
-  // Re-renderizar con el descuento correcto
-  try {
-    if (typeof renderGrid === 'function') {
-      renderGrid(typeof SURTIDOS_ACTIVOS !== 'undefined' ? SURTIDOS_ACTIVOS : SURTIDOS);
-    }
-  } catch(e) {}
-
-  // Scroll al tope — siempre damos feedback visual
-  try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
-
-  console.log('[MAXIFER] volverInicio completado');
-}
-
-// Conectar el handler del botón Inicio por JS (más confiable que onclick inline
-// porque si alguien aprieta antes de que cargue todo el script, al menos
-// cuando dispare ya está registrado).
-(function conectarBotonInicio(){
-  function conectar() {
+// ── Botón "Inicio" — va a index.html pero preserva contexto ──────
+// Propaga tanto el querystring (?tipo=ferretero etc.) como el hash
+// (#wa=Maxi&desc=46 o precio=lista). Así el cliente no pierde su
+// vendedor asignado ni su descuento al volver al landing.
+(function propagarContextoEnBotonInicio(){
+  function propagar() {
     var btn = document.getElementById('btnVolverHome');
-    if (!btn) {
-      console.warn('[MAXIFER] No se encontró btnVolverHome');
-      return;
-    }
-    btn.addEventListener('click', volverInicio);
-    console.log('[MAXIFER] Botón Inicio conectado');
+    if (!btn) return;
+    var suffix = (window.location.search || '') + (window.location.hash || '');
+    btn.setAttribute('href', 'index.html' + suffix);
   }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', conectar);
+    document.addEventListener('DOMContentLoaded', propagar);
   } else {
-    conectar();
+    propagar();
   }
+  // Si el usuario cambia el hash en runtime (ej. llega un link nuevo desde
+  // WhatsApp), re-propagar. Es barato y defensivo.
+  window.addEventListener('hashchange', propagar);
 })();
 
 // ╔══════════════════════════════════════════════════════════╗
