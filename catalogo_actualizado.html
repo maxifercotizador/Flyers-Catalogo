@@ -1826,6 +1826,41 @@
       background: rgba(255,255,255,0.22);
     }
 
+    /* ── Flechas navegación vista Revista ───────────────────── */
+    .rev-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 64px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(0,0,0,0.35);
+      color: white;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      transition: background 0.15s;
+    }
+    .rev-arrow:hover { background: rgba(0,0,0,0.55); }
+    .rev-arrow:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .rev-arrow-prev { left: 8px; }
+    .rev-arrow-next { right: 8px; }
+    /* La vista revista solo existe cuando tiene .activa */
+    #vistaRevista:not(.activa) .rev-arrow { display: none; }
+    /* En mobile ocultamos las flechas — ahí el swipe es más natural */
+    @media (max-width: 640px) {
+      .rev-arrow { display: none; }
+      #vistaRevista:not(.activa) .rev-arrow { display: none; }
+    }
+
     /* Colores de fondo para el libro */
     .lb-c0  { background: #1a2a4a; color: white; }
     .lb-c1  { background: #2a1a0a; color: white; }
@@ -2285,6 +2320,8 @@
 <!-- VISTA REVISTA -->
 <div class="vista-fs" id="vistaRevista">
   <div class="rev-scroll" id="revScroll"></div>
+  <button class="rev-arrow rev-arrow-prev" id="revAnterior" onclick="revNav(-1)" aria-label="Anterior">‹</button>
+  <button class="rev-arrow rev-arrow-next" id="revSiguiente" onclick="revNav(1)" aria-label="Siguiente">›</button>
   <div class="rev-dots"   id="revDots"></div>
   <div class="vista-topbar oculta" id="revTopbar">
     <button class="btn-back" onclick="cambiarVista('grilla')">← Volver</button>
@@ -4281,7 +4318,7 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
       });
 
       if (modoDesc > 0) {
-        // Modo: precio con descuento aplicado
+        // Modo: precio con descuento aplicado (el link PISA lo que hubiera en localStorage)
         descuentoPct = modoDesc;
         mostrarPrecios = true;
         document.getElementById('appBody').classList.add('show-precios');
@@ -4293,15 +4330,26 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
         sincronizarBotonesPrecio();
         refrescarVistaActiva();
       } else if (modoPrecio === 'lista') {
-        // Modo: precio de lista sin descuento
+        // Modo: precio de lista sin descuento — forzar descuento a 0
+        // (crítico: si el cliente antes entró con desc=46, lo tiene guardado en
+        // localStorage, y sin este reset aparecen los precios con descuento)
+        descuentoPct = 0;
+        try { guardarDescuento(); } catch(e) {}
+        var inp2 = document.getElementById('descuentoInput');
+        if (inp2) inp2.value = '';
         mostrarPrecios = true;
         document.getElementById('appBody').classList.add('show-precios');
         document.getElementById('modal').classList.add('show-precios');
         document.getElementById('carritoBody').classList.add('show-precios');
         sincronizarBotonesPrecio();
         refrescarVistaActiva();
+      } else if (modoPrecio === 'sin') {
+        // Modo: sin precios — también resetear descuento persistido
+        descuentoPct = 0;
+        try { guardarDescuento(); } catch(e) {}
+        mostrarPrecios = false;
+        document.getElementById('appBody').classList.remove('show-precios');
       }
-      // modoPrecio === 'sin': no activar precios, el cliente no ve nada
     });
   }
 })();
@@ -4640,6 +4688,7 @@ function revConstruir(lista) {
   });
   document.getElementById('revCounter').textContent = lista.length ? '1 / ' + lista.length : '0 / 0';
   scroll.addEventListener('scroll', revOnScroll, { passive: true });
+  actualizarFlechasRev();
 }
 
 function revOnScroll() {
@@ -4650,7 +4699,29 @@ function revOnScroll() {
     document.getElementById('revCounter').textContent = (idx + 1) + ' / ' + revLista.length;
     var dots = document.querySelectorAll('.rev-dot');
     dots.forEach(function(d, i){ d.classList.toggle('on', i === idx); });
+    actualizarFlechasRev();
   }
+}
+
+// Navegar con flechas en vista revista
+function revNav(dir) {
+  if (!revLista || revLista.length === 0) return;
+  var nuevoIdx = revIdx + dir;
+  if (nuevoIdx < 0 || nuevoIdx >= revLista.length) return;
+  var scroll = document.getElementById('revScroll');
+  scroll.scrollTo({
+    left: nuevoIdx * scroll.offsetWidth,
+    behavior: 'smooth'
+  });
+}
+
+// Habilitar/deshabilitar flechas según posición
+function actualizarFlechasRev() {
+  var prev = document.getElementById('revAnterior');
+  var next = document.getElementById('revSiguiente');
+  if (!prev || !next || !revLista) return;
+  prev.disabled = revIdx <= 0;
+  next.disabled = revIdx >= revLista.length - 1;
 }
 
 function revFiltrar() {
