@@ -621,6 +621,55 @@
       margin-top: 2px;
     }
 
+    /* Modo reducido: cambia el color del bloque de precio */
+    .precio-modal.reducido { background: #6b7280; }
+
+    /* Link discreto "Ver opción con stock reducido" / "Volver a versión estándar" */
+    .toggle-reducido {
+      display: none;
+      margin: -10px 0 14px 0;
+      font-size: 12px;
+      color: #6b7280;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px 2px;
+      font-family: inherit;
+      text-align: left;
+    }
+    .show-precios .toggle-reducido { display: inline-block; }
+    .toggle-reducido:hover { color: #374151; }
+
+    /* Bloque comparativo que aparece cuando se activa modo reducido */
+    .comparativo-versiones {
+      display: none;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 0 0 14px 0;
+      font-size: 12px;
+      color: #4b5563;
+    }
+    .comparativo-versiones.visible { display: block; }
+    .comparativo-versiones .cv-fila {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 3px 0;
+    }
+    .comparativo-versiones .cv-label { opacity: 0.75; }
+    .comparativo-versiones .cv-val { font-weight: 600; color: #111827; }
+    .comparativo-versiones .cv-titulo {
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     /* Botón agregar pedido */
     .btn-pedir {
       width: 100%;
@@ -643,6 +692,30 @@
     }
     .btn-pedir:hover { background: var(--naranja-light); }
     .btn-pedir.agregado { background: var(--success); }
+    .btn-pedir.reducido { background: #6b7280; }
+    .btn-pedir.reducido:hover { background: #4b5563; }
+    .btn-pedir.reducido.agregado { background: var(--success); }
+
+    /* Botón "Agregar al pedido" del modal detalle */
+    .btn-carrito-modal {
+      width: 100%;
+      padding: 13px;
+      background: var(--naranja);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-carrito-modal:hover { background: var(--naranja-light); }
+    .btn-carrito-modal.en-carrito { background: var(--success); }
+    .btn-carrito-modal.btn-carrito-modal-red { background: #6b7280; }
+    .btn-carrito-modal.btn-carrito-modal-red:hover { background: #4b5563; }
+    .btn-carrito-modal.btn-carrito-modal-red.en-carrito { background: var(--success); }
 
     /* ── MODAL CARRITO ── */
     .carrito-overlay {
@@ -706,6 +779,23 @@
       display: none;
     }
     .show-precios .carrito-item-precio { display: block; }
+    .carrito-item.is-reducido {
+      background: linear-gradient(to right, #f9fafb 0%, transparent 60%);
+      border-left: 3px solid #6b7280;
+      padding-left: 10px;
+    }
+    .carrito-item-badge-red {
+      display: inline-block;
+      background: #6b7280;
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+    }
     .btn-rm {
       background: none;
       border: none;
@@ -2224,6 +2314,76 @@ const MODELOS_DIFERENTES = {
   "CON. NEU. NUEV.": 47,
 };
 
+// ── VERSIÓN REDUCIDA POR SURTIDO ──────────────────────────────
+// Fuente: Precio_Surtidos.xlsx (hoja RESUMEN). Misma cantidad de
+// modelos y gavetas que la estándar, pero con menos stock inicial
+// (y por lo tanto menor precio). Se muestra sólo si el cliente
+// la solicita explícitamente en el modal de detalle.
+const VERSION_REDUCIDA = {
+  "PL CH.": { piezas: 360, precio: 354134 },
+  "PL Nac. 160 M.": { piezas: 320, precio: 452509 },
+  "CL. IMP COM": { piezas: 966, precio: 1312890 },
+  "RES. LF": { piezas: 174, precio: 385595 },
+  "RES. LC": { piezas: 327, precio: 539519 },
+  "RES. LB": { piezas: 108, precio: 564025 },
+  "RES. LA": { piezas: 100, precio: 332317 },
+  "RES. LP": { piezas: 76, precio: 570098 },
+  "RES. COMP.": { piezas: 772, precio: 2192035 },
+  "CHA. PART.": { piezas: 450, precio: 83510 },
+  "CHA. CH.": { piezas: 120, precio: 219293 },
+  "GA+CH COMP.": { piezas: 126, precio: 357182 },
+  "OR. CH.": { piezas: 552, precio: 268783 },
+  "OR. GR.": { piezas: 162, precio: 239008 },
+  "OR. COMP.": { piezas: 730, precio: 597833 },
+  "CONEX. ALUM. 1": { piezas: 152, precio: 1401320 },
+  "CONEX. ALUM. 2": { piezas: 110, precio: 1439068 },
+  "Conex. Alum. L. Temp.": { piezas: 54, precio: 935502 },
+  "Conex. Alum. Mayor Rot.": { piezas: 54, precio: 424029 },
+  "CONC. PL": { piezas: 228, precio: 421436 },
+  "CONC. COMB. Red": { piezas: 62, precio: 752074 },
+  "CON. NEU.": { piezas: 150, precio: 571028 },
+  "CON. NEU. COMPL.": { piezas: 256, precio: 1175810 },
+  "BRONCE": { piezas: 92, precio: 240812 },
+  "RAC. CH.": { piezas: 105, precio: 501440 },
+  "RAC. GR.": { piezas: 122, precio: 659933 },
+  "TR Espec. + Torn.": { piezas: 396, precio: 500361 },
+  "TR L. Compl.": { piezas: 216, precio: 310460 },
+  "TR IMP.": { piezas: 140, precio: 231440 },
+  "TER. REM.": { piezas: 200, precio: 181538 },
+  "TUER. RAP.": { piezas: 210, precio: 174189 },
+  "TAP. CAR.": { piezas: 78, precio: 582196 },
+  "ARAND. CH.": { piezas: 480, precio: 169736 },
+  "ARAND. LP.": { piezas: 168, precio: 178709 },
+  "ARAN. CO-FI-AL": { piezas: 375, precio: 475069 },
+  "ARAND. INYEC.": { piezas: 240, precio: 246628 },
+  "UN. ORIENT.": { piezas: 58, precio: 347650 },
+  "ABRA. GOMA": { piezas: 144, precio: 312672 },
+  "REGAT.": { piezas: 372, precio: 272054 },
+  "TOP. TAP. GOMA": { piezas: 78, precio: 204765 },
+  "SEEG.": { piezas: 295, precio: 238351 },
+  "ALEM.": { piezas: 92, precio: 181273 },
+  "RET. ARAN.": { piezas: 525, precio: 126664 },
+  "INTERR. PULSA.": { piezas: 90, precio: 314937 },
+  "TERM. CH.": { piezas: 379, precio: 183395 },
+  "TERM. NU.": { piezas: 87, precio: 353856 },
+  "INS.": { piezas: 72, precio: 168280 },
+  "TEM. COMP.": { piezas: 523, precio: 568940 },
+  "TAR. ESTR.": { piezas: 750, precio: 110554 },
+  "ESP. ELAS.": { piezas: 262, precio: 258849 },
+  "ESPARR.": { piezas: 141, precio: 382817 },
+  "CARB. 1": { piezas: 60, precio: 318580 },
+  "CARB. COMPL.": { piezas: 87, precio: 480442 },
+  "INYEC. GAS ENV.": { piezas: 162, precio: 331422 },
+  "PER. 1": { piezas: 60, precio: 399848 },
+  "PER. 2": { piezas: 60, precio: 414714 },
+  "PER. COMP.": { piezas: 120, precio: 797762 },
+  "CON. NEU. NUEV.": { piezas: 106, precio: 634781 },
+};
+
+// Estado del modal detalle: indica si el surtido actual se está
+// mostrando en su versión reducida. Se resetea al abrir cada modal.
+let modoReducido = false;
+
 // ── GRUPOS ───────────────────────────────────────────────────
 const GRUPOS = [
   { key: 'clips',      label: "Clips Plásticos",         icono: "🔩", color: "#3b82f6",
@@ -3351,6 +3511,10 @@ function refrescarVistaActiva() {
 function abrirModal(id) {
   const s = SURTIDOS.find(x => x.id === id);
   if (!s) return;
+  // Resetear modoReducido si se abre un surtido distinto al actual
+  if (!surtidoActual || surtidoActual.id !== id) {
+    modoReducido = false;
+  }
   surtidoActual = s;
 
   document.getElementById('modalNombre').textContent = s.nombre;
@@ -3389,16 +3553,57 @@ function abrirModal(id) {
   const precioPzLista = (s.precio && pd && pd.pzs) ? Math.round(s.precio / pd.pzs) : null;
   const precioPzDesc  = (precioPzLista && descuentoPct > 0) ? Math.round(precioConDescuento(s.precio, s.codigo) / pd.pzs) : null;
 
+  // ── Versión reducida: datos + estado ──
+  const red = VERSION_REDUCIDA[s.codigo] || null;
+  // Precio que se muestra en la UI (cambia según modoReducido)
+  const precioBase    = modoReducido && red ? red.precio : s.precio;
+  const piezasBase    = modoReducido && red ? red.piezas : s.piezas;
+  const precioFinal   = precioConDescuento(precioBase, s.codigo);
+
   const precioHtml = `
-    <div class="precio-modal">
-      <div class="precio-label">Precio</div>
-      <div class="precio-valor">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
+    <div class="precio-modal${modoReducido && red ? ' reducido' : ''}">
+      <div class="precio-label">Precio${modoReducido && red ? ' (stock reducido)' : ''}</div>
+      <div class="precio-valor">${formatPrecio(precioFinal)}</div>
       <div class="precio-iva">+ IVA</div>
     </div>`;
+
+  // Link discreto para activar/desactivar la versión reducida
+  let toggleReducidoHtml = '';
+  let comparativoHtml = '';
+  if (red) {
+    toggleReducidoHtml = modoReducido
+      ? `<button type="button" class="toggle-reducido" onclick="toggleModoReducido(${s.id})">← Volver a versión estándar</button>`
+      : `<button type="button" class="toggle-reducido" onclick="toggleModoReducido(${s.id})">Ver opción con stock reducido</button>`;
+
+    // Bloque comparativo: solo visible cuando está en modo reducido
+    if (modoReducido) {
+      const precioStdFinal = precioConDescuento(s.precio, s.codigo);
+      const precioRedFinal = precioConDescuento(red.precio, s.codigo);
+      const ahorro = precioStdFinal - precioRedFinal;
+      comparativoHtml = `
+        <div class="comparativo-versiones visible">
+          <div class="cv-titulo">Comparación</div>
+          <div class="cv-fila"><span class="cv-label">Estándar</span><span class="cv-val">${s.piezas} pzs · ${formatPrecio(precioStdFinal)}</span></div>
+          <div class="cv-fila"><span class="cv-label">Reducida</span><span class="cv-val">${red.piezas} pzs · ${formatPrecio(precioRedFinal)}</span></div>
+          ${ahorro > 0 ? `<div class="cv-fila" style="border-top:1px dashed #d1d5db;margin-top:4px;padding-top:6px"><span class="cv-label">Diferencia</span><span class="cv-val">${formatPrecio(ahorro)} menos</span></div>` : ''}
+        </div>`;
+    }
+  }
 
   // Incluye
   // Agregamos al final la cantidad de modelos diferentes (si está disponible)
   const incluyeBase = Array.isArray(s.incluye) ? s.incluye.slice() : [];
+  // Reemplazar la línea de "N piezas totales" si estamos en modo reducido
+  if (modoReducido && red) {
+    for (let i = 0; i < incluyeBase.length; i++) {
+      if (/piezas\s+totales/i.test(incluyeBase[i])) {
+        // Mantener formato con separador de miles
+        const piezasFmt = red.piezas.toLocaleString('es-AR');
+        incluyeBase[i] = piezasFmt + ' piezas totales (stock reducido)';
+        break;
+      }
+    }
+  }
   const cantModelos = MODELOS_DIFERENTES[s.codigo];
   if (cantModelos) {
     incluyeBase.push('Contiene ' + cantModelos + ' modelos diferentes');
@@ -3442,10 +3647,16 @@ function abrirModal(id) {
   }
 
   // Botón carrito
-  const enCarrito = carrito.includes(s.id);
+  // Considera la versión actual: estándar o reducida se tratan como items separados en el carrito
+  const enCarrito = carrito.some(function(c) {
+    return c.id === s.id && !!c._reducido === !!(modoReducido && red);
+  });
+  const btnReducidoClass = (modoReducido && red) ? ' btn-carrito-modal-red' : '';
   btnHtml = '<div style="margin-top:16px">'
-    + '<button class="btn-carrito-modal' + (enCarrito ? ' en-carrito' : '') + '" onclick="toggleCarritoVista(' + s.id + ',this)">'
-    + (enCarrito ? '✓ En el pedido' : '+ Agregar al pedido')
+    + '<button class="btn-carrito-modal' + (enCarrito ? ' en-carrito' : '') + btnReducidoClass + '" onclick="toggleCarritoVistaConVersion(' + s.id + ', ' + ((modoReducido && red) ? 'true' : 'false') + ', this)">'
+    + (enCarrito
+        ? '✓ En el pedido' + ((modoReducido && red) ? ' (reducido)' : '')
+        : '+ Agregar al pedido' + ((modoReducido && red) ? ' (reducido)' : ''))
     + '</button></div>';
 
   // Composición
@@ -3491,7 +3702,7 @@ function abrirModal(id) {
   }
 
   document.getElementById('modalBody').innerHTML =
-    fotosHtml + precioHtml + incluyeHtml + composicionHtml + relacionadosHtml + btnHtml;
+    fotosHtml + precioHtml + toggleReducidoHtml + comparativoHtml + incluyeHtml + composicionHtml + relacionadosHtml + btnHtml;
 
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -3665,16 +3876,26 @@ function renderCarritoBody() {
     return;
   }
   const spClass = mostrarPrecios ? 'show-precios' : '';
-  const total = carrito.reduce((s, c) => s + precioConDescuento(c.precio, c.codigo), 0);
-  const items = carrito.map(c => `
-    <div class="carrito-item">
+  // Usar precio reducido si corresponde
+  const total = carrito.reduce((s, c) => {
+    const precioBase = c._reducido ? c._precioRed : c.precio;
+    return s + precioConDescuento(precioBase, c.codigo);
+  }, 0);
+  const items = carrito.map((c, idx) => {
+    const precioBase = c._reducido ? c._precioRed : c.precio;
+    const itemClass = c._reducido ? 'carrito-item is-reducido' : 'carrito-item';
+    const badge = c._reducido ? '<span class="carrito-item-badge-red">REDUCIDO</span>' : '';
+    // Usamos idx para identificar el item a quitar (porque el mismo id puede aparecer dos veces: std + red)
+    return `
+    <div class="${itemClass}">
       <div class="carrito-item-info">
-        <div class="carrito-item-nombre">${c.nombre}</div>
+        <div class="carrito-item-nombre">${c.nombre}${badge}</div>
         <div class="carrito-item-cod">Cód: ${c.codigo}</div>
-        <div class="carrito-item-precio">${formatPrecio(precioConDescuento(c.precio, c.codigo))} + IVA</div>
+        <div class="carrito-item-precio">${formatPrecio(precioConDescuento(precioBase, c.codigo))} + IVA</div>
       </div>
-      <button class="btn-rm" onclick="quitarItem(${c.id})">✕</button>
-    </div>`).join('');
+      <button class="btn-rm" onclick="quitarItemIdx(${idx})">✕</button>
+    </div>`;
+  }).join('');
 
   body.innerHTML = `
     <div class="${spClass}">
@@ -3698,6 +3919,20 @@ function quitarItem(id) {
   if (surtidoActual && surtidoActual.id === id) {
     const btn = document.getElementById('btnAgregar');
     if (btn) { btn.className = 'btn-pedir'; btn.textContent = '🛒 Agregar al pedido'; }
+  }
+}
+
+// Quitar un item del carrito por índice (usado cuando el mismo id puede estar
+// presente como estándar y como reducido, y no podemos distinguir por id).
+function quitarItemIdx(idx) {
+  if (idx < 0 || idx >= carrito.length) return;
+  const removido = carrito[idx];
+  carrito.splice(idx, 1);
+  actualizarFab();
+  renderCarritoBody();
+  // Si el modal está abierto con ese surtido, refrescarlo para actualizar el botón
+  if (surtidoActual && removido && surtidoActual.id === removido.id) {
+    abrirModal(removido.id);
   }
 }
 
@@ -3776,7 +4011,10 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
 function enviarWhatsApp() {
   if (carrito.length === 0) return;
 
-  var total = carrito.reduce(function(s, c){ return s + c.precio; }, 0);
+  // Helper para obtener el precio y piezas reales según versión
+  function getPrecio(c) { return c._reducido ? c._precioRed : c.precio; }
+  function getPiezas(c) { return c._reducido ? c._piezasRed : c.piezas; }
+
   var ahora = new Date();
   var fecha = ahora.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
   var hora  = ahora.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
@@ -3788,13 +4026,16 @@ function enviarWhatsApp() {
   msg += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
 
   carrito.forEach(function(c, i) {
-    msg += '*' + (i + 1) + '. ' + c.nombre + '*\n';
-    msg += '   📦 Cód: `' + c.codigo + '`\n';
-    if (c.piezas) msg += '   📌 ' + c.piezas + ' piezas\n';
-    if (mostrarPrecios && c.precio) {
-      var pDesc = precioConDescuento(c.precio, c.codigo);
+    var marcaRed = c._reducido ? ' — *REDUCIDO*' : '';
+    msg += '*' + (i + 1) + '. ' + c.nombre + marcaRed + '*\n';
+    msg += '   📦 Cód: `' + c.codigo + '`' + (c._reducido ? ' _(stock reducido)_' : '') + '\n';
+    var pz = getPiezas(c);
+    if (pz) msg += '   📌 ' + pz + ' piezas\n';
+    var precioBase = getPrecio(c);
+    if (mostrarPrecios && precioBase) {
+      var pDesc = precioConDescuento(precioBase, c.codigo);
       if (descuentoPct > 0) {
-        msg += '   💲 Lista: $ ' + formatPrecio(c.precio) + '  →  *$ ' + formatPrecio(pDesc) + '* + IVA\n';
+        msg += '   💲 Lista: $ ' + formatPrecio(precioBase) + '  →  *$ ' + formatPrecio(pDesc) + '* + IVA\n';
       } else {
         msg += '   💲 $ ' + formatPrecio(pDesc) + ' + IVA\n';
       }
@@ -3805,9 +4046,9 @@ function enviarWhatsApp() {
   msg += '━━━━━━━━━━━━━━━━━━━━━━\n';
   msg += '🛒 *' + carrito.length + ' surtido' + (carrito.length > 1 ? 's' : '') + ' seleccionado' + (carrito.length > 1 ? 's' : '') + '*\n';
   if (mostrarPrecios) {
-    var totalDesc = carrito.reduce(function(s, c){ return s + precioConDescuento(c.precio, c.codigo); }, 0);
+    var totalDesc = carrito.reduce(function(s, c){ return s + precioConDescuento(getPrecio(c), c.codigo); }, 0);
     if (descuentoPct > 0) {
-      var totalLista = carrito.reduce(function(s, c){ return s + c.precio; }, 0);
+      var totalLista = carrito.reduce(function(s, c){ return s + getPrecio(c); }, 0);
       msg += '💰 Lista: $ ' + formatPrecio(totalLista) + ' + IVA\n';
       msg += '✅ *Con ' + descuentoPct + '% dto: $ ' + formatPrecio(totalDesc) + '* + IVA\n';
     } else {
@@ -4523,7 +4764,74 @@ function toggleCarritoVista(id) {
   actualizarBtnPanel(id);
 }
 
-// ── PANEL FOTOS EXTRA ─────────────────────────────────────
+// ── VERSIÓN REDUCIDA ──────────────────────────────────────
+// Alterna el modo reducido del modal detalle actual y lo re-renderiza
+function toggleModoReducido(id) {
+  modoReducido = !modoReducido;
+  abrirModal(id);
+}
+
+// Versión del toggle que tiene en cuenta si es estándar o reducida.
+// Se usa sólo desde el modal detalle (que conoce qué versión está viendo).
+function toggleCarritoVistaConVersion(id, reducido, btn) {
+  var s = SURTIDOS.find(function(x){ return x.id === id; });
+  if (!s) return;
+  // Buscamos sólo el ítem con la misma versión (id + flag coincide)
+  var idx = carrito.findIndex(function(c){
+    return c.id === id && !!c._reducido === !!reducido;
+  });
+  if (idx >= 0) {
+    carrito.splice(idx, 1);
+  } else {
+    if (reducido) {
+      var red = VERSION_REDUCIDA[s.codigo];
+      if (!red) { return; }
+      // Clonamos el surtido y marcamos que es reducido. Guardamos precio/piezas
+      // de la versión reducida en campos separados para no pisar los originales.
+      var clon = Object.assign({}, s, {
+        _reducido: true,
+        _precioRed: red.precio,
+        _piezasRed: red.piezas
+      });
+      carrito.push(clon);
+    } else {
+      carrito.push(s);
+    }
+    vibrar();
+    mostrarToast('✅ ' + s.nombre + (reducido ? ' (reducido) ' : ' ') + 'agregado');
+  }
+  actualizarFab();
+  // Actualizar el botón del modal
+  var enCarritoAhora = carrito.some(function(c){
+    return c.id === id && !!c._reducido === !!reducido;
+  });
+  if (btn) {
+    btn.className = 'btn-carrito-modal'
+      + (enCarritoAhora ? ' en-carrito' : '')
+      + (reducido ? ' btn-carrito-modal-red' : '');
+    btn.innerHTML = enCarritoAhora
+      ? '✓ En el pedido' + (reducido ? ' (reducido)' : '')
+      : '+ Agregar al pedido' + (reducido ? ' (reducido)' : '');
+  }
+  // Refrescar otros botones del mismo surtido (revista/libro/grilla)
+  var enCarritoAlguna = carrito.some(function(c){ return c.id === id; });
+  var btnRev2 = document.getElementById('revBtn' + id);
+  if (btnRev2) {
+    btnRev2.className = 'btn-rev-agregar' + (enCarritoAlguna ? ' agregado' : '');
+    btnRev2.innerHTML = enCarritoAlguna ? '✅ En mi pedido' : '🛒 Agregar al pedido';
+  }
+  var btnLibro2 = document.getElementById('libroBtn' + id);
+  if (btnLibro2) {
+    btnLibro2.className = 'btn-libro-agregar' + (enCarritoAlguna ? ' agregado' : '');
+    btnLibro2.innerHTML = enCarritoAlguna ? '✅ En pedido' : '🛒 Agregar';
+  }
+  var cardBtn2 = document.getElementById('cardBtn' + id);
+  if (cardBtn2) {
+    cardBtn2.className = 'btn-card-agregar' + (enCarritoAlguna ? ' agregado' : '');
+    cardBtn2.innerHTML = enCarritoAlguna ? '✅ En pedido' : '🛒 Agregar';
+  }
+  actualizarBtnPanel(id);
+}
 var fotosPanelSurtidoId = null;
 var fotosDotsEl = [];
 
