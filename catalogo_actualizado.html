@@ -2683,12 +2683,48 @@ function maxiferMapPrecios(workbookListas) {
 
 // Construye COMPOSICION_DATA desde Precio_Surtidos.xlsx hoja "BD"
 // Cruza con el mapa de precios de Listas para obtener precios actuales
+// Mapeo manual de códigos del HTML a códigos del Excel cuando no coinciden
+// y la normalización no es suficiente. Solo agregar entradas si el código es
+// tan distinto que normalizar no alcanza (ej: BRONCE vs Uni. Poliam.).
+const MAXIFER_CODIGO_MAP = {
+  'BRONCE': 'Uni. Poliam.',
+  'CARB. COMPL.': 'CARB. CPL',
+  'CONC. COMB. Red': 'Conec. Comb. Red.',
+  'TR IMP.': 'TR IMPO.',
+  'UN. ORIENT.': 'Uni. Orient.'
+};
+
+// Normaliza códigos para matching tolerante: minúsculas, sin espacios ni puntos.
+// Resuelve casos como 'TAP. CAR.' vs 'TAP.CAR.', 'INTERR. PULSA.' vs 'INTERR.PULSA.', etc.
+function maxiferNormCodigo(s) {
+  if (!s) return '';
+  return String(s).toLowerCase().replace(/[\s\.]+/g, '');
+}
+
+// Busca la composición de un surtido tolerando diferencias de mayúsculas, puntos y espacios.
+// Devuelve null si no encuentra.
+function maxiferGetComposicion(composicion, codigoHTML) {
+  if (!codigoHTML) return null;
+  // 1. Match exacto
+  if (composicion[codigoHTML]) return composicion[codigoHTML];
+  // 2. Match por mapeo manual
+  const mapped = MAXIFER_CODIGO_MAP[codigoHTML];
+  if (mapped && composicion[mapped]) return composicion[mapped];
+  // 3. Match normalizado (case-insensitive sin puntos/espacios)
+  const norm = maxiferNormCodigo(codigoHTML);
+  if (composicion._normIndex && composicion._normIndex[norm]) {
+    return composicion[composicion._normIndex[norm]];
+  }
+  return null;
+}
+
 function maxiferConstruirComposicion(workbookSurtidos, mapaPrecios) {
   const sheet = workbookSurtidos.Sheets['BD'];
   if (!sheet) throw new Error('Falta la hoja "BD" en Precio Surtidos.xlsx');
   const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
 
   const result = {};
+  const normIndex = {};  // codigo normalizado -> codigo original del Excel
   for (const r of rows) {
     const codigoSurtido = String(r['Codigo'] || '').trim();
     if (!codigoSurtido) continue;
@@ -2702,14 +2738,24 @@ function maxiferConstruirComposicion(workbookSurtidos, mapaPrecios) {
     const precioRedExcel = parseFloat(r['Precio Reducido'] || 0) || 0;
 
     // Buscar precio actual en Listas_Maxifer (cruce por Producto + Numero)
-    const key = productoFam + '|' + numero;
-    let precioActual = mapaPrecios[key];
+    // Probar primero con clave exacta, luego case-insensitive (resuelve "5 X 30" vs "5 x 30")
+    const keyExacta = productoFam + '|' + numero;
+    const keyLower = productoFam.toLowerCase() + '|' + numero.toLowerCase();
+    let precioActual = mapaPrecios[keyExacta];
+    if (precioActual === undefined || precioActual === null) {
+      precioActual = mapaPrecios[keyLower];
+    }
     if (precioActual === undefined || precioActual === null) {
       // Fallback: si no se encuentra en Listas, usar el del Excel de surtidos
       precioActual = precioStdExcel;
     }
 
-    if (!result[codigoSurtido]) result[codigoSurtido] = [];
+    if (!result[codigoSurtido]) {
+      result[codigoSurtido] = [];
+      // Indexar también por código normalizado para matching tolerante
+      const norm = maxiferNormCodigo(codigoSurtido);
+      if (norm) normIndex[norm] = codigoSurtido;
+    }
     result[codigoSurtido].push({
       n: numero,
       d: descripcion,
@@ -2719,7 +2765,45 @@ function maxiferConstruirComposicion(workbookSurtidos, mapaPrecios) {
       p_r: precioActual  // El precio reducido usa el mismo precio actual
     });
   }
+  // Adjuntar el índice normalizado al objeto resultado (no enumerable para no contaminar)
+  Object.defineProperty(result, '_normIndex', { value: normIndex, enumerable: false });
   return result;
+}
+
+// Resuelve el código del HTML al código real del Excel:
+// 1) si hay mapeo explícito en MAXIFER_CODIGO_MAP, lo usa
+// 2) si existe match exacto en composicion, lo usa
+// 3) si existe match normalizado (sin puntos/espacios, case-insensitive), lo usa
+// 4) si no, devuelve null
+function maxiferResolverCodigo(codigoHTML, composicion) {
+  if (!codigoHTML) return null;
+  // 1) mapeo explícito
+  const mapeado = MAXIFER_CODIGO_MAP[codigoHTML];
+  if (mapeado && composicion[mapeado]) return mapeado;
+  // 2) match exacto
+  if (composicion[codigoHTML]) return codigoHTML;
+  // 3) match normalizado
+  const norm = maxiferNormCodigo(codigoHTML);
+  const normIndex = composicion._normIndex || {};
+  if (normIndex[norm]) return normIndex[norm];
+  return null;
+}
+
+// Crea aliases en composicion para que TODAS las claves usadas por SURTIDOS
+// (códigos del HTML) tengan composición disponible, incluso cuando el código
+// del Excel está escrito distinto. Esto es importante porque el resto del
+// catálogo (búsqueda, comparador, modal) accede a COMPOSICION_DATA[s.codigo]
+// directamente, sin pasar por el resolver.
+function maxiferCrearAliases(surtidos, composicion) {
+  for (const s of surtidos) {
+    if (!s.codigo) continue;
+    if (composicion[s.codigo]) continue; // ya existe
+    const codExcel = maxiferResolverCodigo(s.codigo, composicion);
+    if (codExcel) {
+      // Alias: misma referencia al array de items
+      composicion[s.codigo] = composicion[codExcel];
+    }
+  }
 }
 
 // Recalcula los precios totales de cada surtido sumando (cant × p) de su composición
@@ -2753,8 +2837,9 @@ async function maxiferCargarDatos() {
     // Asignar a la variable global (era let, no const, así se puede reasignar)
     COMPOSICION_DATA = composicion;
 
-    // Recalcular precios totales en SURTIDOS
+    // Crear aliases para códigos del HTML que no matchean exactamente con los del Excel
     if (typeof SURTIDOS !== 'undefined' && Array.isArray(SURTIDOS)) {
+      maxiferCrearAliases(SURTIDOS, COMPOSICION_DATA);
       maxiferRecalcularPrecios(SURTIDOS, COMPOSICION_DATA);
     }
 
