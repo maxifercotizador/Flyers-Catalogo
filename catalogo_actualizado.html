@@ -2677,6 +2677,12 @@ function maxiferMapPrecios(workbookListas) {
     // Clave compuesta: Producto|Numero (Producto = familia, Numero = código del item)
     const key = producto + '|' + numero;
     map[key] = precio;
+    // Indexar TAMBIÉN en lowercase para matching case-insensitive
+    // (resuelve diferencias como "5 X 30" en Surtidos vs "5 x 30" en Listas)
+    const keyLower = producto.toLowerCase() + '|' + numero.toLowerCase();
+    if (keyLower !== key) {
+      map[keyLower] = precio;
+    }
   }
   return map;
 }
@@ -2739,15 +2745,33 @@ function maxiferConstruirComposicion(workbookSurtidos, mapaPrecios) {
 
     // Buscar precio actual en Listas_Maxifer (cruce por Producto + Numero)
     // Probar primero con clave exacta, luego case-insensitive (resuelve "5 X 30" vs "5 x 30")
+    // Por último probar invirtiendo Producto/Numero (resuelve casos como
+    // 'Varios|Varios Ch' en Surtidos vs 'Varios Ch|Varios' en Listas).
     const keyExacta = productoFam + '|' + numero;
     const keyLower = productoFam.toLowerCase() + '|' + numero.toLowerCase();
+    const keyInvertida = numero + '|' + productoFam;
+    const keyInvertidaLower = numero.toLowerCase() + '|' + productoFam.toLowerCase();
     let precioActual = mapaPrecios[keyExacta];
-    if (precioActual === undefined || precioActual === null) {
+    if (precioActual === undefined || precioActual === null || precioActual === 0) {
       precioActual = mapaPrecios[keyLower];
     }
+    if (precioActual === undefined || precioActual === null || precioActual === 0) {
+      precioActual = mapaPrecios[keyInvertida];
+    }
+    if (precioActual === undefined || precioActual === null || precioActual === 0) {
+      precioActual = mapaPrecios[keyInvertidaLower];
+    }
     if (precioActual === undefined || precioActual === null) {
-      // Fallback: si no se encuentra en Listas, usar el del Excel de surtidos
-      precioActual = precioStdExcel;
+      // Si no se encuentra en Listas, dejar precio en 0.
+      // NO usar el "Precio Estándar" del Excel de Surtidos como fallback porque
+      // tiene cargados subtotales (cant×precio) en vez de precios unitarios,
+      // lo que genera precios disparatados (ej: TAR. ESTR. mostrando $11M).
+      // El Excel de Listas Maxifer es la fuente única de verdad para precios unitarios.
+      precioActual = 0;
+      // Log para diagnóstico
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('MAXIFER: ítem sin precio en Listas:', productoFam, '|', numero, '(surtido:', codigoSurtido, ')');
+      }
     }
 
     if (!result[codigoSurtido]) {
