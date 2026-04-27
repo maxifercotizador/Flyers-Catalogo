@@ -2872,12 +2872,24 @@ async function maxiferCargarDatos() {
 
     window.MAXIFER_DATOS_CARGADOS = true;
 
-    // CRÍTICO: refrescar la vista activa después de cargar los Excels.
+    // CRÍTICO: refrescar TODAS las vistas después de cargar los Excels.
     // Si el modo (ej: desc=lista) ya hizo render con los precios hardcodeados
     // del HTML antes que terminaran de cargar los Excels, ahora hay que volver
     // a renderizar para que muestre los precios calculados correctos.
-    if (typeof refrescarVistaActiva === 'function') {
-      try { refrescarVistaActiva(); } catch(e) { console.warn('Error refrescando vista:', e); }
+    // refrescarVistaActiva() sólo cubre revista y libro; la grilla necesita
+    // renderGrid() explícito.
+    try {
+      if (typeof renderGrid === 'function' && typeof SURTIDOS_ACTIVOS !== 'undefined') {
+        renderGrid(SURTIDOS_ACTIVOS);
+      }
+      if (typeof refrescarVistaActiva === 'function') {
+        refrescarVistaActiva();
+      }
+      if (typeof renderCarritoBody === 'function') {
+        renderCarritoBody();
+      }
+    } catch(e) {
+      console.warn('Error refrescando vistas tras carga de Excels:', e);
     }
 
     return true;
