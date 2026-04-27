@@ -4612,13 +4612,27 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
   if (key && VENDEDORES[key]) {
     WA_NUMERO = VENDEDORES[key].wa;
   }
-  // Leer modo precio del hash: &desc=46 / &precio=lista / &precio=sin
-  var modoDesc = parseInt(params['desc']) || 0;
-  var modoPrecio = params['precio'] || '';
+  // Leer modo precio del hash. Aceptamos varias formas:
+  //   desc=46         -> precio con 46% de descuento
+  //   desc=lista      -> precio de lista (alias de precio=lista, tolerante)
+  //   desc=sin        -> sin mostrar precios (alias de precio=sin)
+  //   precio=lista    -> precio de lista
+  //   precio=sin      -> sin mostrar precios
+  var rawDesc = String(params['desc'] || '').toLowerCase().trim();
+  var modoDesc = parseInt(rawDesc) || 0;
+  var modoPrecio = String(params['precio'] || '').toLowerCase().trim();
+  // Si desc viene como texto ("lista" / "sin"), tratarlo como modoPrecio
+  if (!modoPrecio && (rawDesc === 'lista' || rawDesc === 'sin')) {
+    modoPrecio = rawDesc;
+  }
 
-  if (modoDesc > 0 || modoPrecio) {
+  // Si el link trae vendedor (wa=...) o cualquier modo de precio definido,
+  // forzamos un comportamiento limpio (sin "heredar" el descuento de visitas previas).
+  var vieneConfigurado = (modoDesc > 0 || modoPrecio || params['wa']);
+
+  if (vieneConfigurado) {
     window.addEventListener('DOMContentLoaded', function() {
-      // Ocultar modal de descuento siempre que venga por link
+      // Ocultar modal de descuento siempre que venga por link configurado
       var overlay = document.getElementById('modalDescuentoOverlay');
       if (overlay) overlay.classList.remove('open');
       // Ocultar campo de descuento en header — el cliente no lo ve
@@ -4661,6 +4675,20 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
         try { guardarDescuento(); } catch(e) {}
         mostrarPrecios = false;
         document.getElementById('appBody').classList.remove('show-precios');
+      } else if (params['wa']) {
+        // Vino por link de vendedor pero SIN modo de precio especificado:
+        // por defecto mostrar PRECIO DE LISTA (no heredar descuento de localStorage).
+        // Esto evita el bug de "a veces aparece con descuento aleatorio".
+        descuentoPct = 0;
+        try { guardarDescuento(); } catch(e) {}
+        var inp3 = document.getElementById('descuentoInput');
+        if (inp3) inp3.value = '';
+        mostrarPrecios = true;
+        document.getElementById('appBody').classList.add('show-precios');
+        document.getElementById('modal').classList.add('show-precios');
+        document.getElementById('carritoBody').classList.add('show-precios');
+        sincronizarBotonesPrecio();
+        refrescarVistaActiva();
       }
     });
   }
