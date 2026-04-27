@@ -2656,8 +2656,11 @@ const MAXIFER_EXCEL_URLS = {
 window.MAXIFER_DATOS_CARGADOS = false;
 
 // Funcion utilitaria: leer Excel desde URL y devolver SheetJS workbook
+// Agrega ?t=timestamp para evitar caché del navegador (siempre descarga la última versión)
 async function maxiferLeerExcel(url) {
-  const resp = await fetch(url);
+  const sep = url.indexOf('?') >= 0 ? '&' : '?';
+  const urlConTimestamp = url + sep + 't=' + Date.now();
+  const resp = await fetch(urlConTimestamp, { cache: 'no-store' });
   if (!resp.ok) throw new Error('No se pudo descargar ' + url + ' (HTTP ' + resp.status + ')');
   const buf = await resp.arrayBuffer();
   return XLSX.read(buf, { type: 'array' });
@@ -3652,19 +3655,6 @@ const SURTIDOS = [
     cant_uniforme: "3 - 10 - 5 piezas de c/u"
   },
   {
-    id: 56,
-    nombre: "Conectores Neumáticos Línea Nueva",
-    codigo: "CON. NEU. NUEV.",
-    precio: 926800,
-    piezas: 164,
-    foto_exhibidor: "./img/s56_exhibidor.webp",
-    foto_card: "./img/s56_card.webp",
-    foto_gavetas: "./img/s56_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "164 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 - 10 - 5 piezas de c/u"
-  },
-  {
     id: 58,
     nombre: "Tornillería Especial + TR Completo",
     codigo: "TR Espec. + Torn.",
@@ -3676,6 +3666,19 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "660 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "5 piezas de c/u"
+  },
+  {
+    id: 56,
+    nombre: "Conectores Neumáticos Línea Nueva",
+    codigo: "CON. NEU. NUEV.",
+    precio: 926800,
+    piezas: 164,
+    foto_exhibidor: "./img/s56_exhibidor.webp",
+    foto_card: "./img/s56_card.webp",
+    foto_gavetas: "./img/s56_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "164 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 - 10 - 5 piezas de c/u"
   }
 ];
 // ── ESTADO ───────────────────────────────────────────────────
@@ -4845,7 +4848,7 @@ function fotosDelSurtido(s) {
 
 // ── FILTRO POR URL ────────────────────────────────────────
 var CODIGOS_FERRETERO = ["PL CH.","RES. LF","RES. LC","RES. LB","RES. LP","RES. COMP.","CHA. PART.","CHA. CH.","GA+CH COMP.","OR. CH.","OR. GR.","ARAND. CH.","ARAND. LP.","ARAN. CO-FI-AL","TAR. ESTR.","CARB. 1","CARB. COMPL.","REGAT.","TOP. TAP. GOMA","INYEC. GAS ENV.","PER. 1","PER. 2","PER. COMP.","TERM. CH.","TEM. COMP.","INTERR. PULSA."];
-var CODIGOS_AUTOMOTOR = ["PL Nac. 160 M.","CL. IMP COM","RES. LA","OR. COMP.","CONEX. ALUM. 1","CONEX. ALUM. 2","Conex. Alum. L. Temp.","Conex. Alum. Mayor Rot.","CONC. PL","CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","BRONCE","RAC. CH.","RAC. GR.","SEEG.","INS.","RET. ARAN.","ALEM.","TERM. NU.","ARAND. INYEC.","UN. ORIENT.","ABRA. GOMA","ESP. ELAS.","ESPARR.","TUER. RAP.","TER. REM.","TR L. Compl.","TR IMP.","TR Espec. + Torn.","TAP. CAR."];
+var CODIGOS_AUTOMOTOR = ["PL Nac. 160 M.","CL. IMP COM","RES. LA","OR. CH.","OR. GR.","OR. COMP.","CONEX. ALUM. 1","CONEX. ALUM. 2","Conex. Alum. L. Temp.","Conex. Alum. Mayor Rot.","CONC. PL","CONC. COMB. Red","CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","BRONCE","RAC. CH.","RAC. GR.","SEEG.","INS.","RET. ARAN.","ALEM.","TERM. CH.","TERM. NU.","TEM. COMP.","ARAND. INYEC.","UN. ORIENT.","ABRA. GOMA","ESP. ELAS.","ESPARR.","TUER. RAP.","TER. REM.","TR L. Compl.","TR IMP.","TR Espec. + Torn.","TAP. CAR."];
 
 var urlParams = new URLSearchParams(window.location.search);
 var tipoParam = (urlParams.get('tipo') || 'completo').toLowerCase();
