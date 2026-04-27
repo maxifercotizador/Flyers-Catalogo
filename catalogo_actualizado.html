@@ -3949,7 +3949,12 @@ function cardHTML(s) {
 // ── NORMALIZAR para búsqueda sin acentos ni mayúsculas ───────
 function normalizar(s) {
   return String(s).toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/['']/g, '')      // quitar apóstrofes (o'ring -> oring)
+    .replace(/[°ºª"""]/g, '')   // quitar grados, comillas
+    .replace(/[\.\,]/g, '')    // quitar puntos y comas
+    .replace(/\s+/g, ' ')      // colapsar espacios múltiples
+    .trim();
 }
 
 // Mapa de sinónimos — traducir términos comunes a lo que realmente está
@@ -4012,36 +4017,81 @@ var SINONIMOS = {
   'bronce':       ['bronce','poliam'],
 };
 
-// Devuelve true si el surtido matchea q, mirando nombre/código/composición.
-function surtidoMatchea(s, q) {
-  if (normalizar(s.nombre).includes(q)) return true;
-  if (normalizar(s.codigo).includes(q)) return true;
-  // Buscar también dentro de la composición (nombres de productos individuales)
-  var comp = COMPOSICION_DATA[s.codigo];
-  if (comp && comp.length) {
-    for (var i = 0; i < comp.length; i++) {
-      if (normalizar(comp[i].d || '').includes(q)) return true;
+// Devuelve un puntaje de relevancia: cuanto mayor, más arriba va.
+// Si no matchea, devuelve 0.
+function surtidoScore(s, q) {
+  var nombre = normalizar(s.nombre);
+  var codigo = normalizar(s.codigo);
+  var score = 0;
+
+  // Match en el nombre
+  if (nombre === q) score = Math.max(score, 1000);                     // exacto
+  else if (nombre.startsWith(q)) score = Math.max(score, 500);         // prefijo
+  else if ((' ' + nombre).indexOf(' ' + q) !== -1) score = Math.max(score, 300); // arranca palabra
+  else if (nombre.indexOf(q) !== -1) score = Math.max(score, 100);     // dentro
+
+  // Match en el código
+  if (codigo === q) score = Math.max(score, 800);
+  else if (codigo.startsWith(q)) score = Math.max(score, 400);
+  else if (codigo.indexOf(q) !== -1) score = Math.max(score, 80);
+
+  // Match en composición (descripción de items)
+  if (score === 0) {
+    var comp = COMPOSICION_DATA[s.codigo];
+    if (comp && comp.length) {
+      for (var i = 0; i < comp.length; i++) {
+        if (normalizar(comp[i].d || '').indexOf(q) !== -1) { score = 10; break; }
+      }
     }
   }
-  return false;
+  return score;
+}
+
+// Devuelve true si el surtido matchea q, mirando nombre/código/composición.
+function surtidoMatchea(s, q) {
+  return surtidoScore(s, q) > 0;
+}
+
+// Función auxiliar de búsqueda usada por todas las vistas (grilla, revista, libro).
+// Devuelve la lista filtrada y ordenada por relevancia.
+function buscarSurtidos(arr, q) {
+  if (!q) return arr;
+  var conScore = arr
+    .map(function(s){ return { s: s, score: surtidoScore(s, q) }; })
+    .filter(function(x){ return x.score > 0; });
+
+  // Sinónimos: exacto o por prefijo
+  var sinonimoMatch = SINONIMOS[q];
+  if (!sinonimoMatch) {
+    for (var key in SINONIMOS) {
+      if (key.indexOf(q) === 0 && q.length >= 3) {
+        sinonimoMatch = SINONIMOS[key];
+        break;
+      }
+    }
+  }
+  if (sinonimoMatch) {
+    var yaIncluidos = {};
+    conScore.forEach(function(x){ yaIncluidos[x.s.id] = true; });
+    arr.forEach(function(s){
+      if (yaIncluidos[s.id]) return;
+      for (var i = 0; i < sinonimoMatch.length; i++) {
+        var altScore = surtidoScore(s, normalizar(sinonimoMatch[i]));
+        if (altScore > 0) {
+          conScore.push({ s: s, score: Math.round(altScore * 0.6) });
+          yaIncluidos[s.id] = true;
+          break;
+        }
+      }
+    });
+  }
+  conScore.sort(function(a, b){ return b.score - a.score; });
+  return conScore.map(function(x){ return x.s; });
 }
 
 function filtrar() {
   const q = normalizar(document.getElementById('searchInput').value.trim());
-  if (!q) { renderGrid(SURTIDOS); return; }
-
-  // Pase 1: búsqueda directa
-  var lista = SURTIDOS.filter(function(s){ return surtidoMatchea(s, q); });
-
-  // Pase 2: sinónimos — si el término es uno conocido y no hubo resultados (o pocos),
-  // expandir la búsqueda usando los términos alternativos.
-  if (lista.length === 0 && SINONIMOS[q]) {
-    var expandidos = SINONIMOS[q];
-    lista = SURTIDOS.filter(function(s){
-      return expandidos.some(function(alt){ return surtidoMatchea(s, normalizar(alt)); });
-    });
-  }
-  renderGrid(lista);
+  renderGrid(buscarSurtidos(SURTIDOS, q));
 }
 
 // ── PRECIOS ──────────────────────────────────────────────────
@@ -4083,13 +4133,13 @@ function togglePreciosVista() { togglePrecios(); }
 function refrescarVistaActiva() {
   if (vistaActual === 'revista') {
     var q = normalizar(document.getElementById('revBuscar').value.trim());
-    var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
+    var lista = buscarSurtidos(SURTIDOS_ACTIVOS, q);
     document.getElementById('revScroll').removeEventListener('scroll', revOnScroll);
     revConstruir(lista);
   } else if (vistaActual === 'libro') {
     var idxGuardado = libroActual;
     var q = normalizar(document.getElementById('libroBuscar').value.trim());
-    var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
+    var lista = buscarSurtidos(SURTIDOS_ACTIVOS, q);
     libroInit(lista);
     if (idxGuardado < lista.length) {
       libroActual = idxGuardado;
@@ -4968,7 +5018,7 @@ function actualizarFlechasRev() {
 
 function revFiltrar() {
   var q = normalizar(document.getElementById('revBuscar').value.trim());
-  var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
+  var lista = buscarSurtidos(SURTIDOS_ACTIVOS, q);
   document.getElementById('revScroll').removeEventListener('scroll', revOnScroll);
   revConstruir(lista);
 }
@@ -5157,7 +5207,7 @@ function libroNav(dir) {
 
 function libroFiltrar() {
   var q = normalizar(document.getElementById('libroBuscar').value.trim());
-  var lista = q ? SURTIDOS_ACTIVOS.filter(function(s){ return normalizar(s.nombre).includes(q) || normalizar(s.codigo).includes(q); }) : SURTIDOS_ACTIVOS;
+  var lista = buscarSurtidos(SURTIDOS_ACTIVOS, q);
   libroInit(lista);
 }
 
