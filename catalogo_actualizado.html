@@ -2871,6 +2871,15 @@ async function maxiferCargarDatos() {
     }
 
     window.MAXIFER_DATOS_CARGADOS = true;
+
+    // CRÍTICO: refrescar la vista activa después de cargar los Excels.
+    // Si el modo (ej: desc=lista) ya hizo render con los precios hardcodeados
+    // del HTML antes que terminaran de cargar los Excels, ahora hay que volver
+    // a renderizar para que muestre los precios calculados correctos.
+    if (typeof refrescarVistaActiva === 'function') {
+      try { refrescarVistaActiva(); } catch(e) { console.warn('Error refrescando vista:', e); }
+    }
+
     return true;
   } catch (e) {
     console.error('Error cargando datos MAXIFER:', e);
