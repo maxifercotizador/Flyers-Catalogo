@@ -2723,28 +2723,35 @@ async function maxiferLeerExcel(url) {
   return XLSX.read(buf, { type: 'array' });
 }
 
-// Construye un mapa "Numero|Producto" -> Precio de Lista desde Listas_Maxifer
-function maxiferMapPrecios(workbookListas) {
+// Construye dos mapas "Producto|Numero" -> Precio y -> Descripción desde Listas_Maxifer.
+// Soporta nombres de columnas viejos y nuevos:
+//   Precio de Lista | Precio
+//   Descripcion     | Descripción
+function maxiferMapListas(workbookListas) {
   const sheet = workbookListas.Sheets['LISTAS Y BD'];
   if (!sheet) throw new Error('Falta la hoja "LISTAS Y BD" en Listas Maxifer.xlsx');
   const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-  const map = {};
+  const precios = {};
+  const descripciones = {};
   for (const r of rows) {
     const numero = String(r['Numero'] || '').trim();
     const producto = String(r['Producto'] || '').trim();
-    const precio = parseFloat(r['Precio de Lista']) || 0;
+    const precio = parseFloat(r['Precio'] !== undefined && r['Precio'] !== '' ? r['Precio'] : r['Precio de Lista']) || 0;
+    const desc = String(r['Descripción'] || r['Descripcion'] || '').trim();
     if (!numero && !producto) continue;
     // Clave compuesta: Producto|Numero (Producto = familia, Numero = código del item)
     const key = producto + '|' + numero;
-    map[key] = precio;
+    precios[key] = precio;
+    descripciones[key] = desc;
     // Indexar TAMBIÉN en lowercase para matching case-insensitive
     // (resuelve diferencias como "5 X 30" en Surtidos vs "5 x 30" en Listas)
     const keyLower = producto.toLowerCase() + '|' + numero.toLowerCase();
     if (keyLower !== key) {
-      map[keyLower] = precio;
+      precios[keyLower] = precio;
+      descripciones[keyLower] = desc;
     }
   }
-  return map;
+  return { precios, descripciones };
 }
 
 // Construye COMPOSICION_DATA desde Precio_Surtidos.xlsx hoja "BD"
@@ -2784,10 +2791,13 @@ function maxiferGetComposicion(composicion, codigoHTML) {
   return null;
 }
 
-function maxiferConstruirComposicion(workbookSurtidos, mapaPrecios) {
+function maxiferConstruirComposicion(workbookSurtidos, mapaListas) {
   const sheet = workbookSurtidos.Sheets['BD'];
   if (!sheet) throw new Error('Falta la hoja "BD" en Precio Surtidos.xlsx');
   const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+  const mapaPrecios = mapaListas.precios;
+  const mapaDesc = mapaListas.descripciones;
 
   const result = {};
   const normIndex = {};  // codigo normalizado -> codigo original del Excel
@@ -2796,7 +2806,8 @@ function maxiferConstruirComposicion(workbookSurtidos, mapaPrecios) {
     if (!codigoSurtido) continue;
 
     const numero = String(r['N°'] || r['Numero'] || r['N'] || '').trim();
-    const descripcion = String(r['Descripción'] || r['Descripcion'] || '').trim();
+    // El Excel de Surtidos nuevo ya no trae 'Descripción'; se obtiene del lookup de Listas.
+    let descripcion = String(r['Descripción'] || r['Descripcion'] || '').trim();
     const productoFam = String(r['Producto'] || '').trim();
     const cantStd = parseFloat(r['Cantidad stándar'] || r['Cantidad standar'] || r['Cantidad estándar'] || 0) || 0;
     const cantRed = parseFloat(r['Cantidad Reducidas'] || r['Cantidad Reducida'] || 0) || 0;
@@ -2811,6 +2822,12 @@ function maxiferConstruirComposicion(workbookSurtidos, mapaPrecios) {
     const keyLower = productoFam.toLowerCase() + '|' + numero.toLowerCase();
     const keyInvertida = numero + '|' + productoFam;
     const keyInvertidaLower = numero.toLowerCase() + '|' + productoFam.toLowerCase();
+
+    // Fallback de descripción: si el Excel de Surtidos no la trae, buscarla en Listas.
+    if (!descripcion) {
+      descripcion = mapaDesc[keyExacta] || mapaDesc[keyLower] || mapaDesc[keyInvertida] || mapaDesc[keyInvertidaLower] || '';
+    }
+
     let precioActual = mapaPrecios[keyExacta];
     if (precioActual === undefined || precioActual === null || precioActual === 0) {
       precioActual = mapaPrecios[keyLower];
@@ -2915,8 +2932,8 @@ async function maxiferCargarDatos() {
     const wbSurtidos = await maxiferLeerExcel(MAXIFER_EXCEL_URLS.surtidos);
 
     if (txtEl) txtEl.textContent = 'Procesando datos...';
-    const mapaPrecios = maxiferMapPrecios(wbListas);
-    const composicion = maxiferConstruirComposicion(wbSurtidos, mapaPrecios);
+    const mapaListas = maxiferMapListas(wbListas);
+    const composicion = maxiferConstruirComposicion(wbSurtidos, mapaListas);
 
     // Asignar a la variable global (era let, no const, así se puede reasignar)
     COMPOSICION_DATA = composicion;
