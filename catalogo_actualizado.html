@@ -171,6 +171,38 @@
       font-size: 13px;
     }
 
+    /* Badge de vendedor (esquina superior derecha) */
+    .vend-badge {
+      position: fixed; top: 12px; right: 12px; z-index: 250;
+      background: rgba(255,255,255,0.95); color: #1a3a7a;
+      border: 1px solid rgba(26,58,122,.18);
+      border-radius: 12px; padding: 8px 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.12);
+      font-size: 12px; line-height: 1.25; display: none;
+    }
+    .vend-badge .vb-label {
+      font-size: 9px; letter-spacing: 1px;
+      text-transform: uppercase; color: #888; font-weight: 700;
+    }
+    .vend-badge .vb-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px; font-weight: 800; color: #1a2740;
+    }
+    .vend-badge.show { display: block; }
+
+    /* Botón flotante WhatsApp del vendedor (encima del carrito) */
+    .vend-wa-fab {
+      position: fixed; bottom: 88px; right: 16px; z-index: 200;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #25d366; color: white; border: none;
+      box-shadow: 0 6px 20px rgba(37,211,102,0.45);
+      display: none; align-items: center; justify-content: center;
+      font-size: 26px; cursor: pointer; text-decoration: none;
+      transition: transform .15s;
+    }
+    .vend-wa-fab:hover { transform: scale(1.06); }
+    .vend-wa-fab.show { display: flex; }
+
     /* CARRITO FLOTANTE */
     .carrito-fab {
       position: fixed;
@@ -2464,6 +2496,13 @@
   <button class="btn-panel-agregar" id="btnPanelAgregar"></button>
 </div>
 
+<!-- BADGE VENDEDOR + FAB WHATSAPP (solo si hay #wa= válido) -->
+<div class="vend-badge" id="vendBadge">
+  <div class="vb-label">Vendedor</div>
+  <div class="vb-name" id="vendBadgeName"></div>
+</div>
+<a class="vend-wa-fab" id="vendWaFab" target="_blank" rel="noopener" aria-label="WhatsApp del vendedor">💬</a>
+
 <!-- FAB CARRITO -->
 <button class="carrito-fab" id="carritoFab" onclick="abrirCarrito()">
   🛒 Ver pedido
@@ -4616,11 +4655,12 @@ function vaciarCarrito() {
 // ── NÚMERO WHATSAPP MAXIFER ───────────────────────────────
 // ── VENDEDORES ───────────────────────────────────────────
 var VENDEDORES = {
-  'Maxi':    { nombre: 'Maximiliano Gordillo', wa: '5491150408378' },
-  'Micky':   { nombre: 'Micky',                wa: '5491164865752' },
-  'Victor':  { nombre: 'Victor Gordillo',       wa: '5491149367336' },
-  'Nadia':   { nombre: 'Nadia',                 wa: '5491128243870' },
-  'Eduardo': { nombre: 'Eduardo',               wa: '5492634688163' },
+  'Maxi':     { nombre: 'Maximiliano Gordillo', wa: '5491150408378' },
+  'Micky':    { nombre: 'Micky',                wa: '5491164865752' },
+  'Victor':   { nombre: 'Victor Gordillo',      wa: '5491149367336' },
+  'Nadia':    { nombre: 'Nadia',                wa: '5491128243870' },
+  'Eduardo':  { nombre: 'Eduardo',              wa: '5492634688163' },
+  'Federico': { nombre: 'Federico',             wa: '5493516017663' },
 };
 
 var WA_NUMERO = '5491150408378'; // default: Maxi
@@ -4636,6 +4676,21 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
   var key = params['wa'];
   if (key && VENDEDORES[key]) {
     WA_NUMERO = VENDEDORES[key].wa;
+    // Mostrar badge "Vendedor: xxx" y botón flotante de WhatsApp del vendedor
+    window.addEventListener('DOMContentLoaded', function() {
+      var v = VENDEDORES[key];
+      var nameEl = document.getElementById('vendBadgeName');
+      var badge  = document.getElementById('vendBadge');
+      var fab    = document.getElementById('vendWaFab');
+      if (nameEl && badge) {
+        nameEl.textContent = v.nombre || key;
+        badge.classList.add('show');
+      }
+      if (fab) {
+        fab.href = 'https://wa.me/' + v.wa + '?text=' + encodeURIComponent('Hola ' + (v.nombre || key) + ', te consulto por el catálogo MAXIFER.');
+        fab.classList.add('show');
+      }
+    });
   }
   // Leer modo precio del hash. Aceptamos varias formas:
   //   desc=46         -> precio con 46% de descuento
