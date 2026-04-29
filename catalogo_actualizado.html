@@ -2704,9 +2704,11 @@ function getGrupo(s) {
 // Si Max actualiza los Excel en GitHub, los próximos usuarios que abran
 // el catálogo (o refresquen la página) verán los precios nuevos.
 
+// Los Excel viven en el repo `Presupuestador` (fuente única de verdad).
+// Cuando Max sube un xlsx nuevo ahi, el catalogo de exhibidores lo lee al toque.
 const MAXIFER_EXCEL_URLS = {
-  listas: './Listas Maxifer.xlsx',
-  surtidos: './Precio Surtidos.xlsx'
+  listas: 'https://raw.githubusercontent.com/maxifercotizador/Presupuestador/main/Listas%20Maxifer.xlsx',
+  surtidos: 'https://raw.githubusercontent.com/maxifercotizador/Presupuestador/main/Precio%20Surtidos.xlsx'
 };
 
 // Estado global de carga
