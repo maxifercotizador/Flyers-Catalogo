@@ -403,17 +403,22 @@
     }
     .modal-title {
       flex: 1;
+      text-align: center;
+      padding-left: 44px; /* compensa el botón cerrar (32px + gap 12px) para centrar el título visualmente */
     }
     .modal-title h2 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 20px;
+      font-size: 26px;
       font-weight: 800;
       line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .modal-title .modal-cod {
-      font-size: 11px;
-      opacity: 0.65;
-      margin-top: 3px;
+      font-size: 14px;
+      opacity: 0.8;
+      margin-top: 5px;
+      font-weight: 600;
     }
     .modal-close {
       background: rgba(255,255,255,0.15);
@@ -2594,6 +2599,84 @@ const MODELOS_DIFERENTES = {
   "ABRA. GOMA": 36,
 };
 
+// ── CANTIDADES POR GAVETA (POR SURTIDO) ───────────────────────
+// Fuente: Precio_Surtidos.xlsx (hoja RESUMEN, columna H "Cantidades
+// del Surtido"). Muestra cuántas piezas trae cada gaveta del surtido.
+// Si vienen varios números separados por " - " significa que cada
+// gaveta tiene una cantidad distinta (ver composición del surtido).
+const CANTIDADES_GAVETAS = {
+  "PL CH.": "5",
+  "PL Nac. 160 M.": "3",
+  "CL. IMP COM": "3",
+  "RES. LF": "3",
+  "RES. LC": "3",
+  "RES. LB": "2",
+  "RES. LA": "2",
+  "RES. LP": "2",
+  "RES. COMP.": "2",
+  "CHA. PART.": "49 - 29 - 19",
+  "CHA. CH.": "5 - 3",
+  "GA+CH COMP.": "2 - 4 - 1",
+  "OR. CH.": "19 - 9",
+  "OR. GR.": "9 - 4",
+  "OR. COMP.": "24 - 9 - 4 - 19",
+  "CONEX. ALUM. 1": "2",
+  "CONEX. ALUM. 2": "1",
+  "Conex. Alum. L. Temp.": "1 - -1",
+  "Conex. Alum. Mayor Rot.": "1",
+  "CONC. PL": "4",
+  "CONC. COMB. Red": "2",
+  "CON. NEU.": "2 - 9 - 4 - 3",
+  "CON. NEU. COMPL.": "2 - 9 - 4 - 1",
+  "CON. NEU. NUEV.": "2 - 9 - 4",
+  "BRONCE": "4 - 2",
+  "RAC. CH.": "4 - 1",
+  "RAC. GR.": "2 - 1 - -1",
+  "TR Espec. + Torn.": "4",
+  "TR L. Compl.": "5",
+  "TR IMP.": "5",
+  "TER. REM.": "19 - 9",
+  "TUER. RAP.": "10 - 20",
+  "TAP. CAR.": "3",
+  "ARAND. CH.": "20 - 10",
+  "ARAND. LP.": "9",
+  "ARAN. CO-FI-AL": "19 - 9 - 29",
+  "TOP. TAP. GOMA": "4",
+  "SEEG.": "9 - 4",
+  "ALEM.": "5",
+  "RET. ARAN.": "49 - 24",
+  "INTERR. PULSA.": "2",
+  "TERM. CH.": "49 - 5 - 19 - 9",
+  "TERM. NU.": "5 - 3 - 2",
+  "INS.": "4",
+  "TEM. COMP.": "49 - 5 - 19 - 9 - 3 - 2",
+  "TAR. ESTR.": "119 - 99",
+  "ESP. ELAS.": "19 - 9 - 4 - 2",
+  "ESPARR.": "5 - 4",
+  "CARB. 1": "1,5 - 1",
+  "CARB. COMPL.": "1,5",
+  "INYEC. GAS ENV.": "4 - 2 - 3",
+  "PER. 1": "2",
+  "PER. 2": "2",
+  "PER. COMP.": "2",
+  "ARAND. INYEC.": "10",
+  "UN. ORIENT.": "3 - 2",
+  "REGAT.": "9 - 6 - 5",
+  "ABRA. GOMA": "6",
+};
+
+// Devuelve el texto a insertar en "Incluye" según la cantidad por
+// gaveta del código de surtido. Devuelve null si no hay dato.
+function textoPiezasEnGavetas(codigo) {
+  const v = CANTIDADES_GAVETAS[codigo];
+  if (v == null) return null;
+  const txt = String(v).trim();
+  if (txt.indexOf(' - ') >= 0) {
+    return txt + ' Piezas en Gavetas (Ver composición abajo)';
+  }
+  return txt + (txt === '1' ? ' Pieza en Gavetas' : ' Piezas en Gavetas');
+}
+
 // ── VERSIÓN REDUCIDA POR SURTIDO ──────────────────────────────
 // Fuente: Precio_Surtidos.xlsx (hoja RESUMEN). Misma cantidad de
 // modelos y gavetas que la estándar, pero con menos stock inicial
@@ -4305,9 +4388,11 @@ function abrirModal(id) {
   const piezasBase    = modoReducido && red ? red.piezas : s.piezas;
   const precioFinal   = precioConDescuento(precioBase, s.codigo);
 
+  const tieneDescuentoAplicado = (descuentoPct > 0) || !!DESCUENTOS_FIJOS[s.codigo];
+  const precioLabelBase = tieneDescuentoAplicado ? 'Precio Neto Final' : 'Precio de Lista';
   const precioHtml = `
     <div class="precio-modal${modoReducido && red ? ' reducido' : ''}">
-      <div class="precio-label">Precio${modoReducido && red ? ' (stock reducido)' : ''}</div>
+      <div class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock reducido)' : ''}</div>
       <div class="precio-valor">${formatPrecio(precioFinal)}</div>
       <div class="precio-iva">+ IVA</div>
     </div>`;
@@ -4348,6 +4433,13 @@ function abrirModal(id) {
         break;
       }
     }
+  }
+  // Insertar "Piezas en Gavetas" como tercer item (después de
+  // exhibidor y gavetas codificadas) si tenemos el dato del Excel.
+  const txtGav = textoPiezasEnGavetas(s.codigo);
+  if (txtGav) {
+    const idxIns = Math.min(2, incluyeBase.length);
+    incluyeBase.splice(idxIns, 0, txtGav);
   }
   const cantModelos = MODELOS_DIFERENTES[s.codigo];
   if (cantModelos) {

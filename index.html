@@ -361,7 +361,7 @@ body {
       <div class="cat-icon">📚</div>
       <div class="cat-info">
         <div class="cat-titulo">Catálogo Completo</div>
-        <div class="cat-desc">Todos los surtidos MAXIFER — ferretería, repuestos y más</div>
+        <div class="cat-desc">Todos los surtidos MAXIFER — Ferretería, Bulonería, Repuestos Automotor y más</div>
         <div class="cat-tags">
           <span class="tag" style="background:#3b82f6">Clips</span>
           <span class="tag" style="background:#10b981">Resortes</span>
@@ -376,26 +376,6 @@ body {
   </a>
 
   <div class="divider">— — —</div>
-
-  <a class="cat-card" id="linkFerretero" href="#">
-    <div class="cat-banner" style="background: linear-gradient(90deg, #1a5e2a, #2d9e4a)"></div>
-    <div class="cat-body">
-      <div class="cat-icon">🔧</div>
-      <div class="cat-info">
-        <div class="cat-titulo">Catálogo Ferretero</div>
-        <div class="cat-desc">Productos para ferreterías y buloneras</div>
-        <div class="cat-tags">
-          <span class="tag" style="background:#10b981">Resortes</span>
-          <span class="tag" style="background:#ef4444">Chavetas</span>
-          <span class="tag" style="background:#8b5cf6">Arandelas</span>
-          <span class="tag" style="background:#374151">Carbones</span>
-          <span class="tag" style="background:#ec4899">Perillas</span>
-        </div>
-      </div>
-      <div class="cat-arrow">›</div>
-    </div>
-    <div class="cat-footer">🔩 Ferretería · Bulonería</div>
-  </a>
 
   <a class="cat-card" id="linkAutomotor" href="#">
     <div class="cat-banner" style="background: linear-gradient(90deg, #7c2d12, #c2410c)"></div>
@@ -488,7 +468,6 @@ if (waKey) {
   if (precioKey)    catSuffix += '&precio=' + precioKey;
 }
 document.getElementById('linkCompleto').href   = 'catalogo_actualizado.html?tipo=completo'  + catSuffix;
-document.getElementById('linkFerretero').href  = 'catalogo_actualizado.html?tipo=ferretero' + catSuffix;
 document.getElementById('linkAutomotor').href  = 'catalogo_actualizado.html?tipo=automotor' + catSuffix;
 
 // Badge de vendedor + botón flotante WhatsApp (solo si el link trae vendedor válido)
@@ -605,13 +584,6 @@ if (carTotal > 0) {
           <div class="vend-dest-info">
             <div class="vend-dest-title">Catálogo Completo</div>
             <div class="vend-dest-sub">Todos los surtidos MAXIFER</div>
-          </div>
-        </button>
-        <button class="vend-dest-btn" data-tipo="ferretero" onclick="selDest(this)">
-          <span class="vend-dest-icon">🔧</span>
-          <div class="vend-dest-info">
-            <div class="vend-dest-title">Catálogo Ferretero</div>
-            <div class="vend-dest-sub">Ferreterías y buloneras</div>
           </div>
         </button>
         <button class="vend-dest-btn" data-tipo="automotor" onclick="selDest(this)">
