@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview · 3 opciones de fotos en el modal</title>
+<style>
+  :root{
+    --azul:#1e3a8a;
+    --azul-pale:#eff6ff;
+    --gris-bg:#f3f4f6;
+    --gris-text:#374151;
+    --gris-muted:#6b7280;
+    --borde:#e5e7eb;
+    --naranja:#f97316;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    padding:24px 12px 80px;
+    background:#e5e7eb;
+    font-family:system-ui,-apple-system,sans-serif;
+    color:var(--gris-text);
+  }
+  h1{
+    text-align:center;
+    margin:0 0 8px;
+    font-size:22px;
+    color:var(--azul);
+  }
+  .intro{
+    text-align:center;
+    color:var(--gris-muted);
+    margin-bottom:28px;
+    font-size:14px;
+  }
+  .grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+    justify-content:center;
+    align-items:flex-start;
+  }
+  .mockup-col{
+    width:380px;
+    max-width:100%;
+  }
+  .mockup-tag{
+    background:var(--azul);
+    color:#fff;
+    font-weight:800;
+    font-size:14px;
+    text-align:center;
+    padding:8px 12px;
+    border-radius:10px 10px 0 0;
+    letter-spacing:.5px;
+  }
+  .mockup-desc{
+    background:#fff;
+    border-left:1px solid var(--borde);
+    border-right:1px solid var(--borde);
+    padding:10px 14px;
+    font-size:12px;
+    color:var(--gris-muted);
+    line-height:1.4;
+    border-bottom:1px solid var(--borde);
+  }
+
+  /* Modal "fake" */
+  .modal{
+    background:#fff;
+    border-radius:0 0 16px 16px;
+    overflow:hidden;
+    box-shadow:0 20px 40px rgba(0,0,0,.18);
+  }
+  .modal-header{
+    background:var(--azul);
+    color:#fff;
+    padding:14px 16px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .modal-title{
+    flex:1;
+    text-align:center;
+    padding-left:42px;
+  }
+  .modal-title h2{
+    font-size:22px;
+    font-weight:800;
+    margin:0;
+    text-transform:uppercase;
+    line-height:1.1;
+    letter-spacing:.5px;
+  }
+  .modal-cod{
+    font-size:13px;
+    margin-top:4px;
+    opacity:.85;
+    font-weight:600;
+  }
+  .modal-close{
+    background:rgba(255,255,255,.15);
+    width:30px;height:30px;
+    border-radius:50%;
+    color:#fff;
+    border:none;
+    font-size:16px;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .modal-body{padding:16px}
+  .foto-label{
+    font-size:10px;
+    color:var(--gris-muted);
+    font-weight:600;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    margin-top:6px;
+    text-align:center;
+  }
+  .precio-modal{
+    background:var(--azul);
+    color:#fff;
+    border-radius:10px;
+    padding:12px 14px;
+    margin-top:14px;
+  }
+  .precio-label{
+    font-size:11px;
+    opacity:.65;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+  }
+  .precio-valor{
+    font-size:26px;
+    font-weight:800;
+  }
+  .precio-iva{font-size:11px;opacity:.65}
+
+  /* ---------- OPCIÓN A: vertical, exhibidor full + gaveteros full ---------- */
+  .opA .foto-exhibidor{
+    width:100%;
+    background:var(--gris-bg);
+    border-radius:10px;
+    overflow:hidden;
+    aspect-ratio: 1400 / 812; /* ratio real del exhibidor */
+  }
+  .opA .foto-exhibidor img{
+    width:100%;height:100%;
+    object-fit:contain;
+    background:#fafafa;
+  }
+  .opA .foto-gaveteros{
+    width:100%;
+    background:var(--gris-bg);
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:14px;
+    aspect-ratio: 1050 / 1400; /* ratio real */
+    max-height:340px;
+  }
+  .opA .foto-gaveteros img{
+    width:100%;height:100%;
+    object-fit:contain;
+    background:#fafafa;
+  }
+
+  /* ---------- OPCIÓN B: exhibidor full + gaveteros como banda ---------- */
+  .opB .foto-exhibidor{
+    width:100%;
+    background:var(--gris-bg);
+    border-radius:10px;
+    overflow:hidden;
+    aspect-ratio: 1400 / 812;
+  }
+  .opB .foto-exhibidor img{
+    width:100%;height:100%;
+    object-fit:contain;
+    background:#fafafa;
+  }
+  .opB .foto-gaveteros{
+    width:100%;
+    background:var(--gris-bg);
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:14px;
+    height:140px;
+  }
+  .opB .foto-gaveteros img{
+    width:100%;height:100%;
+    object-fit:contain;
+    background:#fafafa;
+  }
+
+  /* ---------- OPCIÓN C: carrusel ---------- */
+  .opC .carrusel{
+    position:relative;
+    width:100%;
+    background:var(--gris-bg);
+    border-radius:10px;
+    overflow:hidden;
+    aspect-ratio: 4 / 3;
+  }
+  .opC .carrusel img{
+    width:100%;height:100%;
+    object-fit:contain;
+    background:#fafafa;
+    display:none;
+  }
+  .opC .carrusel img.active{display:block}
+  .opC .car-btn{
+    position:absolute;
+    top:50%;transform:translateY(-50%);
+    background:rgba(255,255,255,.9);
+    border:1px solid var(--borde);
+    width:34px;height:34px;
+    border-radius:50%;
+    font-size:18px;font-weight:800;
+    color:var(--azul);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+  }
+  .opC .car-btn.prev{left:8px}
+  .opC .car-btn.next{right:8px}
+  .opC .car-dots{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-top:10px;
+  }
+  .opC .car-dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:#cbd5e1;
+    cursor:pointer;
+    border:none;
+  }
+  .opC .car-dot.active{background:var(--azul);width:22px;border-radius:4px}
+  .opC .car-counter{
+    position:absolute;
+    top:8px;right:8px;
+    background:rgba(0,0,0,.55);
+    color:#fff;
+    font-size:11px;
+    font-weight:600;
+    padding:3px 8px;
+    border-radius:12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>3 opciones para mostrar las fotos del surtido</h1>
+<div class="intro">Comparativa con el surtido <b>Clips Plásticos Básico</b>. El exhibidor siempre se ve entero en las 3.</div>
+
+<div class="grid">
+
+  <!-- ===================== OPCIÓN A ===================== -->
+  <div class="mockup-col">
+    <div class="mockup-tag">OPCIÓN A · Vertical estilo PDF</div>
+    <div class="mockup-desc">Exhibidor a todo el ancho arriba, gaveteros a todo el ancho abajo. Ambos en su proporción natural.</div>
+    <div class="modal opA">
+      <div class="modal-header">
+        <div class="modal-title">
+          <h2>Clips Plásticos Básico</h2>
+          <div class="modal-cod">Código: PL CH.</div>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="foto-exhibidor">
+          <img src="img/s54_exhibidor.webp" alt="Exhibidor">
+        </div>
+        <div class="foto-label">Exhibidor</div>
+
+        <div class="foto-gaveteros">
+          <img src="img/s54_gavetas.webp" alt="Gaveteros">
+        </div>
+        <div class="foto-label">Gaveteros</div>
+
+        <div class="precio-modal">
+          <div class="precio-label">Precio de Lista</div>
+          <div class="precio-valor">$ 277.026</div>
+          <div class="precio-iva">+ IVA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== OPCIÓN B ===================== -->
+  <div class="mockup-col">
+    <div class="mockup-tag">OPCIÓN B · Exhibidor protagonista</div>
+    <div class="mockup-desc">Exhibidor enorme arriba (como A); abajo los gaveteros en una banda más compacta para dejar el precio más cerca.</div>
+    <div class="modal opB">
+      <div class="modal-header">
+        <div class="modal-title">
+          <h2>Clips Plásticos Básico</h2>
+          <div class="modal-cod">Código: PL CH.</div>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="foto-exhibidor">
+          <img src="img/s54_exhibidor.webp" alt="Exhibidor">
+        </div>
+        <div class="foto-label">Exhibidor · 3 fotos</div>
+
+        <div class="foto-gaveteros">
+          <img src="img/s54_gavetas.webp" alt="Gaveteros">
+        </div>
+        <div class="foto-label">Gaveteros</div>
+
+        <div class="precio-modal">
+          <div class="precio-label">Precio de Lista</div>
+          <div class="precio-valor">$ 277.026</div>
+          <div class="precio-iva">+ IVA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== OPCIÓN C ===================== -->
+  <div class="mockup-col">
+    <div class="mockup-tag">OPCIÓN C · Carrusel pantalla completa</div>
+    <div class="mockup-desc">Una sola foto a la vez ocupando casi todo el ancho. Se cambia con flechitas o tocando los puntitos. Lleva indicador 1/2.</div>
+    <div class="modal opC">
+      <div class="modal-header">
+        <div class="modal-title">
+          <h2>Clips Plásticos Básico</h2>
+          <div class="modal-cod">Código: PL CH.</div>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="carrusel" id="carrC">
+          <img src="img/s54_exhibidor.webp" class="active" alt="Exhibidor">
+          <img src="img/s54_gavetas.webp" alt="Gaveteros">
+          <button class="car-btn prev" onclick="navC(-1)">‹</button>
+          <button class="car-btn next" onclick="navC(1)">›</button>
+          <div class="car-counter" id="carCounter">1 / 2 · Exhibidor</div>
+        </div>
+        <div class="car-dots" id="carDots">
+          <button class="car-dot active" onclick="goC(0)"></button>
+          <button class="car-dot" onclick="goC(1)"></button>
+        </div>
+
+        <div class="precio-modal">
+          <div class="precio-label">Precio de Lista</div>
+          <div class="precio-valor">$ 277.026</div>
+          <div class="precio-iva">+ IVA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var labelsC = ['Exhibidor', 'Gaveteros'];
+  var idxC = 0;
+  function paintC(){
+    var imgs = document.querySelectorAll('#carrC img');
+    var dots = document.querySelectorAll('#carDots .car-dot');
+    imgs.forEach(function(im,i){ im.classList.toggle('active', i===idxC); });
+    dots.forEach(function(d,i){ d.classList.toggle('active', i===idxC); });
+    document.getElementById('carCounter').textContent = (idxC+1) + ' / ' + imgs.length + ' · ' + labelsC[idxC];
+  }
+  function navC(d){ idxC = (idxC + d + 2) % 2; paintC(); }
+  function goC(i){ idxC = i; paintC(); }
+</script>
+
+</body>
+</html>
