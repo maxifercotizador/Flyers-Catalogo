@@ -306,17 +306,23 @@
     .surtido-card:active { transform: scale(0.97); }
     .surtido-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
 
+    /* La card se adapta al exhibidor: cada imagen impone su propio
+       alto según el ratio natural (no recorta nada). Se reserva un
+       min-height mientras la imagen carga para evitar saltos. */
     .card-img-wrap {
       width: 100%;
-      aspect-ratio: 1/1;
       background: #fff;
       overflow: hidden;
       position: relative;
+      min-height: 80px;
     }
     .card-img-wrap img {
       width: 100%;
-      height: 100%;
-      object-fit: contain;
+      height: auto;
+      display: block;
+    }
+    .card-img-wrap .card-img-placeholder {
+      aspect-ratio: 4/3;
     }
     .card-img-placeholder {
       width: 100%;
@@ -4093,7 +4099,9 @@ function renderGrid(lista) {
 }
 
 function cardHTML(s) {
-  const foto = s.foto_card || s.foto_exhibidor;
+  // Priorizamos el exhibidor en la card del listado: queda mucho más
+  // limpio que el screenshot del PDF (sin headers/footers/page nums).
+  const foto = s.foto_exhibidor || s.foto_card;
   const enCarrito = carrito.some(c => c.id === s.id);
   const esFav = esFavorito(s.id);
   const badge = BADGES[s.id];
