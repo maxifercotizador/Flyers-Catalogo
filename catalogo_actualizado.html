@@ -6,6 +6,36 @@
   <title>Catálogo MAXIFER</title>
   <meta name="description" content="Catálogo MAXIFER · Surtidos · Fábrica Importadora">
 
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8QLJVZT4X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-K8QLJVZT4X');
+
+    // Evento custom: apertura del catálogo con datos del link
+    (function() {
+      try {
+        var h = (location.hash || '').replace('#','');
+        var params = {};
+        h.split('&').forEach(function(p) {
+          var kv = p.split('=');
+          if (kv.length === 2) params[kv[0]] = decodeURIComponent(kv[1]);
+        });
+        var qs = new URLSearchParams(location.search);
+        var modoPrecio = params.desc && +params.desc > 0
+          ? ('descuento_' + params.desc)
+          : (params.precio || 'lista');
+        gtag('event', 'catalogo_open', {
+          vendedor:    params.wa  || '(directo)',
+          modo_precio: modoPrecio,
+          tipo_catalogo: qs.get('tipo') || '(no_seteado)'
+        });
+      } catch(e) {}
+    })();
+  </script>
+
   <!-- Favicon -->
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
@@ -4725,7 +4755,13 @@ function toggleCarritoCard(id, event) {
   const s = SURTIDOS.find(x => x.id === id);
   if (!s) return;
   const idx = carrito.findIndex(c => c.id === id);
-  if (idx >= 0) { carrito.splice(idx, 1); } else { carrito.push(s); vibrar(); mostrarToast('✅ ' + s.nombre + ' agregado'); }
+  if (idx >= 0) {
+    carrito.splice(idx, 1);
+    if (window.gtag) gtag('event', 'pedido_remove', { surtido_id: s.id, codigo: s.codigo });
+  } else {
+    carrito.push(s); vibrar(); mostrarToast('✅ ' + s.nombre + ' agregado');
+    if (window.gtag) gtag('event', 'pedido_add', { surtido_id: s.id, codigo: s.codigo, nombre: s.nombre });
+  }
   actualizarFab();
   const enCarrito = carrito.some(c => c.id === id);
   const btn = document.getElementById('cardBtn' + id);
@@ -5027,6 +5063,16 @@ function enviarWhatsApp() {
   // Helper para obtener el precio y piezas reales según versión
   function getPrecio(c) { return c._reducido ? c._precioRed : c.precio; }
   function getPiezas(c) { return c._reducido ? c._piezasRed : c.piezas; }
+
+  // GA4: pedido enviado por WhatsApp
+  if (window.gtag) {
+    var totalLista = carrito.reduce(function(s, c){ return s + (getPrecio(c) || 0); }, 0);
+    gtag('event', 'pedido_whatsapp', {
+      items: carrito.length,
+      total_lista: totalLista,
+      descuento_pct: descuentoPct
+    });
+  }
 
   var ahora = new Date();
   var fecha = ahora.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
@@ -6019,6 +6065,15 @@ function maxiferIniciarCatalogo() {
     abrirModal = function(id) {
       _origAbrirModal(id);
       hPush('modal');
+      // GA4: ver detalle de surtido
+      if (window.gtag) {
+        var s = SURTIDOS.find(function(x){ return x.id === id; });
+        if (s) gtag('event', 'surtido_view', {
+          surtido_id: s.id,
+          codigo:     s.codigo,
+          nombre:     s.nombre
+        });
+      }
     };
 
     var _origAbrirCarrito = abrirCarrito;

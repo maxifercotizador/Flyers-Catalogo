@@ -6,6 +6,15 @@
 <title>MAXIFER — Catálogos</title>
 <meta name="description" content="Catálogo MAXIFER · Surtidos · Fábrica Importadora">
 
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8QLJVZT4X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K8QLJVZT4X');
+</script>
+
 <!-- Favicon -->
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
@@ -478,6 +487,16 @@ if (waKey && VENDEDORES[waKey]) {
   var _fab = document.getElementById('vendWaFab');
   _fab.href = 'https://wa.me/' + _v.wa + '?text=' + encodeURIComponent('Hola ' + (_v.nombre || waKey) + ', te consulto por el catálogo MAXIFER.');
   _fab.classList.add('show');
+}
+
+// ── Google Analytics: evento de apertura del link de vendedor ──
+if (window.gtag) {
+  var _modoPrecio = descKey > 0 ? ('descuento_' + descKey) : (precioKey || 'lista');
+  gtag('event', 'index_open', {
+    vendedor: waKey || '(directo)',
+    modo_precio: _modoPrecio,
+    tipo_origen: tipoKey || '(no_seteado)'
+  });
 }
 
 var FOTOS = [
