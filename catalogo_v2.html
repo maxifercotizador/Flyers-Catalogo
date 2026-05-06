@@ -307,14 +307,14 @@
     .surtido-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
 
     /* La card se adapta al exhibidor: cada imagen impone su propio
-       alto según el ratio natural (no recorta nada). Se reserva un
-       min-height mientras la imagen carga para evitar saltos. */
+       alto según el ratio natural (no recorta nada). Sin min-height
+       para que no quede blanco abajo de exhibidores cortitos. */
     .card-img-wrap {
       width: 100%;
       background: #fff;
       overflow: hidden;
       position: relative;
-      min-height: 80px;
+      line-height: 0; /* evita gap fantasma debajo del <img> */
     }
     .card-img-wrap img {
       width: 100%;
@@ -334,22 +334,11 @@
       color: var(--gris-muted);
       background: linear-gradient(135deg, #eef0f7, #dde3f0);
     }
-    .card-precio-badge {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: var(--azul);
-      color: white;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 13px; /* reemplazado */ font-size: 14px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 5px;
-      display: none;
-    }
-    .show-precios .card-precio-badge { display: block; }
 
-    .card-content { padding: 12px 12px 14px; }
+    .card-content {
+      padding: 10px 12px 6px;
+      position: relative;
+    }
     .card-nombre {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 16px;
@@ -357,6 +346,7 @@
       color: var(--azul);
       line-height: 1.2;
       margin-bottom: 4px;
+      padding-right: 92px; /* espacio para el precio a la derecha */
     }
     .card-codigo {
       font-size: 12px;
@@ -368,8 +358,25 @@
     .card-piezas {
       font-size: 13px;
       color: var(--gris-text);
-      margin-top: 5px;
+      margin-top: 4px;
     }
+    /* Precio dentro del bloque blanco, alineado a la derecha
+       del título — solo visible cuando se muestran precios. */
+    .card-precio-inline {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: var(--azul);
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      line-height: 1.1;
+      display: none;
+    }
+    .show-precios .card-precio-inline { display: inline-block; }
 
     /* ── MODAL ── */
     .modal-overlay {
@@ -1019,6 +1026,21 @@
       flex-shrink: 0;
     }
     .btn-card-ver:active { background: var(--azul-pale); }
+
+    /* Corazón de favoritos en el footer (en lugar de la lupa).
+       Usa los mismos botones que .btn-fav pero sin posicionar
+       absoluto y con tamaño igual al de los otros botones. */
+    .btn-fav.btn-fav-card {
+      position: static;
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      border: 1.5px solid var(--gris-border);
+      background: #fff;
+      box-shadow: none;
+    }
+    .btn-fav.btn-fav-card.fav-on { background: #fff0f0; }
 
     /* ── BOTONES EN VISTA REVISTA ── */
     .rev-actions {
@@ -2695,9 +2717,9 @@ function textoPiezasEnGavetas(codigo) {
   if (v == null) return null;
   const txt = String(v).trim();
   if (txt.indexOf(' - ') >= 0) {
-    return txt + ' Piezas en Gavetas (Ver composición abajo)';
+    return txt + ' Piezas de c/u en Gavetas (Ver composición abajo)';
   }
-  return txt + (txt === '1' ? ' Pieza en Gavetas' : ' Piezas en Gavetas');
+  return txt + (txt === '1' ? ' Pieza de c/u en Gavetas' : ' Piezas de c/u en Gavetas');
 }
 
 // ── VERSIÓN REDUCIDA POR SURTIDO ──────────────────────────────
@@ -4131,16 +4153,12 @@ function cardHTML(s) {
         ? `<img src="${foto}" alt="Surtido ${s.nombre} — MAXIFER ${s.codigo}" loading="lazy">`
         : `<div class="card-img-placeholder">📦</div>`}
       ${badgeHtml}
-      <div class="card-precio-badge">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
-      <button class="btn-fav ${esFav ? 'fav-on' : ''}" data-id="${s.id}"
-        aria-label="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
-        title="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
-        onclick="toggleFavorito(${s.id}, event)">${esFav ? '❤️' : '🤍'}</button>
     </div>
     <div class="card-content" onclick="abrirModal(${s.id})">
       <div class="card-nombre">${s.nombre}</div>
       <div class="card-codigo">Cód: ${s.codigo}</div>
       ${s.piezas ? `<div class="card-piezas">📌 ${s.piezas} piezas</div>` : ''}
+      <div class="card-precio-inline">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
     </div>
     <div class="card-footer">
       <button class="btn-card-agregar ${enCarrito ? 'agregado' : ''}" id="cardBtn${s.id}"
@@ -4148,8 +4166,10 @@ function cardHTML(s) {
         onclick="toggleCarritoCard(${s.id}, event)">
         ${enCarrito ? '✅ En pedido' : '🛒 Agregar'}
       </button>
-      <button class="btn-card-ver" onclick="abrirModal(${s.id})"
-        aria-label="Ver detalle" title="Ver detalle">🔍</button>
+      <button class="btn-fav btn-fav-card ${esFav ? 'fav-on' : ''}" data-id="${s.id}"
+        aria-label="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
+        title="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
+        onclick="toggleFavorito(${s.id}, event)">${esFav ? '❤️' : '🤍'}</button>
     </div>
   </div>`;
 }
