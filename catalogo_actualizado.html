@@ -306,17 +306,23 @@
     .surtido-card:active { transform: scale(0.97); }
     .surtido-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
 
+    /* La card se adapta al exhibidor: cada imagen impone su propio
+       alto según el ratio natural (no recorta nada). Sin min-height
+       para que no quede blanco abajo de exhibidores cortitos. */
     .card-img-wrap {
       width: 100%;
-      aspect-ratio: 1/1;
       background: #fff;
       overflow: hidden;
       position: relative;
+      line-height: 0; /* evita gap fantasma debajo del <img> */
     }
     .card-img-wrap img {
       width: 100%;
-      height: 100%;
-      object-fit: contain;
+      height: auto;
+      display: block;
+    }
+    .card-img-wrap .card-img-placeholder {
+      aspect-ratio: 4/3;
     }
     .card-img-placeholder {
       width: 100%;
@@ -328,22 +334,30 @@
       color: var(--gris-muted);
       background: linear-gradient(135deg, #eef0f7, #dde3f0);
     }
-    .card-precio-badge {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: var(--azul);
-      color: white;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 13px; /* reemplazado */ font-size: 14px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 5px;
-      display: none;
-    }
-    .show-precios .card-precio-badge { display: block; }
 
-    .card-content { padding: 12px 12px 14px; }
+    /* Título del surtido arriba de la foto, centrado y resaltado.
+       Vive afuera de card-img-wrap para no encimarse a la imagen. */
+    .card-titulo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--azul);
+      line-height: 1.15;
+      text-align: center;
+      padding: 10px 10px 8px;
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-content {
+      padding: 10px 12px 6px;
+      text-align: center;
+    }
+    /* Compatibilidad: dejamos card-nombre por si alguna otra vista
+       (revista/libro) lo sigue usando; en la grilla ya no se renderea. */
     .card-nombre {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 16px;
@@ -362,8 +376,23 @@
     .card-piezas {
       font-size: 13px;
       color: var(--gris-text);
-      margin-top: 5px;
+      margin-top: 4px;
     }
+    /* Precio en su propia línea, centrado, debajo del resto.
+       Solo visible cuando se muestran precios. */
+    .card-precio-inline {
+      background: var(--azul);
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 6px;
+      line-height: 1.15;
+      margin: 8px auto 2px;
+      display: none;
+    }
+    .show-precios .card-precio-inline { display: inline-block; }
 
     /* ── MODAL ── */
     .modal-overlay {
@@ -395,29 +424,29 @@
     .modal-header {
       background: var(--azul);
       color: white;
-      padding: 16px 20px;
+      padding: 10px 16px;
       border-radius: 20px 20px 0 0;
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      gap: 10px;
     }
     .modal-title {
       flex: 1;
       text-align: center;
-      padding-left: 44px; /* compensa el botón cerrar (32px + gap 12px) para centrar el título visualmente */
+      padding-left: 42px; /* compensa el botón cerrar (32px + gap) para centrar visualmente */
     }
     .modal-title h2 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 800;
-      line-height: 1.1;
+      line-height: 1.05;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .modal-title .modal-cod {
-      font-size: 14px;
+      font-size: 12px;
       opacity: 0.8;
-      margin-top: 5px;
+      margin-top: 2px;
       font-weight: 600;
     }
     .modal-close {
@@ -432,69 +461,121 @@
       flex-shrink: 0;
     }
 
-    .modal-body { padding: 20px; }
+    .modal-body { padding: 14px 16px 18px; }
 
-    /* Fotos en modal */
-    .fotos-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 18px;
+    /* ── Ficha del surtido ──
+       Exhibidor a todo el ancho.
+       Debajo, "al pie" del exhibidor, va el gavetero centrado y un
+       poquito superpuesto sobre el borde inferior (para el efecto
+       de fotografía pegada que pidió Max) y abajo el label. */
+    .ficha-stage {
+      position: relative;
+      width: 100%;
+      margin-bottom: 10px;
     }
-    .foto-box {
+    .ficha-exh-box {
+      width: 100%;
       border-radius: 10px;
       overflow: hidden;
-      background: var(--gris-bg);
-      aspect-ratio: 1;
+      background: #fff;
+      border: 1px solid var(--borde);
+      cursor: pointer;
     }
-    .foto-box img {
-      width: 100%; height: 100%;
-      object-fit: cover;
+    .ficha-exh-box img {
+      width: 100%;
+      height: auto;
+      display: block;
     }
-    .foto-box-placeholder {
-      width: 100%; height: 100%;
+    /* Wrap centrado del gavetero, "al pie" del exhibidor (con
+       margin-top negativo para superponerse un poco). */
+    .ficha-gav-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-size: 28px;
-      color: var(--gris-muted);
+      gap: 4px;
+      margin-top: -22px;   /* superposición suave con el exhibidor */
+      position: relative;
+      z-index: 2;
     }
-    .foto-label {
+    .ficha-gav-box {
+      width: 68%;
+      max-width: 280px;
+      aspect-ratio: 4 / 3;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      border: 2px solid #fff;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.28);
+      cursor: pointer;
+    }
+    .ficha-gav-box img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center 78%; /* recorta el blanco superior y muestra las gavetas */
+    }
+    /* Label gris "Organizador para Stock" */
+    .ficha-rol-label {
       font-size: 10px;
+      font-weight: 800;
       color: var(--gris-muted);
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       text-transform: uppercase;
-      margin-top: 4px;
       text-align: center;
+      line-height: 1.15;
+      margin-top: 2px;
     }
+    .foto-box-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--gris-muted);
+    }
+    /* Link "Ver N fotos del Exhibidor (Galería)" */
+    .galeria-link {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 4px 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--azul);
+      text-decoration: underline;
+      cursor: pointer;
+      text-align: center;
+      font-family: inherit;
+    }
+    .galeria-link:active { opacity: 0.7; }
 
-    /* Info incluye */
+    /* Info incluye (compacta) */
     .incluye-list {
       background: var(--azul-pale);
       border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
     }
     .incluye-list h4 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--azul);
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
     .incluye-item {
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--gris-text);
       display: flex;
       align-items: flex-start;
-      gap: 8px;
-      margin-bottom: 5px;
-      line-height: 1.4;
+      gap: 7px;
+      margin-bottom: 3px;
+      line-height: 1.3;
     }
     .incluye-item:last-child { margin-bottom: 0; }
     .incluye-dot {
@@ -677,33 +758,40 @@
     .pd-row.pd-highlight .pd-label { font-weight: 600; color: var(--azul); }
     .pd-row.pd-highlight .pd-val { font-size: 18px; color: var(--success); }
 
-    /* Precio en modal */
+    /* Precio en modal — caja azul horizontal: label izq + valor der */
     .precio-modal {
       background: var(--azul);
       color: white;
       border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 18px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
       display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .show-precios .precio-modal { display: block; }
+    .show-precios .precio-modal { display: flex; }
     .precio-modal .precio-label {
-      font-size: 11px;
-      opacity: 0.65;
+      font-size: 13px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      letter-spacing: 0.6px;
+      opacity: 0.95;
     }
     .precio-modal .precio-valor {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
+      line-height: 1;
     }
     .precio-modal .precio-iva {
       font-size: 11px;
-      opacity: 0.65;
-      margin-top: 2px;
+      opacity: 0.75;
+      margin-left: 6px;
     }
+    /* Modo reducido: cambia el color del bloque de precio */
+    .precio-modal.reducido { background: #6b7280; }
 
     /* Modo reducido: cambia el color del bloque de precio */
     .precio-modal.reducido { background: #6b7280; }
@@ -711,14 +799,14 @@
     /* Link discreto "Ver opción con stock reducido" / "Volver a versión estándar" */
     .toggle-reducido {
       display: none;
-      margin: -10px 0 14px 0;
-      font-size: 12px;
+      margin: -4px 0 8px 0;
+      font-size: 11px;
       color: #6b7280;
       text-decoration: underline;
       cursor: pointer;
       background: none;
       border: none;
-      padding: 4px 2px;
+      padding: 2px;
       font-family: inherit;
       text-align: left;
     }
@@ -996,6 +1084,21 @@
       flex-shrink: 0;
     }
     .btn-card-ver:active { background: var(--azul-pale); }
+
+    /* Corazón de favoritos en el footer (en lugar de la lupa).
+       Usa los mismos botones que .btn-fav pero sin posicionar
+       absoluto y con tamaño igual al de los otros botones. */
+    .btn-fav.btn-fav-card {
+      position: static;
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      border: 1.5px solid var(--gris-border);
+      background: #fff;
+      box-shadow: none;
+    }
+    .btn-fav.btn-fav-card.fav-on { background: #fff0f0; }
 
     /* ── BOTONES EN VISTA REVISTA ── */
     .rev-actions {
@@ -1531,6 +1634,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+      align-items: start; /* cada card su propio alto, sin estirarse hasta la más alta */
     }
 
     /* ── VISTA TABS ──────────────────────────────────────────── */
@@ -2336,19 +2440,17 @@
 </style>
 
 <script>
-// Ocultar modal inmediatamente si el cliente llega con link de vendedor
+// Skip del modal de descuento — siempre arrancar en modo "Precio de Lista".
+// Antes solo se ocultaba si el link traía wa/desc/precio; ahora se oculta
+// para todos los visitantes y se entra directo al catálogo con precios.
 (function() {
-  var h = window.location.hash;
-  if (h && (h.indexOf('desc=') !== -1 || h.indexOf('precio=') !== -1)) {
-    document.addEventListener('DOMContentLoaded', function() {
-      var el = document.getElementById('modalDescuentoOverlay');
-      if (el) el.classList.remove('open');
-    });
-    // También via style inline para que no parpadee
-    var style = document.createElement('style');
-    style.textContent = '#modalDescuentoOverlay { display: none !important; } #descuentoWrap { display: none !important; } #btnPrecioRev, #btnPrecioLibro { display: none !important; }';
-    document.head.appendChild(style);
-  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('modalDescuentoOverlay');
+    if (el) el.classList.remove('open');
+  });
+  var style = document.createElement('style');
+  style.textContent = '#modalDescuentoOverlay { display: none !important; } #descuentoWrap { display: none !important; } #btnPrecioRev, #btnPrecioLibro { display: none !important; }';
+  document.head.appendChild(style);
 })();
 </script>
 
@@ -2672,9 +2774,9 @@ function textoPiezasEnGavetas(codigo) {
   if (v == null) return null;
   const txt = String(v).trim();
   if (txt.indexOf(' - ') >= 0) {
-    return txt + ' Piezas en Gavetas (Ver composición abajo)';
+    return txt + ' Piezas de c/u en Gavetas (Ver composición abajo)';
   }
-  return txt + (txt === '1' ? ' Pieza en Gavetas' : ' Piezas en Gavetas');
+  return txt + (txt === '1' ? ' Pieza de c/u en Gavetas' : ' Piezas de c/u en Gavetas');
 }
 
 // ── VERSIÓN REDUCIDA POR SURTIDO ──────────────────────────────
@@ -4093,7 +4195,9 @@ function renderGrid(lista) {
 }
 
 function cardHTML(s) {
-  const foto = s.foto_card || s.foto_exhibidor;
+  // Priorizamos el exhibidor en la card del listado: queda mucho más
+  // limpio que el screenshot del PDF (sin headers/footers/page nums).
+  const foto = s.foto_exhibidor || s.foto_card;
   const enCarrito = carrito.some(c => c.id === s.id);
   const esFav = esFavorito(s.id);
   const badge = BADGES[s.id];
@@ -4101,21 +4205,17 @@ function cardHTML(s) {
     ? `<div class="card-badge badge-${badge}">${badge === 'top' ? '⭐ Más vendido' : '✨ Nuevo'}</div>`
     : '';
   return `<div class="surtido-card">
+    <div class="card-titulo" onclick="abrirModal(${s.id})">${s.nombre}</div>
     <div class="card-img-wrap" onclick="abrirModal(${s.id})">
       ${foto
         ? `<img src="${foto}" alt="Surtido ${s.nombre} — MAXIFER ${s.codigo}" loading="lazy">`
         : `<div class="card-img-placeholder">📦</div>`}
       ${badgeHtml}
-      <div class="card-precio-badge">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
-      <button class="btn-fav ${esFav ? 'fav-on' : ''}" data-id="${s.id}"
-        aria-label="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
-        title="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
-        onclick="toggleFavorito(${s.id}, event)">${esFav ? '❤️' : '🤍'}</button>
     </div>
     <div class="card-content" onclick="abrirModal(${s.id})">
-      <div class="card-nombre">${s.nombre}</div>
       <div class="card-codigo">Cód: ${s.codigo}</div>
       ${s.piezas ? `<div class="card-piezas">📌 ${s.piezas} piezas</div>` : ''}
+      <div class="card-precio-inline">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
     </div>
     <div class="card-footer">
       <button class="btn-card-agregar ${enCarrito ? 'agregado' : ''}" id="cardBtn${s.id}"
@@ -4123,8 +4223,10 @@ function cardHTML(s) {
         onclick="toggleCarritoCard(${s.id}, event)">
         ${enCarrito ? '✅ En pedido' : '🛒 Agregar'}
       </button>
-      <button class="btn-card-ver" onclick="abrirModal(${s.id})"
-        aria-label="Ver detalle" title="Ver detalle">🔍</button>
+      <button class="btn-fav btn-fav-card ${esFav ? 'fav-on' : ''}" data-id="${s.id}"
+        aria-label="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
+        title="${esFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}"
+        onclick="toggleFavorito(${s.id}, event)">${esFav ? '❤️' : '🤍'}</button>
     </div>
   </div>`;
 }
@@ -4351,30 +4453,35 @@ function abrirModal(id) {
   const modal = document.getElementById('modal');
   modal.classList.toggle('show-precios', mostrarPrecios);
 
-  // Fotos — clickeables para abrir lightbox
+  // Fotos — layout 2 columnas: izq exhibidor grande, der gavetero + badges
   const todasFotos = fotosDelSurtido(s);
   const idxExhibidor = 0;
   const idxGavetas   = todasFotos.findIndex(function(f){ return f.label === 'Gaveteros'; });
+  const cantFotosExhibidor = todasFotos.filter(function(f){ return f.label !== 'Gaveteros'; }).length;
+  const galeriaLinkHtml = cantFotosExhibidor > 1
+    ? `<button type="button" class="galeria-link" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">📷 Ver ${cantFotosExhibidor} fotos del Exhibidor (Galería)</button>`
+    : '';
+
+  const exhClick  = `abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')`;
+  const gavClick  = s.foto_gavetas ? `abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : '';
 
   const fotosHtml = `
-    <div class="fotos-wrap">
-      <div>
-        <div class="foto-box" style="cursor:pointer" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">
-          ${s.foto_exhibidor
-            ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
-            : `<div class="foto-box-placeholder">🖼️<span style="font-size:10px;color:var(--gris-muted)">Foto surtido completo</span></div>`}
-        </div>
-        <div class="foto-label">Exhibidor ${todasFotos.length > 1 ? '<span style="color:var(--naranja);font-size:10px"> · ' + todasFotos.length + ' fotos</span>' : ''}</div>
+    <div class="ficha-stage">
+      <div class="ficha-exh-box" onclick="${exhClick}">
+        ${s.foto_exhibidor
+          ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
+          : `<div class="foto-box-placeholder">🖼️</div>`}
       </div>
-      <div>
-        <div class="foto-box" style="${s.foto_gavetas ? 'cursor:pointer' : ''}" ${s.foto_gavetas ? `onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : ''}">
+      <div class="ficha-gav-wrap">
+        <div class="ficha-gav-box" ${gavClick ? `onclick="${gavClick}"` : ''}>
           ${s.foto_gavetas
             ? `<img src="${s.foto_gavetas}" alt="Gaveteros del surtido ${s.nombre}">`
-            : `<div class="foto-box-placeholder">🗂️<span style="font-size:10px;color:var(--gris-muted)">Foto gaveteros</span></div>`}
+            : `<div class="foto-box-placeholder">🗂️</div>`}
         </div>
-        <div class="foto-label">Gaveteros</div>
+        <div class="ficha-rol-label">Organizador para Stock</div>
       </div>
-    </div>`;
+    </div>
+    ${galeriaLinkHtml}`;
 
   // Precio
   const pd = PIEZAS_DATA[String(s.id)];
@@ -4392,9 +4499,8 @@ function abrirModal(id) {
   const precioLabelBase = tieneDescuentoAplicado ? 'Precio Neto Final' : 'Precio de Lista';
   const precioHtml = `
     <div class="precio-modal${modoReducido && red ? ' reducido' : ''}">
-      <div class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock reducido)' : ''}</div>
-      <div class="precio-valor">${formatPrecio(precioFinal)}</div>
-      <div class="precio-iva">+ IVA</div>
+      <span class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock red.)' : ''}</span>
+      <div><span class="precio-valor">${formatPrecio(precioFinal)}</span><span class="precio-iva">+ IVA</span></div>
     </div>`;
 
   // Link discreto para activar/desactivar la versión reducida
@@ -4908,6 +5014,22 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
         sincronizarBotonesPrecio();
         refrescarVistaActiva();
       }
+    });
+  } else {
+    // Visitante sin link configurado: por defecto entra al catálogo
+    // mostrando los Precios de Lista (sin descuento). Antes aparecía
+    // un modal pidiendo descuento — ahora se saltea.
+    window.addEventListener('DOMContentLoaded', function() {
+      descuentoPct = 0;
+      try { guardarDescuento(); } catch(e) {}
+      var inp4 = document.getElementById('descuentoInput');
+      if (inp4) inp4.value = '';
+      mostrarPrecios = true;
+      document.getElementById('appBody').classList.add('show-precios');
+      document.getElementById('modal').classList.add('show-precios');
+      document.getElementById('carritoBody').classList.add('show-precios');
+      sincronizarBotonesPrecio();
+      refrescarVistaActiva();
     });
   }
 })();
