@@ -463,54 +463,101 @@
 
     .modal-body { padding: 14px 16px 18px; }
 
-    /* ── Fotos en modal (compactas: el exhibidor manda) ── */
-    .fotos-wrap {
+    /* ── Ficha del surtido: dos columnas ──
+       Izq: exhibidor grande (patrón).
+       Der: badge "Patrón de fábrica" + gavetero chico + label
+            "Organizador para stock".
+       Replica el mockup que pidió Max.
+    */
+    .ficha-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-      align-items: start;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 8px;
     }
-    .foto-box {
-      border-radius: 10px;
+    .ficha-col-exh,
+    .ficha-col-gav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ficha-exh-box {
+      flex: 1;
+      border-radius: 8px;
       overflow: hidden;
       background: #fff;
-      position: relative;
+      border: 1px solid var(--borde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
     }
-    .foto-box.foto-exh {
-      aspect-ratio: 1400 / 812; /* ratio real del exhibidor */
+    .ficha-exh-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
-    .foto-box.foto-gav {
+    .ficha-gav-box {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--borde);
       aspect-ratio: 4 / 3;
     }
-    .foto-box img {
+    .ficha-gav-box img {
       width: 100%; height: 100%;
-      display: block;
-    }
-    .foto-box.foto-exh img { object-fit: contain; }
-    .foto-box.foto-gav img {
       object-fit: cover;
-      object-position: center 78%; /* recorta el blanco superior */
+      object-position: center 78%;
+    }
+    /* Badge amarilla "Patrón de Fábrica" — describe el rol del exhibidor */
+    .ficha-rol-badge {
+      background: #fde68a;
+      color: #78350f;
+      border: 1px solid #fbbf24;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 5px 8px;
+      border-radius: 6px;
+      line-height: 1.1;
+    }
+    /* Label gris "Organizador para Stock" — describe el rol del gavetero */
+    .ficha-rol-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--gris-text);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.15;
     }
     .foto-box-placeholder {
       width: 100%; height: 100%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
       font-size: 24px;
       color: var(--gris-muted);
     }
-    .foto-label {
-      font-size: 9px;
-      color: var(--gris-muted);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-top: 3px;
+    /* Link "Ver N fotos del Exhibidor (Galería)" debajo del grid */
+    .galeria-link {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 6px 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--azul);
+      text-decoration: underline;
+      cursor: pointer;
       text-align: center;
+      font-family: inherit;
     }
+    .galeria-link:active { opacity: 0.7; }
 
     /* Info incluye (compacta) */
     .incluye-list {
@@ -718,38 +765,43 @@
     .pd-row.pd-highlight .pd-label { font-weight: 600; color: var(--azul); }
     .pd-row.pd-highlight .pd-val { font-size: 18px; color: var(--success); }
 
-    /* Precio en modal — versión compacta horizontal */
-    .precio-modal {
-      background: var(--azul);
-      color: white;
-      border-radius: 10px;
-      padding: 8px 14px;
-      margin-bottom: 10px;
+    /* Precio en modal — chip compacto en una sola línea */
+    .precio-modal.precio-compacto {
+      background: transparent;
+      color: var(--azul);
+      border-radius: 0;
+      padding: 6px 0 4px;
+      margin-bottom: 4px;
       display: none;
       align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
       flex-wrap: wrap;
+      gap: 6px;
+      border-bottom: 1px solid var(--borde);
     }
-    .show-precios .precio-modal { display: flex; }
-    .precio-modal .precio-label {
-      font-size: 11px;
-      opacity: 0.85;
+    .show-precios .precio-modal.precio-compacto { display: flex; }
+    .precio-modal.precio-compacto .precio-label {
+      font-size: 12px;
+      color: var(--gris-text);
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
+      letter-spacing: 0.4px;
+      opacity: 1;
     }
-    .precio-modal .precio-valor {
+    .precio-modal.precio-compacto .precio-valor {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 22px;
       font-weight: 800;
+      color: var(--azul);
       line-height: 1;
     }
-    .precio-modal .precio-iva {
-      font-size: 10px;
-      opacity: 0.7;
-      margin-left: 4px;
+    .precio-modal.precio-compacto .precio-iva {
+      font-size: 11px;
+      color: var(--gris-muted);
+      font-weight: 600;
+      margin-left: 2px;
     }
+    .precio-modal.precio-compacto.reducido { background: transparent; }
+    .precio-modal.precio-compacto.reducido .precio-valor { color: #4b5563; }
 
     /* Modo reducido: cambia el color del bloque de precio */
     .precio-modal.reducido { background: #6b7280; }
@@ -4411,30 +4463,35 @@ function abrirModal(id) {
   const modal = document.getElementById('modal');
   modal.classList.toggle('show-precios', mostrarPrecios);
 
-  // Fotos — clickeables para abrir lightbox
+  // Fotos — layout 2 columnas: izq exhibidor grande, der gavetero + badges
   const todasFotos = fotosDelSurtido(s);
   const idxExhibidor = 0;
   const idxGavetas   = todasFotos.findIndex(function(f){ return f.label === 'Gaveteros'; });
+  const cantFotosExhibidor = todasFotos.filter(function(f){ return f.label !== 'Gaveteros'; }).length;
+  const galeriaLinkHtml = cantFotosExhibidor > 1
+    ? `<button type="button" class="galeria-link" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">📷 Ver ${cantFotosExhibidor} fotos del Exhibidor (Galería)</button>`
+    : '';
 
   const fotosHtml = `
-    <div class="fotos-wrap">
-      <div>
-        <div class="foto-box foto-exh" style="cursor:pointer" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">
+    <div class="ficha-grid">
+      <div class="ficha-col-exh">
+        <div class="ficha-exh-box" style="cursor:pointer" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">
           ${s.foto_exhibidor
             ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
-            : `<div class="foto-box-placeholder">🖼️<span style="font-size:10px;color:var(--gris-muted)">Foto surtido completo</span></div>`}
+            : `<div class="foto-box-placeholder">🖼️</div>`}
         </div>
-        <div class="foto-label">Exhibidor ${todasFotos.length > 1 ? '<span style="color:var(--naranja);font-size:10px"> · ' + todasFotos.length + ' fotos</span>' : ''}</div>
       </div>
-      <div>
-        <div class="foto-box foto-gav" style="${s.foto_gavetas ? 'cursor:pointer' : ''}" ${s.foto_gavetas ? `onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : ''}">
+      <div class="ficha-col-gav">
+        <div class="ficha-rol-badge">Patrón de Fábrica</div>
+        <div class="ficha-gav-box" style="${s.foto_gavetas ? 'cursor:pointer' : ''}" ${s.foto_gavetas ? `onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : ''}>
           ${s.foto_gavetas
             ? `<img src="${s.foto_gavetas}" alt="Gaveteros del surtido ${s.nombre}">`
-            : `<div class="foto-box-placeholder">🗂️<span style="font-size:10px;color:var(--gris-muted)">Foto gaveteros</span></div>`}
+            : `<div class="foto-box-placeholder">🗂️</div>`}
         </div>
-        <div class="foto-label">Gaveteros</div>
+        <div class="ficha-rol-label">Organizador para Stock</div>
       </div>
-    </div>`;
+    </div>
+    ${galeriaLinkHtml}`;
 
   // Precio
   const pd = PIEZAS_DATA[String(s.id)];
@@ -4451,9 +4508,10 @@ function abrirModal(id) {
   const tieneDescuentoAplicado = (descuentoPct > 0) || !!DESCUENTOS_FIJOS[s.codigo];
   const precioLabelBase = tieneDescuentoAplicado ? 'Precio Neto Final' : 'Precio de Lista';
   const precioHtml = `
-    <div class="precio-modal${modoReducido && red ? ' reducido' : ''}">
-      <div class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock red.)' : ''}</div>
-      <div><span class="precio-valor">${formatPrecio(precioFinal)}</span><span class="precio-iva">+ IVA</span></div>
+    <div class="precio-modal precio-compacto${modoReducido && red ? ' reducido' : ''}">
+      <span class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock red.)' : ''}:</span>
+      <span class="precio-valor">${formatPrecio(precioFinal)}</span>
+      <span class="precio-iva">+ IVA</span>
     </div>`;
 
   // Link discreto para activar/desactivar la versión reducida
