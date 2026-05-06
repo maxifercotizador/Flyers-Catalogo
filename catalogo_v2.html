@@ -463,18 +463,15 @@
 
     .modal-body { padding: 14px 16px 18px; }
 
-    /* ── Ficha del surtido: layout con overlay ──
-       El exhibidor ocupa todo el ancho (es el "patrón de fábrica").
-       Encima, sobre la esquina superior derecha, flota un panelito con:
-        · badge amarillo "Patrón de Fábrica"
-        · gavetero chico (con sombra para dar efecto 3D)
-        · label gris "Organizador para Stock"
-       El panelito se mete sobre el exhibidor sin taparlo entero. */
+    /* ── Ficha del surtido ──
+       Exhibidor a todo el ancho.
+       Debajo, "al pie" del exhibidor, va el gavetero centrado y un
+       poquito superpuesto sobre el borde inferior (para el efecto
+       de fotografía pegada que pidió Max) y abajo el label. */
     .ficha-stage {
       position: relative;
       width: 100%;
-      margin-bottom: 8px;
-      isolation: isolate; /* z-index local */
+      margin-bottom: 10px;
     }
     .ficha-exh-box {
       width: 100%;
@@ -483,52 +480,32 @@
       background: #fff;
       border: 1px solid var(--borde);
       cursor: pointer;
-      padding-right: 38%; /* deja espacio a la derecha para el overlay */
     }
     .ficha-exh-box img {
       width: 100%;
       height: auto;
       display: block;
     }
-    /* Panel flotante a la derecha (sobre el exhibidor) */
-    .ficha-overlay {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 36%;
-      max-width: 150px;
+    /* Wrap centrado del gavetero, "al pie" del exhibidor (con
+       margin-top negativo para superponerse un poco). */
+    .ficha-gav-wrap {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      align-items: center;
+      gap: 4px;
+      margin-top: -22px;   /* superposición suave con el exhibidor */
+      position: relative;
       z-index: 2;
-      pointer-events: none; /* deja pasar los clics al exhibidor por defecto */
     }
-    .ficha-overlay > * { pointer-events: auto; }
-    /* Badge amarilla "Patrón de Fábrica" */
-    .ficha-rol-badge {
-      background: #fde68a;
-      color: #78350f;
-      border: 1px solid #f59e0b;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      text-align: center;
-      padding: 5px 6px;
-      border-radius: 6px;
-      line-height: 1.1;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-    /* Caja del gavetero: overlap-style, con sombra fuerte para
-       separarse visualmente del exhibidor que tiene atrás. */
     .ficha-gav-box {
-      width: 100%;
+      width: 68%;
+      max-width: 280px;
       aspect-ratio: 4 / 3;
       border-radius: 8px;
       overflow: hidden;
       background: #fff;
       border: 2px solid #fff;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.28);
       cursor: pointer;
     }
     .ficha-gav-box img {
@@ -536,22 +513,18 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      object-position: center 78%; /* recorta el blanco superior de la foto */
+      object-position: center 78%; /* recorta el blanco superior y muestra las gavetas */
     }
-    /* Label "Organizador para Stock" en chip blanco con sombra
-       para que se lea bien encima del exhibidor. */
+    /* Label gris "Organizador para Stock" */
     .ficha-rol-label {
-      font-size: 9.5px;
+      font-size: 10px;
       font-weight: 800;
-      color: var(--gris-text);
-      letter-spacing: 0.3px;
+      color: var(--gris-muted);
+      letter-spacing: 0.4px;
       text-transform: uppercase;
       text-align: center;
-      line-height: 1.1;
-      background: rgba(255,255,255,0.92);
-      padding: 4px 6px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      line-height: 1.15;
+      margin-top: 2px;
     }
     .foto-box-placeholder {
       width: 100%;
@@ -562,7 +535,7 @@
       font-size: 24px;
       color: var(--gris-muted);
     }
-    /* Link "Ver N fotos del Exhibidor (Galería)" debajo del stage */
+    /* Link "Ver N fotos del Exhibidor (Galería)" */
     .galeria-link {
       display: block;
       width: 100%;
@@ -4499,8 +4472,7 @@ function abrirModal(id) {
           ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
           : `<div class="foto-box-placeholder">🖼️</div>`}
       </div>
-      <div class="ficha-overlay">
-        <div class="ficha-rol-badge">Patrón de Fábrica</div>
+      <div class="ficha-gav-wrap">
         <div class="ficha-gav-box" ${gavClick ? `onclick="${gavClick}"` : ''}>
           ${s.foto_gavetas
             ? `<img src="${s.foto_gavetas}" alt="Gaveteros del surtido ${s.nombre}">`
