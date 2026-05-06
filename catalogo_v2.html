@@ -401,29 +401,29 @@
     .modal-header {
       background: var(--azul);
       color: white;
-      padding: 16px 20px;
+      padding: 10px 16px;
       border-radius: 20px 20px 0 0;
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      gap: 10px;
     }
     .modal-title {
       flex: 1;
       text-align: center;
-      padding-left: 44px; /* compensa el botón cerrar (32px + gap 12px) para centrar el título visualmente */
+      padding-left: 42px; /* compensa el botón cerrar (32px + gap) para centrar visualmente */
     }
     .modal-title h2 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 800;
-      line-height: 1.1;
+      line-height: 1.05;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .modal-title .modal-cod {
-      font-size: 14px;
+      font-size: 12px;
       opacity: 0.8;
-      margin-top: 5px;
+      margin-top: 2px;
       font-weight: 600;
     }
     .modal-close {
@@ -438,24 +438,36 @@
       flex-shrink: 0;
     }
 
-    .modal-body { padding: 20px; }
+    .modal-body { padding: 14px 16px 18px; }
 
-    /* Fotos en modal */
+    /* ── Fotos en modal (compactas: el exhibidor manda) ── */
     .fotos-wrap {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 18px;
+      grid-template-columns: 2fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: start;
     }
     .foto-box {
       border-radius: 10px;
       overflow: hidden;
-      background: var(--gris-bg);
-      aspect-ratio: 1;
+      background: #fff;
+      position: relative;
+    }
+    .foto-box.foto-exh {
+      aspect-ratio: 1400 / 812; /* ratio real del exhibidor */
+    }
+    .foto-box.foto-gav {
+      aspect-ratio: 4 / 3;
     }
     .foto-box img {
       width: 100%; height: 100%;
+      display: block;
+    }
+    .foto-box.foto-exh img { object-fit: contain; }
+    .foto-box.foto-gav img {
       object-fit: cover;
+      object-position: center 78%; /* recorta el blanco superior */
     }
     .foto-box-placeholder {
       width: 100%; height: 100%;
@@ -464,43 +476,43 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      font-size: 28px;
+      font-size: 24px;
       color: var(--gris-muted);
     }
     .foto-label {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--gris-muted);
       font-weight: 600;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      margin-top: 4px;
+      margin-top: 3px;
       text-align: center;
     }
 
-    /* Info incluye */
+    /* Info incluye (compacta) */
     .incluye-list {
       background: var(--azul-pale);
       border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
     }
     .incluye-list h4 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--azul);
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
     .incluye-item {
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--gris-text);
       display: flex;
       align-items: flex-start;
-      gap: 8px;
-      margin-bottom: 5px;
-      line-height: 1.4;
+      gap: 7px;
+      margin-bottom: 3px;
+      line-height: 1.3;
     }
     .incluye-item:last-child { margin-bottom: 0; }
     .incluye-dot {
@@ -683,32 +695,37 @@
     .pd-row.pd-highlight .pd-label { font-weight: 600; color: var(--azul); }
     .pd-row.pd-highlight .pd-val { font-size: 18px; color: var(--success); }
 
-    /* Precio en modal */
+    /* Precio en modal — versión compacta horizontal */
     .precio-modal {
       background: var(--azul);
       color: white;
       border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 18px;
+      padding: 8px 14px;
+      margin-bottom: 10px;
       display: none;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .show-precios .precio-modal { display: block; }
+    .show-precios .precio-modal { display: flex; }
     .precio-modal .precio-label {
       font-size: 11px;
-      opacity: 0.65;
+      opacity: 0.85;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      font-weight: 600;
     }
     .precio-modal .precio-valor {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 28px;
+      font-size: 22px;
       font-weight: 800;
+      line-height: 1;
     }
     .precio-modal .precio-iva {
-      font-size: 11px;
-      opacity: 0.65;
-      margin-top: 2px;
+      font-size: 10px;
+      opacity: 0.7;
+      margin-left: 4px;
     }
 
     /* Modo reducido: cambia el color del bloque de precio */
@@ -717,14 +734,14 @@
     /* Link discreto "Ver opción con stock reducido" / "Volver a versión estándar" */
     .toggle-reducido {
       display: none;
-      margin: -10px 0 14px 0;
-      font-size: 12px;
+      margin: -4px 0 8px 0;
+      font-size: 11px;
       color: #6b7280;
       text-decoration: underline;
       cursor: pointer;
       background: none;
       border: none;
-      padding: 4px 2px;
+      padding: 2px;
       font-family: inherit;
       text-align: left;
     }
@@ -4367,7 +4384,7 @@ function abrirModal(id) {
   const fotosHtml = `
     <div class="fotos-wrap">
       <div>
-        <div class="foto-box" style="cursor:pointer" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">
+        <div class="foto-box foto-exh" style="cursor:pointer" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">
           ${s.foto_exhibidor
             ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
             : `<div class="foto-box-placeholder">🖼️<span style="font-size:10px;color:var(--gris-muted)">Foto surtido completo</span></div>`}
@@ -4375,7 +4392,7 @@ function abrirModal(id) {
         <div class="foto-label">Exhibidor ${todasFotos.length > 1 ? '<span style="color:var(--naranja);font-size:10px"> · ' + todasFotos.length + ' fotos</span>' : ''}</div>
       </div>
       <div>
-        <div class="foto-box" style="${s.foto_gavetas ? 'cursor:pointer' : ''}" ${s.foto_gavetas ? `onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : ''}">
+        <div class="foto-box foto-gav" style="${s.foto_gavetas ? 'cursor:pointer' : ''}" ${s.foto_gavetas ? `onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : ''}">
           ${s.foto_gavetas
             ? `<img src="${s.foto_gavetas}" alt="Gaveteros del surtido ${s.nombre}">`
             : `<div class="foto-box-placeholder">🗂️<span style="font-size:10px;color:var(--gris-muted)">Foto gaveteros</span></div>`}
@@ -4400,9 +4417,8 @@ function abrirModal(id) {
   const precioLabelBase = tieneDescuentoAplicado ? 'Precio Neto Final' : 'Precio de Lista';
   const precioHtml = `
     <div class="precio-modal${modoReducido && red ? ' reducido' : ''}">
-      <div class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock reducido)' : ''}</div>
-      <div class="precio-valor">${formatPrecio(precioFinal)}</div>
-      <div class="precio-iva">+ IVA</div>
+      <div class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock red.)' : ''}</div>
+      <div><span class="precio-valor">${formatPrecio(precioFinal)}</span><span class="precio-iva">+ IVA</span></div>
     </div>`;
 
   // Link discreto para activar/desactivar la versión reducida
