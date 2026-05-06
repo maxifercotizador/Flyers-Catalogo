@@ -335,10 +335,29 @@
       background: linear-gradient(135deg, #eef0f7, #dde3f0);
     }
 
+    /* Título del surtido arriba de la foto, centrado y resaltado.
+       Vive afuera de card-img-wrap para no encimarse a la imagen. */
+    .card-titulo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--azul);
+      line-height: 1.15;
+      text-align: center;
+      padding: 10px 10px 8px;
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .card-content {
       padding: 10px 12px 6px;
       text-align: center;
     }
+    /* Compatibilidad: dejamos card-nombre por si alguna otra vista
+       (revista/libro) lo sigue usando; en la grilla ya no se renderea. */
     .card-nombre {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 16px;
@@ -4144,6 +4163,7 @@ function cardHTML(s) {
     ? `<div class="card-badge badge-${badge}">${badge === 'top' ? '⭐ Más vendido' : '✨ Nuevo'}</div>`
     : '';
   return `<div class="surtido-card">
+    <div class="card-titulo" onclick="abrirModal(${s.id})">${s.nombre}</div>
     <div class="card-img-wrap" onclick="abrirModal(${s.id})">
       ${foto
         ? `<img src="${foto}" alt="Surtido ${s.nombre} — MAXIFER ${s.codigo}" loading="lazy">`
@@ -4151,7 +4171,6 @@ function cardHTML(s) {
       ${badgeHtml}
     </div>
     <div class="card-content" onclick="abrirModal(${s.id})">
-      <div class="card-nombre">${s.nombre}</div>
       <div class="card-codigo">Cód: ${s.codigo}</div>
       ${s.piezas ? `<div class="card-piezas">📌 ${s.piezas} piezas</div>` : ''}
       <div class="card-precio-inline">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
