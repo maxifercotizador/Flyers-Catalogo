@@ -463,74 +463,95 @@
 
     .modal-body { padding: 14px 16px 18px; }
 
-    /* ── Ficha del surtido: dos columnas ──
-       Izq: exhibidor grande (patrón de fábrica).
-       Der (en orden vertical): badge amarillo "Patrón de Fábrica",
-       gavetero, label "Organizador para Stock". */
-    .ficha-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 10px;
-      align-items: start;
+    /* ── Ficha del surtido: layout con overlay ──
+       El exhibidor ocupa todo el ancho (es el "patrón de fábrica").
+       Encima, sobre la esquina superior derecha, flota un panelito con:
+        · badge amarillo "Patrón de Fábrica"
+        · gavetero chico (con sombra para dar efecto 3D)
+        · label gris "Organizador para Stock"
+       El panelito se mete sobre el exhibidor sin taparlo entero. */
+    .ficha-stage {
+      position: relative;
+      width: 100%;
       margin-bottom: 8px;
-    }
-    .ficha-col-exh,
-    .ficha-col-gav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 0; /* evita que el grid se desborde con imágenes anchas */
+      isolation: isolate; /* z-index local */
     }
     .ficha-exh-box {
       width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
       background: #fff;
       border: 1px solid var(--borde);
+      cursor: pointer;
+      padding-right: 38%; /* deja espacio a la derecha para el overlay */
     }
     .ficha-exh-box img {
       width: 100%;
       height: auto;
       display: block;
     }
+    /* Panel flotante a la derecha (sobre el exhibidor) */
+    .ficha-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 36%;
+      max-width: 150px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 2;
+      pointer-events: none; /* deja pasar los clics al exhibidor por defecto */
+    }
+    .ficha-overlay > * { pointer-events: auto; }
+    /* Badge amarilla "Patrón de Fábrica" */
+    .ficha-rol-badge {
+      background: #fde68a;
+      color: #78350f;
+      border: 1px solid #f59e0b;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 5px 6px;
+      border-radius: 6px;
+      line-height: 1.1;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    /* Caja del gavetero: overlap-style, con sombra fuerte para
+       separarse visualmente del exhibidor que tiene atrás. */
     .ficha-gav-box {
       width: 100%;
+      aspect-ratio: 4 / 3;
       border-radius: 8px;
       overflow: hidden;
       background: #fff;
-      border: 1px solid var(--borde);
-      aspect-ratio: 4 / 3;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      cursor: pointer;
     }
     .ficha-gav-box img {
       width: 100%;
       height: 100%;
       display: block;
       object-fit: cover;
-      object-position: center 78%; /* recorta el blanco superior */
+      object-position: center 78%; /* recorta el blanco superior de la foto */
     }
-    /* Badge amarilla "Patrón de Fábrica" — describe el rol del exhibidor */
-    .ficha-rol-badge {
-      background: #fde68a;
-      color: #78350f;
-      border: 1px solid #fbbf24;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      text-align: center;
-      padding: 6px 8px;
-      border-radius: 6px;
-      line-height: 1.1;
-    }
-    /* Label gris "Organizador para Stock" — describe el rol del gavetero */
+    /* Label "Organizador para Stock" en chip blanco con sombra
+       para que se lea bien encima del exhibidor. */
     .ficha-rol-label {
-      font-size: 10.5px;
-      font-weight: 700;
+      font-size: 9.5px;
+      font-weight: 800;
       color: var(--gris-text);
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px;
       text-transform: uppercase;
       text-align: center;
-      line-height: 1.15;
+      line-height: 1.1;
+      background: rgba(255,255,255,0.92);
+      padding: 4px 6px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .foto-box-placeholder {
       width: 100%;
@@ -541,13 +562,13 @@
       font-size: 24px;
       color: var(--gris-muted);
     }
-    /* Link "Ver N fotos del Exhibidor (Galería)" debajo del grid */
+    /* Link "Ver N fotos del Exhibidor (Galería)" debajo del stage */
     .galeria-link {
       display: block;
       width: 100%;
       background: none;
       border: none;
-      padding: 6px 0 10px;
+      padding: 4px 0 10px;
       font-size: 12px;
       font-weight: 700;
       color: var(--azul);
@@ -4468,18 +4489,19 @@ function abrirModal(id) {
     ? `<button type="button" class="galeria-link" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">📷 Ver ${cantFotosExhibidor} fotos del Exhibidor (Galería)</button>`
     : '';
 
+  const exhClick  = `abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')`;
+  const gavClick  = s.foto_gavetas ? `abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : '';
+
   const fotosHtml = `
-    <div class="ficha-grid">
-      <div class="ficha-col-exh">
-        <div class="ficha-exh-box" style="cursor:pointer" onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), 0, '${s.nombre.replace(/'/g,"\\'")}')">
-          ${s.foto_exhibidor
-            ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
-            : `<div class="foto-box-placeholder">🖼️</div>`}
-        </div>
+    <div class="ficha-stage">
+      <div class="ficha-exh-box" onclick="${exhClick}">
+        ${s.foto_exhibidor
+          ? `<img src="${s.foto_exhibidor}" alt="Exhibidor del surtido ${s.nombre}">`
+          : `<div class="foto-box-placeholder">🖼️</div>`}
       </div>
-      <div class="ficha-col-gav">
+      <div class="ficha-overlay">
         <div class="ficha-rol-badge">Patrón de Fábrica</div>
-        <div class="ficha-gav-box" style="${s.foto_gavetas ? 'cursor:pointer' : ''}" ${s.foto_gavetas ? `onclick="abrirLightbox(fotosDelSurtido(SURTIDOS.find(x=>x.id===${s.id})), ${idxGavetas >= 0 ? idxGavetas : 0}, '${s.nombre.replace(/'/g,"\\'")}')` : ''}>
+        <div class="ficha-gav-box" ${gavClick ? `onclick="${gavClick}"` : ''}>
           ${s.foto_gavetas
             ? `<img src="${s.foto_gavetas}" alt="Gaveteros del surtido ${s.nombre}">`
             : `<div class="foto-box-placeholder">🗂️</div>`}
