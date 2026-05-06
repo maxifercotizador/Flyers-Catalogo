@@ -337,7 +337,7 @@
 
     .card-content {
       padding: 10px 12px 6px;
-      position: relative;
+      text-align: center;
     }
     .card-nombre {
       font-family: 'Barlow Condensed', sans-serif;
@@ -346,7 +346,6 @@
       color: var(--azul);
       line-height: 1.2;
       margin-bottom: 4px;
-      padding-right: 92px; /* espacio para el precio a la derecha */
     }
     .card-codigo {
       font-size: 12px;
@@ -360,20 +359,18 @@
       color: var(--gris-text);
       margin-top: 4px;
     }
-    /* Precio dentro del bloque blanco, alineado a la derecha
-       del título — solo visible cuando se muestran precios. */
+    /* Precio en su propia línea, centrado, debajo del resto.
+       Solo visible cuando se muestran precios. */
     .card-precio-inline {
-      position: absolute;
-      top: 10px;
-      right: 12px;
       background: var(--azul);
       color: #fff;
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 15px;
+      font-size: 17px;
       font-weight: 800;
-      padding: 3px 8px;
+      padding: 4px 12px;
       border-radius: 6px;
-      line-height: 1.1;
+      line-height: 1.15;
+      margin: 8px auto 2px;
       display: none;
     }
     .show-precios .card-precio-inline { display: inline-block; }
@@ -1576,6 +1573,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+      align-items: start; /* cada card su propio alto, sin estirarse hasta la más alta */
     }
 
     /* ── VISTA TABS ──────────────────────────────────────────── */
@@ -2381,19 +2379,17 @@
 </style>
 
 <script>
-// Ocultar modal inmediatamente si el cliente llega con link de vendedor
+// Skip del modal de descuento — siempre arrancar en modo "Precio de Lista".
+// Antes solo se ocultaba si el link traía wa/desc/precio; ahora se oculta
+// para todos los visitantes y se entra directo al catálogo con precios.
 (function() {
-  var h = window.location.hash;
-  if (h && (h.indexOf('desc=') !== -1 || h.indexOf('precio=') !== -1)) {
-    document.addEventListener('DOMContentLoaded', function() {
-      var el = document.getElementById('modalDescuentoOverlay');
-      if (el) el.classList.remove('open');
-    });
-    // También via style inline para que no parpadee
-    var style = document.createElement('style');
-    style.textContent = '#modalDescuentoOverlay { display: none !important; } #descuentoWrap { display: none !important; } #btnPrecioRev, #btnPrecioLibro { display: none !important; }';
-    document.head.appendChild(style);
-  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('modalDescuentoOverlay');
+    if (el) el.classList.remove('open');
+  });
+  var style = document.createElement('style');
+  style.textContent = '#modalDescuentoOverlay { display: none !important; } #descuentoWrap { display: none !important; } #btnPrecioRev, #btnPrecioLibro { display: none !important; }';
+  document.head.appendChild(style);
 })();
 </script>
 
@@ -4952,6 +4948,22 @@ var WA_NUMERO = '5491150408378'; // default: Maxi
         sincronizarBotonesPrecio();
         refrescarVistaActiva();
       }
+    });
+  } else {
+    // Visitante sin link configurado: por defecto entra al catálogo
+    // mostrando los Precios de Lista (sin descuento). Antes aparecía
+    // un modal pidiendo descuento — ahora se saltea.
+    window.addEventListener('DOMContentLoaded', function() {
+      descuentoPct = 0;
+      try { guardarDescuento(); } catch(e) {}
+      var inp4 = document.getElementById('descuentoInput');
+      if (inp4) inp4.value = '';
+      mostrarPrecios = true;
+      document.getElementById('appBody').classList.add('show-precios');
+      document.getElementById('modal').classList.add('show-precios');
+      document.getElementById('carritoBody').classList.add('show-precios');
+      sincronizarBotonesPrecio();
+      refrescarVistaActiva();
     });
   }
 })();
