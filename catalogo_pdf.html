@@ -456,7 +456,8 @@ function leerParams(){
     return {
         vendor: p.get('wa') || 'Maxi',
         precio: p.get('precio'),
-        desc:   p.get('desc')
+        desc:   p.get('desc'),
+        autodl: p.get('autodl') === '1'
     };
 }
 
@@ -727,6 +728,19 @@ async function descargarPDF(){
 document.getElementById('btnDescargar').addEventListener('click', descargarPDF);
 window.addEventListener('hashchange', render);
 render();
+
+// Si vino desde pedido-links.html con autodl=1, dispara la descarga
+// automáticamente (una sola vez, después del primer render).
+let _autodlDone = false;
+function maybeAutoDownload(){
+    if (_autodlDone) return;
+    const ctx = leerParams();
+    if (!ctx.autodl) return;
+    _autodlDone = true;
+    // Esperar un toque a que el render + las imágenes estén OK
+    setTimeout(() => descargarPDF(), 400);
+}
+maybeAutoDownload();
 </script>
 </body>
 </html>
