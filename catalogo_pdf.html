@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXIFER · Catálogo Imprimible</title>
+<meta name="description" content="Catálogo MAXIFER · Versión imprimible (PDF)">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --navy:#1a3a7a; --navy-dark:#13295a; --navy-light:#2151a8;
+    --green:#4ea83e; --green-dark:#3d8a30; --green-light:#6bc35a;
+    --orange:#e8510a;
+    --bg:#eef1f7; --bg-soft:#f5f7fb;
+    --border:#dde3ee; --border-strong:#c5cee0;
+    --text:#1a2238; --text-muted:#5a6685; --text-dim:#8a94ae;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased;
+}
+
+/* Barra fija con acción imprimir (solo en pantalla) */
+.toolbar{
+    position:fixed;top:14px;right:14px;z-index:1000;
+    display:flex;gap:10px;align-items:center;
+    background:#fff;border:1px solid var(--border);border-radius:14px;
+    padding:10px 14px;box-shadow:0 8px 24px rgba(19,41,90,.18);
+}
+.toolbar .meta{
+    font-size:12px;color:var(--text-muted);line-height:1.3;
+}
+.toolbar .meta strong{color:var(--navy);display:block;font-size:13px}
+.btn-print{
+    background:linear-gradient(180deg,var(--green-light),var(--green));
+    color:#fff;border:none;padding:11px 18px;border-radius:10px;
+    font-weight:800;font-size:13px;letter-spacing:.04em;cursor:pointer;
+    text-transform:uppercase;
+    box-shadow:0 4px 10px rgba(78,168,62,.35);
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .12s;
+}
+.btn-print:hover{transform:translateY(-1px)}
+
+/* Contenedor de páginas */
+.book{
+    max-width:210mm;margin:0 auto;padding:20px 0 60px;
+}
+
+/* PÁGINA A4 */
+.page{
+    width:210mm; min-height:297mm;
+    background:#fff;
+    margin:0 auto 20px;
+    box-shadow:0 4px 18px rgba(19,41,90,.10);
+    padding:14mm 14mm 12mm;
+    display:flex;flex-direction:column;
+    page-break-after:always;
+    position:relative;
+    overflow:hidden;
+}
+.page:last-child{page-break-after:auto}
+
+/* Cintas superior/inferior decorativas */
+.page::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--navy) 0%,var(--navy-light) 60%,var(--green) 100%);
+}
+.page::after{
+    content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--green) 0%,var(--navy) 100%);
+}
+
+/* HEADER de página */
+.page-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-bottom:8mm;border-bottom:1px solid var(--border);
+    margin-bottom:6mm;
+}
+.brand-block{display:flex;align-items:center;gap:10px}
+.brand-block img{
+    width:44px;height:44px;object-fit:contain;
+    border-radius:10px;background:#fff;padding:2px;
+    border:1px solid var(--border);
+}
+.brand-block .b-name{
+    font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;
+    color:var(--navy);letter-spacing:.06em;line-height:1;
+}
+.brand-block .b-sub{
+    font-size:9px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.18em;margin-top:3px;
+}
+.vendor-block{
+    text-align:right;font-size:11px;color:var(--text-muted);line-height:1.5;
+}
+.vendor-block .v-name{
+    color:var(--navy);font-weight:800;font-size:13px;display:block;
+    font-family:'Montserrat',sans-serif;
+}
+.vendor-block .v-wa{
+    color:var(--green-dark);font-weight:700;font-size:11px;display:block;
+    font-family:ui-monospace,Menlo,monospace;
+}
+
+/* TÍTULO del surtido */
+.surtido-title{
+    display:flex;align-items:center;gap:10px;margin-bottom:5mm;
+}
+.surtido-num{
+    background:linear-gradient(135deg,var(--navy),var(--navy-light));
+    color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;
+    font-size:13px;padding:6px 12px;border-radius:8px;letter-spacing:.05em;
+    box-shadow:0 2px 5px rgba(26,58,122,.25);
+}
+.surtido-name{
+    font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;
+    color:var(--navy);line-height:1.15;flex:1;
+}
+.surtido-codigo{
+    font-family:ui-monospace,Menlo,monospace;font-size:11px;
+    color:var(--text-muted);background:var(--bg-soft);
+    padding:4px 9px;border-radius:6px;border:1px solid var(--border);
+    font-weight:700;
+}
+
+/* HERO: fotos exhibidor + gaveta */
+.hero{
+    display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:5mm;
+}
+.hero .photo{
+    background:var(--bg-soft);border:1px solid var(--border);
+    border-radius:10px;padding:6px;
+    height:90mm;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;position:relative;
+}
+.hero .photo img{
+    max-width:100%;max-height:calc(100% - 18px);
+    object-fit:contain;
+}
+.hero .photo .ph-label{
+    position:absolute;top:6px;left:8px;
+    font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--text-muted);
+    background:#fff;padding:3px 7px;border-radius:5px;
+    border:1px solid var(--border);
+}
+
+/* SPECS row */
+.specs{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-bottom:5mm;
+}
+.spec{
+    background:var(--bg-soft);border:1px solid var(--border);
+    border-left:3px solid var(--green);
+    border-radius:8px;padding:8px 10px;
+}
+.spec .s-label{
+    font-size:9px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.08em;
+}
+.spec .s-value{
+    font-family:'Montserrat',sans-serif;font-size:14px;font-weight:800;
+    color:var(--navy);margin-top:2px;line-height:1.2;
+}
+
+/* INCLUYE */
+.incluye{
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:10px 14px;margin-bottom:5mm;
+}
+.incluye .h{
+    font-size:10px;font-weight:800;color:var(--navy);
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;
+    display:flex;align-items:center;gap:6px;
+}
+.incluye .h::before{content:'✓';color:var(--green);font-weight:900}
+.incluye ul{list-style:none;margin:0}
+.incluye li{
+    font-size:12px;color:var(--text);padding:3px 0;
+    display:flex;gap:8px;align-items:flex-start;
+}
+.incluye li::before{
+    content:'•';color:var(--green-dark);font-weight:900;flex-shrink:0;
+}
+
+/* TABLA de medidas (cuando aplica) */
+.tabla-section{
+    flex:1;display:flex;flex-direction:column;
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:10px 14px;margin-bottom:5mm;min-height:0;
+}
+.tabla-section .h{
+    font-size:10px;font-weight:800;color:var(--navy);
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;
+    display:flex;align-items:center;gap:6px;
+}
+.tabla-section .h::before{content:'📋'}
+.tabla-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:4px 8px;
+    font-size:10.5px;
+}
+.tabla-grid .row{
+    display:flex;align-items:center;gap:6px;padding:3px 6px;
+    background:var(--bg-soft);border-radius:5px;
+    border-left:2px solid var(--navy-light);
+}
+.tabla-grid .cant{
+    font-weight:800;color:var(--navy);font-family:'Montserrat',sans-serif;
+    min-width:22px;text-align:right;
+}
+.tabla-grid .med{
+    color:var(--text);font-family:ui-monospace,Menlo,monospace;font-size:10px;
+}
+
+/* UNIFORME info (cuando NO hay tabla) */
+.uniforme{
+    background:linear-gradient(135deg,rgba(78,168,62,.08),rgba(26,58,122,.05));
+    border:1px solid var(--border);border-left:3px solid var(--green);
+    border-radius:10px;padding:14px 18px;margin-bottom:5mm;
+    display:flex;align-items:center;gap:14px;
+}
+.uniforme .u-icon{font-size:32px;line-height:1}
+.uniforme .u-text{flex:1}
+.uniforme .u-title{
+    font-size:10px;font-weight:800;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;
+}
+.uniforme .u-value{
+    font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;
+    color:var(--navy);
+}
+
+/* FOOTER de página: precio + cta */
+.page-footer{
+    margin-top:auto;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding-top:6mm;border-top:1px solid var(--border);
+}
+.precio-box{
+    background:linear-gradient(135deg,var(--navy-dark),var(--navy));
+    color:#fff;border-radius:12px;padding:12px 18px;
+    box-shadow:0 4px 10px rgba(19,41,90,.25);
+    flex:1;
+}
+.precio-box .p-label{
+    font-size:10px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.12em;opacity:.8;margin-bottom:4px;
+}
+.precio-box .p-value{
+    font-family:'Montserrat',sans-serif;font-size:24px;font-weight:900;
+    line-height:1.1;
+}
+.precio-box .p-hint{
+    font-size:10px;opacity:.75;margin-top:3px;font-weight:600;
+}
+.precio-box.sin{
+    background:linear-gradient(135deg,#444,#666);
+}
+.precio-box.desc .p-old{
+    text-decoration:line-through;opacity:.55;font-size:13px;
+    font-weight:600;margin-right:8px;
+}
+.cta-block{
+    text-align:right;font-size:10px;color:var(--text-muted);line-height:1.4;
+}
+.cta-block strong{
+    display:block;color:var(--navy);font-size:11px;
+    font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:.04em;
+}
+
+/* Print */
+@media print{
+    @page{size:A4;margin:0}
+    html,body{background:#fff}
+    .toolbar{display:none}
+    .book{padding:0;max-width:none}
+    .page{
+        margin:0;box-shadow:none;
+        width:210mm;min-height:297mm;height:297mm;
+        page-break-after:always;
+    }
+    .page:last-child{page-break-after:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- Barra de herramientas (solo pantalla) -->
+<div class="toolbar">
+    <div class="meta">
+        <strong id="metaVendor">Maxi</strong>
+        <span id="metaMode">Precio Lista</span>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨 Descargar PDF</button>
+</div>
+
+<div class="book" id="book">
+    <!-- Las páginas se inyectan acá -->
+</div>
+
+<script>
+// ── DATOS DE MUESTRA (paso 1: solo 2 surtidos para validar diseño) ──
+const SURTIDOS_MUESTRA = [
+    {
+        id: 10,
+        nombre: "Chavetas Partidas",
+        codigo: "CHA. PART.",
+        piezas: 960,
+        modelos: 30,
+        cantidades_gavetas: "49 - 29 - 19",
+        foto_exhibidor: "./img/s10_exhibidor.webp",
+        foto_gavetas: "./img/s10_gavetas.webp",
+        incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "960 piezas totales", "Libre reposición"],
+        tabla: [
+            {cant:50,medida:"1,5 X 20"},{cant:50,medida:"1,5 X 25"},{cant:50,medida:"1,5 X 30"},
+            {cant:50,medida:"2 X 20"},{cant:50,medida:"2 X 25"},{cant:50,medida:"2 X 30"},
+            {cant:50,medida:"2 X 40"},{cant:50,medida:"2 X 50"},{cant:30,medida:"2,5 X 25"},
+            {cant:30,medida:"2,5 X 30"},{cant:30,medida:"2,5 X 40"},{cant:30,medida:"2,5 X 50"},
+            {cant:30,medida:"3 X 25"},{cant:30,medida:"3 X 30"},{cant:30,medida:"3 X 40"},
+            {cant:30,medida:"3 X 50"},{cant:30,medida:"3,5 X 30"},{cant:30,medida:"3,5 X 40"},
+            {cant:30,medida:"3,5 X 50"},{cant:30,medida:"4 X 30"},{cant:20,medida:"4 X 40"},
+            {cant:20,medida:"4 X 50"},{cant:20,medida:"4 X 60"},{cant:20,medida:"4,5 X 40"},
+            {cant:20,medida:"4,5 X 50"},{cant:20,medida:"4,5 X 60"},{cant:20,medida:"5 X 40"},
+            {cant:20,medida:"5 X 50"},{cant:20,medida:"5 X 60"},{cant:20,medida:"5 X 70"}
+        ],
+        cant_uniforme: null,
+        // Placeholder de precio (se reemplaza con data real en el paso siguiente)
+        precio_lista: 154278
+    },
+    {
+        id: 54,
+        nombre: "Clips Plásticos Básico",
+        codigo: "PL CH.",
+        piezas: 540,
+        modelos: 90,
+        cantidades_gavetas: "5",
+        foto_exhibidor: "./img/s54_exhibidor.webp",
+        foto_gavetas: "./img/s54_gavetas.webp",
+        incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "540 piezas totales", "Libre reposición"],
+        tabla: null,
+        cant_uniforme: "6 piezas de c/u",
+        precio_lista: 567894
+    }
+];
+
+const VENDEDORES = {
+    'Maxi':     { nombre:'Maximiliano Gordillo', wa:'5491150408378' },
+    'Micky':    { nombre:'Micky',                wa:'5491164865752' },
+    'Victor':   { nombre:'Victor Gordillo',      wa:'5491149367336' },
+    'Nadia':    { nombre:'Nadia',                wa:'5491128243870' },
+    'Eduardo':  { nombre:'Eduardo',              wa:'5492634688163' },
+    'Federico': { nombre:'Federico',             wa:'5493516017663' }
+};
+
+// Lee parámetros del hash (#wa=Maxi&precio=lista|sin&desc=30)
+function leerParams(){
+    const h = (location.hash || '').replace(/^#/, '');
+    const p = new URLSearchParams(h);
+    return {
+        vendor: p.get('wa') || 'Maxi',
+        precio: p.get('precio'),       // 'lista' | 'sin' | null
+        desc:   p.get('desc')           // '20', '30', etc.
+    };
+}
+
+function formatPrecio(n){
+    if (!n && n !== 0) return '—';
+    return n.toLocaleString('es-AR');
+}
+
+function formatWA(num){
+    // 5491150408378 → +54 9 11 5040-8378
+    if (!num) return '';
+    const m = String(num).match(/^54(9?)(\d{2,3})(\d{4})(\d{4})$/);
+    if (!m) return '+' + num;
+    return '+54 ' + (m[1] ? '9 ' : '') + m[2] + ' ' + m[3] + '-' + m[4];
+}
+
+function renderPagina(s, ctx){
+    const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
+    const sinPrecio = ctx.precio === 'sin';
+    const descNum = ctx.desc ? parseInt(ctx.desc, 10) : 0;
+    const precioLista = s.precio_lista || 0;
+    const precioFinal = descNum > 0 ? Math.round(precioLista * (1 - descNum/100)) : precioLista;
+
+    // Bloque precio
+    let precioHTML = '';
+    if (sinPrecio){
+        precioHTML = `
+            <div class="precio-box sin">
+                <div class="p-label">Consultar precio</div>
+                <div class="p-value">Contactar al vendedor</div>
+                <div class="p-hint">Coordiná condiciones por WhatsApp</div>
+            </div>`;
+    } else if (descNum > 0){
+        precioHTML = `
+            <div class="precio-box desc">
+                <div class="p-label">Precio con −${descNum}%</div>
+                <div class="p-value">
+                    <span class="p-old">$${formatPrecio(precioLista)}</span>
+                    $${formatPrecio(precioFinal)}
+                </div>
+                <div class="p-hint">IVA incluido · Libre reposición</div>
+            </div>`;
+    } else {
+        precioHTML = `
+            <div class="precio-box">
+                <div class="p-label">Precio Lista</div>
+                <div class="p-value">$${formatPrecio(precioLista)}</div>
+                <div class="p-hint">IVA incluido · Libre reposición</div>
+            </div>`;
+    }
+
+    // Bloque tabla o uniforme
+    let stockHTML = '';
+    if (s.tabla && s.tabla.length){
+        const filas = s.tabla.map(r => `
+            <div class="row">
+                <span class="cant">${r.cant}</span>
+                <span class="med">${r.medida}</span>
+            </div>`).join('');
+        stockHTML = `
+            <div class="tabla-section">
+                <div class="h">Composición · ${s.tabla.length} medidas</div>
+                <div class="tabla-grid">${filas}</div>
+            </div>`;
+    } else if (s.cant_uniforme){
+        stockHTML = `
+            <div class="uniforme">
+                <div class="u-icon">📦</div>
+                <div class="u-text">
+                    <div class="u-title">Cantidades por modelo</div>
+                    <div class="u-value">${s.cant_uniforme}</div>
+                </div>
+            </div>`;
+    }
+
+    return `
+    <section class="page">
+        <header class="page-header">
+            <div class="brand-block">
+                <img src="img/favicon-192.png" alt="MAXIFER">
+                <div>
+                    <div class="b-name">MAXIFER</div>
+                    <div class="b-sub">Fábrica Importadora</div>
+                </div>
+            </div>
+            <div class="vendor-block">
+                Tu vendedor
+                <span class="v-name">${v.nombre}</span>
+                <span class="v-wa">${formatWA(v.wa)}</span>
+            </div>
+        </header>
+
+        <div class="surtido-title">
+            <span class="surtido-num">SURTIDO #${s.id}</span>
+            <h1 class="surtido-name">${s.nombre}</h1>
+            <span class="surtido-codigo">${s.codigo}</span>
+        </div>
+
+        <div class="hero">
+            <div class="photo">
+                <span class="ph-label">Exhibidor</span>
+                <img src="${s.foto_exhibidor}" alt="Exhibidor ${s.nombre}">
+            </div>
+            <div class="photo">
+                <span class="ph-label">Gaveta</span>
+                <img src="${s.foto_gavetas}" alt="Gaveta ${s.nombre}">
+            </div>
+        </div>
+
+        <div class="specs">
+            <div class="spec">
+                <div class="s-label">Piezas totales</div>
+                <div class="s-value">${formatPrecio(s.piezas)}</div>
+            </div>
+            <div class="spec">
+                <div class="s-label">Modelos diferentes</div>
+                <div class="s-value">${s.modelos}</div>
+            </div>
+            <div class="spec">
+                <div class="s-label">Por gaveta</div>
+                <div class="s-value">${s.cantidades_gavetas}</div>
+            </div>
+        </div>
+
+        <div class="incluye">
+            <div class="h">Incluye</div>
+            <ul>${s.incluye.map(i => `<li>${i}</li>`).join('')}</ul>
+        </div>
+
+        ${stockHTML}
+
+        <footer class="page-footer">
+            ${precioHTML}
+            <div class="cta-block">
+                <strong>${v.nombre}</strong>
+                WhatsApp ${formatWA(v.wa)}<br>
+                www.maxifer.com.ar
+            </div>
+        </footer>
+    </section>`;
+}
+
+function render(){
+    const ctx = leerParams();
+    const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
+    document.getElementById('metaVendor').textContent = v.nombre;
+    let modeText = 'Precio Lista';
+    if (ctx.precio === 'sin') modeText = 'Sin precios';
+    else if (ctx.desc) modeText = `Con −${ctx.desc}%`;
+    document.getElementById('metaMode').textContent = modeText;
+
+    const html = SURTIDOS_MUESTRA.map(s => renderPagina(s, ctx)).join('');
+    document.getElementById('book').innerHTML = html;
+}
+
+window.addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>
