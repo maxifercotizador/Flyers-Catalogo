@@ -13,9 +13,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
 
-<!-- jsPDF + html2canvas por separado (necesitamos los globals jsPDF/html2canvas) -->
+<!-- jsPDF + html2canvas para descarga real de PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- SheetJS para leer los Excels de precios -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Datos del catálogo (separados en archivos JS por límite de tool call API) -->
+<script src="catalogo-data.js"></script>
+<script src="surtidos-data.js"></script>
 
 <style>
 :root{
@@ -33,7 +38,31 @@ html,body{
     -webkit-font-smoothing:antialiased;
 }
 
-/* Toolbar (solo pantalla) */
+/* Loading overlay (mientras carga el Excel) */
+.loading-overlay{
+    position:fixed;inset:0;z-index:2000;
+    background:linear-gradient(135deg,var(--navy-dark),var(--navy));
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:18px;
+    transition:opacity .3s;
+}
+.loading-overlay.gone{opacity:0;pointer-events:none}
+.loading-overlay img{
+    width:90px;height:90px;background:#fff;border-radius:18px;padding:6px;
+    box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.loading-overlay .lo-title{
+    font-family:'Montserrat',sans-serif;font-size:24px;font-weight:900;letter-spacing:.12em;
+}
+.loading-overlay .lo-text{font-size:13px;opacity:.85;letter-spacing:.06em}
+.loading-overlay .spinner{
+    width:34px;height:34px;border:3px solid rgba(255,255,255,.25);
+    border-top-color:#fff;border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toolbar */
 .toolbar{
     position:fixed;top:14px;right:14px;z-index:1000;
     display:flex;gap:10px;align-items:center;
@@ -68,13 +97,11 @@ html,body{
 }
 .page:last-child{page-break-after:auto}
 
-/* Marco decorativo (SVG ocupa toda la página) */
 .frame{
     position:absolute;top:0;left:0;width:100%;height:100%;
     pointer-events:none;z-index:0;
 }
 
-/* Contenido con padding generoso para no chocar con el marco */
 .page-body{
     position:relative;z-index:1;
     width:100%;height:100%;
@@ -82,10 +109,8 @@ html,body{
     display:flex;flex-direction:column;
 }
 
-/* HEADER de página de surtido */
 .page-header{
     display:flex;align-items:center;justify-content:space-between;
-    /* padding-left extra para que el brand-block no se choque con el bloque navy del marco (que contiene el "26") */
     padding:0 0 5mm 44mm;border-bottom:1px solid var(--border);
     margin-bottom:5mm;
 }
@@ -115,7 +140,6 @@ html,body{
     font-family:ui-monospace,Menlo,monospace;
 }
 
-/* TÍTULO del surtido */
 .surtido-title{
     display:flex;align-items:center;gap:12px;margin-bottom:5mm;
 }
@@ -132,10 +156,10 @@ html,body{
     text-transform:uppercase;letter-spacing:.02em;
 }
 
-/* HERO: fotos exhibidor + gaveta */
 .hero{
     display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:5mm;
 }
+.hero.single{grid-template-columns:1fr}
 .hero .photo{
     background:var(--bg-soft);border:1px solid var(--border);
     border-radius:10px;padding:6px;
@@ -154,7 +178,6 @@ html,body{
     border:1px solid var(--border);
 }
 
-/* SPECS row */
 .specs{
     display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin-bottom:5mm;
 }
@@ -172,7 +195,6 @@ html,body{
     color:var(--navy);margin-top:2px;line-height:1.2;
 }
 
-/* INCLUYE */
 .incluye{
     background:#fff;border:1px solid var(--border);border-radius:10px;
     padding:9px 14px;margin-bottom:4mm;
@@ -192,7 +214,6 @@ html,body{
     content:'•';color:var(--green-dark);font-weight:900;flex-shrink:0;
 }
 
-/* TABLA de medidas */
 .tabla-section{
     flex:1;display:flex;flex-direction:column;
     background:#fff;border:1px solid var(--border);border-radius:10px;
@@ -208,6 +229,8 @@ html,body{
     display:grid;grid-template-columns:repeat(4,1fr);gap:4px 8px;
     font-size:10.5px;
 }
+.tabla-grid.cols5{grid-template-columns:repeat(5,1fr);font-size:9.5px}
+.tabla-grid.cols6{grid-template-columns:repeat(6,1fr);font-size:9px}
 .tabla-grid .row{
     display:flex;align-items:center;gap:6px;padding:3px 6px;
     background:var(--bg-soft);border-radius:5px;
@@ -215,13 +238,13 @@ html,body{
 }
 .tabla-grid .cant{
     font-weight:800;color:var(--navy);font-family:'Montserrat',sans-serif;
-    min-width:22px;text-align:right;
+    min-width:20px;text-align:right;
 }
 .tabla-grid .med{
     color:var(--text);font-family:ui-monospace,Menlo,monospace;font-size:10px;
 }
+.tabla-grid.cols5 .med, .tabla-grid.cols6 .med{font-size:9px}
 
-/* UNIFORME info */
 .uniforme{
     background:linear-gradient(135deg,rgba(14,138,74,.08),rgba(26,58,122,.05));
     border:1px solid var(--border);border-left:3px solid var(--green);
@@ -239,13 +262,11 @@ html,body{
     color:var(--navy);
 }
 
-/* FOOTER de página de surtido: precio + cta */
 .page-footer{
     margin-top:auto;
     display:flex;align-items:stretch;justify-content:space-between;gap:14px;
     padding-top:4mm;border-top:1px solid var(--border);
 }
-/* Precio: ahora azul (navy) sobre fondo claro */
 .precio-box{
     background:#fff;
     border:2px solid var(--navy);
@@ -264,9 +285,7 @@ html,body{
 .precio-box .p-hint{
     font-size:10px;color:var(--text-muted);margin-top:3px;font-weight:600;
 }
-.precio-box.sin{
-    border-color:#888;background:#fafafa;
-}
+.precio-box.sin{border-color:#888;background:#fafafa}
 .precio-box.sin .p-label, .precio-box.sin .p-value{color:#444}
 .precio-box.desc .p-old{
     text-decoration:line-through;color:var(--text-muted);font-size:14px;
@@ -285,31 +304,43 @@ html,body{
 .cover-body{
     position:relative;z-index:1;
     width:100%;height:100%;
-    padding:60mm 30mm;
+    padding:50mm 30mm 36mm;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     text-align:center;
 }
 .cover-logo{
     width:90px;height:90px;object-fit:contain;
     background:#fff;border-radius:18px;padding:6px;
-    border:1px solid var(--border);margin-bottom:14mm;
+    border:1px solid var(--border);margin-bottom:12mm;
     box-shadow:0 6px 18px rgba(26,58,122,.18);
 }
 .cover-brand{
-    font-family:'Montserrat',sans-serif;font-size:42px;font-weight:900;
-    color:var(--navy);letter-spacing:.12em;line-height:1;margin-bottom:6mm;
+    font-family:'Montserrat',sans-serif;font-size:46px;font-weight:900;
+    color:var(--navy);letter-spacing:.14em;line-height:1;margin-bottom:5mm;
 }
 .cover-tagline{
     font-size:12px;color:var(--text-muted);font-weight:700;
-    text-transform:uppercase;letter-spacing:.3em;margin-bottom:18mm;
+    text-transform:uppercase;letter-spacing:.3em;margin-bottom:15mm;
 }
 .cover-title{
-    font-family:'Montserrat',sans-serif;font-size:26px;font-weight:800;
-    color:var(--navy);line-height:1.2;margin-bottom:6mm;
+    font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800;
+    color:var(--navy);line-height:1.2;margin-bottom:5mm;
 }
 .cover-sub{
-    font-size:14px;color:var(--text);max-width:130mm;
-    line-height:1.5;margin-bottom:14mm;
+    font-size:14px;color:var(--text);max-width:140mm;
+    line-height:1.5;margin-bottom:12mm;
+}
+.cover-stats{
+    display:flex;gap:22mm;margin-bottom:12mm;
+}
+.cover-stat{text-align:center}
+.cover-stat .num{
+    font-family:'Montserrat',sans-serif;font-size:34px;font-weight:900;
+    color:var(--green-dark);line-height:1;
+}
+.cover-stat .lbl{
+    font-size:10px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.1em;margin-top:4px;
 }
 .cover-vendor{
     background:var(--bg-soft);border:1px solid var(--border);
@@ -329,55 +360,102 @@ html,body{
     color:var(--green-dark);font-weight:700;
 }
 
+/* ── CONTRATAPA ── */
+.bcover-body{
+    position:relative;z-index:1;
+    width:100%;height:100%;
+    padding:50mm 30mm 36mm;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+}
+.bcover-thanks{
+    font-family:'Playfair Display','Georgia',serif;font-style:italic;font-weight:800;
+    font-size:54px;color:var(--navy);line-height:1;margin-bottom:6mm;
+}
+.bcover-msg{
+    font-size:15px;color:var(--text);line-height:1.6;
+    max-width:140mm;margin-bottom:16mm;
+}
+.bcover-msg b{color:var(--navy)}
+.bcover-cta{
+    background:linear-gradient(135deg,var(--green-light),var(--green));
+    color:#fff;border-radius:14px;padding:18px 28px;
+    box-shadow:0 6px 18px rgba(14,138,74,.35);
+    display:inline-block;margin-bottom:14mm;
+}
+.bcover-cta .ct-label{
+    font-size:11px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.16em;opacity:.95;margin-bottom:5px;
+}
+.bcover-cta .ct-name{
+    font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;line-height:1.1;
+}
+.bcover-cta .ct-wa{
+    font-family:ui-monospace,Menlo,monospace;font-size:14px;
+    font-weight:700;margin-top:4px;
+}
+.bcover-foot{
+    font-size:11px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.18em;
+}
+.bcover-foot a{color:var(--navy);text-decoration:none}
+
 /* ── ÍNDICE ── */
 .idx-body{
     position:relative;z-index:1;
     width:100%;height:100%;
-    padding:30mm 22mm 24mm;
+    padding:24mm 22mm 22mm;
     display:flex;flex-direction:column;
 }
 .idx-title{
-    font-family:'Montserrat',sans-serif;font-size:32px;font-weight:900;
+    font-family:'Montserrat',sans-serif;font-size:30px;font-weight:900;
     color:var(--navy);letter-spacing:.12em;text-transform:uppercase;
-    margin-bottom:2mm;
-    /* corrido a la derecha para no pisar el bloque navy del marco */
-    margin-left:44mm;
+    margin-bottom:1mm;margin-left:44mm;
 }
 .idx-sub{
     font-size:11px;color:var(--text-muted);font-weight:700;
-    letter-spacing:.16em;text-transform:uppercase;margin-bottom:10mm;
+    letter-spacing:.16em;text-transform:uppercase;margin-bottom:6mm;
     margin-left:44mm;
 }
-.idx-list{flex:1}
+.idx-cols{
+    flex:1;
+    display:grid;grid-template-columns:1fr 1fr;column-gap:8mm;row-gap:0;
+    align-content:start;
+}
+.idx-grupo{
+    margin-bottom:3mm;break-inside:avoid;
+}
+.idx-grupo-h{
+    font-family:'Montserrat',sans-serif;font-size:10px;font-weight:900;
+    color:var(--green-dark);text-transform:uppercase;letter-spacing:.1em;
+    padding:3px 0 3px;border-bottom:1.5px solid var(--green);
+    margin-bottom:2mm;display:flex;align-items:center;gap:6px;
+}
 .idx-row{
-    display:flex;align-items:baseline;gap:6px;
-    padding:5px 0;border-bottom:1px dotted var(--border);
-    font-size:12px;
+    display:flex;align-items:baseline;gap:5px;
+    padding:2px 0;
+    font-size:10px;
 }
 .idx-cod{
-    font-family:ui-monospace,Menlo,monospace;font-size:10px;
+    font-family:ui-monospace,Menlo,monospace;font-size:8.5px;
     color:var(--text-muted);font-weight:700;
-    background:var(--bg-soft);padding:2px 7px;border-radius:5px;
-    border:1px solid var(--border);min-width:80px;text-align:center;
+    background:var(--bg-soft);padding:1px 5px;border-radius:4px;
+    border:1px solid var(--border);min-width:62px;text-align:center;
 }
 .idx-name{
     flex:1;color:var(--text);font-weight:600;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.idx-dots{
-    color:var(--border-strong);overflow:hidden;letter-spacing:2px;
-    flex:0 1 auto;min-width:0;
-}
 .idx-page{
     font-family:'Montserrat',sans-serif;font-weight:800;color:var(--navy);
-    font-size:13px;min-width:24px;text-align:right;
+    font-size:10px;min-width:18px;text-align:right;
 }
 
 /* Print */
 @media print{
     @page{size:A4;margin:0}
     html,body{background:#fff}
-    .toolbar{display:none}
+    .toolbar, .loading-overlay{display:none}
     .book{padding:0;max-width:none}
     .page{
         margin:0;box-shadow:none;
@@ -390,60 +468,29 @@ html,body{
 </head>
 <body>
 
+<!-- Loading overlay (oculto al terminar de cargar el Excel) -->
+<div class="loading-overlay" id="loadingOverlay">
+    <img src="img/favicon-192.png" alt="MAXIFER">
+    <div class="lo-title">MAXIFER</div>
+    <div class="spinner"></div>
+    <div class="lo-text" id="loadingText">Descargando lista de precios…</div>
+</div>
+
 <!-- Toolbar -->
 <div class="toolbar">
     <div class="meta">
         <strong id="metaVendor">Maxi</strong>
         <span id="metaMode">Precio Lista</span>
     </div>
-    <button class="btn-print" id="btnDescargar">📥 Descargar PDF</button>
+    <button class="btn-print" id="btnDescargar" disabled>📥 Descargar PDF</button>
 </div>
 
 <div class="book" id="book"></div>
 
 <script>
-// ── DATOS DE MUESTRA (paso 1: 2 surtidos para validar diseño) ──
-const SURTIDOS_MUESTRA = [
-    {
-        id: 10,
-        nombre: "Chavetas Partidas",
-        codigo: "CHA. PART.",
-        piezas: 960,
-        modelos: 30,
-        cantidades_gavetas: "49 - 29 - 19",
-        foto_exhibidor: "./img/s10_exhibidor.webp",
-        foto_gavetas: "./img/s10_gavetas.webp",
-        incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "960 piezas totales", "Libre reposición"],
-        tabla: [
-            {cant:50,medida:"1,5 X 20"},{cant:50,medida:"1,5 X 25"},{cant:50,medida:"1,5 X 30"},
-            {cant:50,medida:"2 X 20"},{cant:50,medida:"2 X 25"},{cant:50,medida:"2 X 30"},
-            {cant:50,medida:"2 X 40"},{cant:50,medida:"2 X 50"},{cant:30,medida:"2,5 X 25"},
-            {cant:30,medida:"2,5 X 30"},{cant:30,medida:"2,5 X 40"},{cant:30,medida:"2,5 X 50"},
-            {cant:30,medida:"3 X 25"},{cant:30,medida:"3 X 30"},{cant:30,medida:"3 X 40"},
-            {cant:30,medida:"3 X 50"},{cant:30,medida:"3,5 X 30"},{cant:30,medida:"3,5 X 40"},
-            {cant:30,medida:"3,5 X 50"},{cant:30,medida:"4 X 30"},{cant:20,medida:"4 X 40"},
-            {cant:20,medida:"4 X 50"},{cant:20,medida:"4 X 60"},{cant:20,medida:"4,5 X 40"},
-            {cant:20,medida:"4,5 X 50"},{cant:20,medida:"4,5 X 60"},{cant:20,medida:"5 X 40"},
-            {cant:20,medida:"5 X 50"},{cant:20,medida:"5 X 60"},{cant:20,medida:"5 X 70"}
-        ],
-        cant_uniforme: null,
-        precio_lista: 154278
-    },
-    {
-        id: 54,
-        nombre: "Clips Plásticos Básico",
-        codigo: "PL CH.",
-        piezas: 540,
-        modelos: 90,
-        cantidades_gavetas: "5",
-        foto_exhibidor: "./img/s54_exhibidor.webp",
-        foto_gavetas: "./img/s54_gavetas.webp",
-        incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "540 piezas totales", "Libre reposición"],
-        tabla: null,
-        cant_uniforme: "6 piezas de c/u",
-        precio_lista: 567894
-    }
-];
+// Las constantes GRUPOS, MODELOS_DIFERENTES, CANTIDADES_GAVETAS, VERSION_REDUCIDA,
+// MAXIFER_EXCEL_URLS, las funciones maxifer*, y SURTIDOS vienen de
+// catalogo-data.js y surtidos-data.js (cargados antes de este script).
 
 const VENDEDORES = {
     'Maxi':     { nombre:'Maximiliano Gordillo', wa:'5491150408378' },
@@ -455,6 +502,7 @@ const VENDEDORES = {
 };
 
 const ANIO = '26'; // 2026
+let COMPOSICION_DATA = {};
 
 function leerParams(){
     const h = (location.hash || '').replace(/^#/, '');
@@ -479,50 +527,67 @@ function formatWA(num){
     return '+54 ' + (m[1] ? '9 ' : '') + m[2] + ' ' + m[3] + '-' + m[4];
 }
 
-// ── MARCO DECORATIVO (SVG) ──
-function frameSVG(pageNum){
-    return `
-    <svg class="frame" viewBox="0 0 210 297" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Bloque navy sup-izq -->
-        <path d="M 0,0 L 78,0 Q 64,18 50,32 Q 30,50 0,72 Z" fill="#1a3a7a"/>
-        <!-- Curva verde superior -->
-        <path d="M 0,68 Q 30,46 52,30 Q 70,17 88,8 Q 130,2 168,16 Q 192,24 210,12 L 210,2 Q 192,16 168,8 Q 130,-2 88,2 Q 68,10 50,24 Q 28,40 0,60 Z" fill="#0e8a4a"/>
-        <!-- Cuña roja sup-der -->
-        <path d="M 196,0 L 210,0 L 210,22 Q 204,11 196,0 Z" fill="#c8102e"/>
+function getGrupo(s){
+    for (const g of GRUPOS){
+        if (g.codigos.includes(s.codigo)) return g;
+    }
+    return { key:'otros', label:'Otros', icono:'📦', color:'#9ca3af', codigos:[] };
+}
 
-        <!-- Año -->
-        <text x="14" y="30" font-family="'Playfair Display', Georgia, serif"
-              font-style="italic" font-weight="800" font-size="26" fill="#ffffff">${ANIO}</text>
-
-        <!-- Bloque navy inf-izq -->
-        <path d="M 0,253 Q 18,258 32,272 Q 44,284 56,297 L 0,297 Z" fill="#1a3a7a"/>
-        <!-- Curva verde inferior -->
-        <path d="M 0,275 Q 28,283 52,283 Q 88,283 130,288 Q 170,292 196,283 Q 204,279 210,288 L 210,297 L 0,297 Z" fill="#0e8a4a"/>
-        <!-- Cuña roja inf-der -->
-        <path d="M 199,297 L 210,297 L 210,278 Q 205,288 199,297 Z" fill="#c8102e"/>
-
-        <!-- Círculo blanco con número de página -->
+// ── MARCO DECORATIVO (SVG) ────────────────────────────────────
+function frameSVG(pageNum, opts){
+    opts = opts || {};
+    const showPage = opts.showPage !== false;
+    const numEl = showPage ? `
         <circle cx="14" cy="285" r="5.5" fill="#ffffff"/>
         <text x="14" y="287.5" text-anchor="middle"
-              font-family="'Inter', sans-serif" font-weight="800" font-size="6.5" fill="#1a3a7a">${pageNum}</text>
+              font-family="'Inter', sans-serif" font-weight="800" font-size="6.5" fill="#1a3a7a">${pageNum}</text>` : '';
+    return `
+    <svg class="frame" viewBox="0 0 210 297" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 0,0 L 78,0 Q 64,18 50,32 Q 30,50 0,72 Z" fill="#1a3a7a"/>
+        <path d="M 0,68 Q 30,46 52,30 Q 70,17 88,8 Q 130,2 168,16 Q 192,24 210,12 L 210,2 Q 192,16 168,8 Q 130,-2 88,2 Q 68,10 50,24 Q 28,40 0,60 Z" fill="#0e8a4a"/>
+        <path d="M 196,0 L 210,0 L 210,22 Q 204,11 196,0 Z" fill="#c8102e"/>
+        <text x="14" y="30" font-family="'Playfair Display', Georgia, serif"
+              font-style="italic" font-weight="800" font-size="26" fill="#ffffff">${ANIO}</text>
+        <path d="M 0,253 Q 18,258 32,272 Q 44,284 56,297 L 0,297 Z" fill="#1a3a7a"/>
+        <path d="M 0,275 Q 28,283 52,283 Q 88,283 130,288 Q 170,292 196,283 Q 204,279 210,288 L 210,297 L 0,297 Z" fill="#0e8a4a"/>
+        <path d="M 199,297 L 210,297 L 210,278 Q 205,288 199,297 Z" fill="#c8102e"/>
+        ${numEl}
     </svg>`;
 }
 
+// ── PORTADA ───────────────────────────────────────────────────
 function renderPortada(ctx, totalSurtidos){
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
-    let modeText = 'con precios de lista';
-    if (ctx.precio === 'sin') modeText = 'sin precios (consultar al vendedor)';
-    else if (ctx.desc) modeText = `con descuento aplicado (−${ctx.desc}%)`;
+    let modeText = 'Edición precio lista';
+    if (ctx.precio === 'sin') modeText = 'Edición sin precios';
+    else if (ctx.desc) modeText = `Edición con −${ctx.desc}% aplicado`;
+
+    const piezasTotales = SURTIDOS.reduce((acc, s) => acc + (s.piezas || 0), 0);
 
     return `
     <section class="page">
-        ${frameSVG(1)}
+        ${frameSVG(1, {showPage:false})}
         <div class="cover-body">
             <img class="cover-logo" src="img/favicon-192.png" alt="MAXIFER">
             <div class="cover-brand">MAXIFER</div>
             <div class="cover-tagline">Fábrica · Importadora</div>
             <div class="cover-title">Catálogo de Surtidos 20${ANIO}</div>
-            <div class="cover-sub">${totalSurtidos} surtidos para tu ferretería · Edición ${modeText}</div>
+            <div class="cover-sub">Exhibidores con gavetas codificadas para tu ferretería · ${modeText}</div>
+            <div class="cover-stats">
+                <div class="cover-stat">
+                    <div class="num">${totalSurtidos}</div>
+                    <div class="lbl">Surtidos</div>
+                </div>
+                <div class="cover-stat">
+                    <div class="num">${formatNum(piezasTotales)}</div>
+                    <div class="lbl">Piezas en exhibición</div>
+                </div>
+                <div class="cover-stat">
+                    <div class="num">100%</div>
+                    <div class="lbl">Libre reposición</div>
+                </div>
+            </div>
             <div class="cover-vendor">
                 <div class="cv-label">Tu vendedor</div>
                 <div class="cv-name">${v.nombre}</div>
@@ -532,14 +597,32 @@ function renderPortada(ctx, totalSurtidos){
     </section>`;
 }
 
+// ── ÍNDICE (agrupado por GRUPO, 2 columnas) ───────────────────
 function renderIndice(surtidos, paginaInicio){
-    const filas = surtidos.map((s, i) => `
-        <div class="idx-row">
-            <span class="idx-cod">${s.codigo}</span>
-            <span class="idx-name">${s.nombre}</span>
-            <span class="idx-dots">······································································</span>
-            <span class="idx-page">${paginaInicio + i}</span>
-        </div>`).join('');
+    const grupoMap = new Map();
+    for (let i = 0; i < surtidos.length; i++){
+        const s = surtidos[i];
+        const g = getGrupo(s);
+        if (!grupoMap.has(g.key)) grupoMap.set(g.key, { grupo:g, items:[] });
+        grupoMap.get(g.key).items.push({ s, pagina: paginaInicio + i });
+    }
+
+    const bloques = [];
+    for (const g of GRUPOS){
+        const data = grupoMap.get(g.key);
+        if (!data || !data.items.length) continue;
+        const filas = data.items.map(it => `
+            <div class="idx-row">
+                <span class="idx-cod">${it.s.codigo}</span>
+                <span class="idx-name">${it.s.nombre}</span>
+                <span class="idx-page">${it.pagina}</span>
+            </div>`).join('');
+        bloques.push(`
+            <div class="idx-grupo">
+                <div class="idx-grupo-h">${g.icono} ${g.label}</div>
+                ${filas}
+            </div>`);
+    }
 
     return `
     <section class="page">
@@ -547,16 +630,17 @@ function renderIndice(surtidos, paginaInicio){
         <div class="idx-body">
             <h1 class="idx-title">Índice</h1>
             <div class="idx-sub">${surtidos.length} surtidos · Catálogo MAXIFER 20${ANIO}</div>
-            <div class="idx-list">${filas}</div>
+            <div class="idx-cols">${bloques.join('')}</div>
         </div>
     </section>`;
 }
 
+// ── PÁGINA DE SURTIDO ─────────────────────────────────────────
 function renderPagina(s, ctx, pageNum){
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
     const sinPrecio = ctx.precio === 'sin';
     const descNum = ctx.desc ? parseInt(ctx.desc, 10) : 0;
-    const precioLista = s.precio_lista || 0;
+    const precioLista = s.precio || 0;
     const precioFinal = descNum > 0 ? Math.round(precioLista * (1 - descNum/100)) : precioLista;
 
     let precioHTML;
@@ -588,6 +672,9 @@ function renderPagina(s, ctx, pageNum){
 
     let stockHTML = '';
     if (s.tabla && s.tabla.length){
+        let colsClass = '';
+        if (s.tabla.length > 32) colsClass = ' cols6';
+        else if (s.tabla.length > 24) colsClass = ' cols5';
         const filas = s.tabla.map(r => `
             <div class="row">
                 <span class="cant">${r.cant}</span>
@@ -596,7 +683,7 @@ function renderPagina(s, ctx, pageNum){
         stockHTML = `
             <div class="tabla-section">
                 <div class="h">Composición · ${s.tabla.length} medidas</div>
-                <div class="tabla-grid">${filas}</div>
+                <div class="tabla-grid${colsClass}">${filas}</div>
             </div>`;
     } else if (s.cant_uniforme){
         stockHTML = `
@@ -608,6 +695,45 @@ function renderPagina(s, ctx, pageNum){
                 </div>
             </div>`;
     }
+
+    const hasGaveta = s.foto_gavetas && s.foto_gavetas.length;
+    const hasExhibidor = s.foto_exhibidor && s.foto_exhibidor.length;
+    const fotoGavetaSrc = hasGaveta ? s.foto_gavetas : (s.foto_card || '');
+    let heroHTML;
+    if (hasExhibidor && fotoGavetaSrc){
+        heroHTML = `
+            <div class="hero">
+                <div class="photo">
+                    <span class="ph-label">Exhibidor</span>
+                    <img src="${s.foto_exhibidor}" alt="Exhibidor ${s.nombre}">
+                </div>
+                <div class="photo">
+                    <span class="ph-label">${hasGaveta ? 'Gaveta' : 'Vista'}</span>
+                    <img src="${fotoGavetaSrc}" alt="Gaveta ${s.nombre}">
+                </div>
+            </div>`;
+    } else if (hasExhibidor){
+        heroHTML = `
+            <div class="hero single">
+                <div class="photo">
+                    <span class="ph-label">Exhibidor</span>
+                    <img src="${s.foto_exhibidor}" alt="${s.nombre}">
+                </div>
+            </div>`;
+    } else if (s.foto_card){
+        heroHTML = `
+            <div class="hero single">
+                <div class="photo">
+                    <span class="ph-label">Vista</span>
+                    <img src="${s.foto_card}" alt="${s.nombre}">
+                </div>
+            </div>`;
+    } else {
+        heroHTML = '<div class="hero single"><div class="photo"></div></div>';
+    }
+
+    const modelos = MODELOS_DIFERENTES[s.codigo] || '—';
+    const stockGav = CANTIDADES_GAVETAS[s.codigo] || '—';
 
     return `
     <section class="page">
@@ -632,16 +758,7 @@ function renderPagina(s, ctx, pageNum){
                 <h1 class="surtido-name">${s.nombre}</h1>
             </div>
 
-            <div class="hero">
-                <div class="photo">
-                    <span class="ph-label">Exhibidor</span>
-                    <img src="${s.foto_exhibidor}" alt="Exhibidor ${s.nombre}">
-                </div>
-                <div class="photo">
-                    <span class="ph-label">Gaveta</span>
-                    <img src="${s.foto_gavetas}" alt="Gaveta ${s.nombre}">
-                </div>
-            </div>
+            ${heroHTML}
 
             <div class="specs">
                 <div class="spec">
@@ -650,11 +767,11 @@ function renderPagina(s, ctx, pageNum){
                 </div>
                 <div class="spec">
                     <div class="s-label">Modelos diferentes</div>
-                    <div class="s-value">${s.modelos}</div>
+                    <div class="s-value">${modelos}</div>
                 </div>
                 <div class="spec">
                     <div class="s-label">Stock en gaveta</div>
-                    <div class="s-value">${s.cantidades_gavetas}</div>
+                    <div class="s-value">${stockGav}</div>
                 </div>
             </div>
 
@@ -670,13 +787,40 @@ function renderPagina(s, ctx, pageNum){
                 <div class="cta-block">
                     <strong>${v.nombre}</strong>
                     WhatsApp ${formatWA(v.wa)}<br>
-                    www.maxifer.com.ar
+                    www.fabricamaxifer.com
                 </div>
             </footer>
         </div>
     </section>`;
 }
 
+// ── CONTRATAPA ────────────────────────────────────────────────
+function renderContratapa(ctx, pageNum){
+    const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
+    return `
+    <section class="page">
+        ${frameSVG(pageNum)}
+        <div class="bcover-body">
+            <img class="cover-logo" src="img/favicon-192.png" alt="MAXIFER">
+            <div class="bcover-thanks">¡Gracias!</div>
+            <div class="bcover-msg">
+                Confiá en <b>MAXIFER</b> para abastecer tu ferretería con surtidos completos,
+                exhibidores listos para vender y reposición libre.<br>
+                <b>Hacé tu pedido</b> directo con tu vendedor:
+            </div>
+            <div class="bcover-cta">
+                <div class="ct-label">Tu vendedor MAXIFER</div>
+                <div class="ct-name">${v.nombre}</div>
+                <div class="ct-wa">${formatWA(v.wa)}</div>
+            </div>
+            <div class="bcover-foot">
+                www.fabricamaxifer.com · MAXIFER · Fábrica Importadora · 20${ANIO}
+            </div>
+        </div>
+    </section>`;
+}
+
+// ── RENDER PRINCIPAL ──────────────────────────────────────────
 function render(){
     const ctx = leerParams();
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
@@ -686,23 +830,23 @@ function render(){
     else if (ctx.desc) modeText = `Con −${ctx.desc}%`;
     document.getElementById('metaMode').textContent = modeText;
 
-    const surtidos = SURTIDOS_MUESTRA;
-    const inicioSurtidos = 3; // portada=1, índice=2, surtidos desde 3
+    const surtidos = SURTIDOS;
+    // Páginas: portada=1, índice=2, surtidos=3..N, contratapa=N+1
+    const inicioSurtidos = 3;
+    const totalSurt = surtidos.length;
+    const pageContratapa = inicioSurtidos + totalSurt;
 
     const html = [
-        renderPortada(ctx, surtidos.length),
+        renderPortada(ctx, totalSurt),
         renderIndice(surtidos, inicioSurtidos),
-        ...surtidos.map((s, i) => renderPagina(s, ctx, inicioSurtidos + i))
+        ...surtidos.map((s, i) => renderPagina(s, ctx, inicioSurtidos + i)),
+        renderContratapa(ctx, pageContratapa)
     ].join('');
 
     document.getElementById('book').innerHTML = html;
 }
 
-// ── DESCARGA REAL DE PDF ──
-// Capturamos cada .page por separado con html2canvas y armamos el PDF
-// página por página con jsPDF.addImage. Así evitamos que html2pdf inserte
-// hojas en blanco entre páginas y que pierda fidelidad con respecto al
-// viewer (sobre todo el marco SVG).
+// ── DESCARGA REAL DE PDF ──────────────────────────────────────
 async function descargarPDF(){
     const btn = document.getElementById('btnDescargar');
     const original = btn.innerHTML;
@@ -714,13 +858,11 @@ async function descargarPDF(){
         const imgs = Array.from(document.querySelectorAll('#book img'));
         await Promise.all(imgs.map(img => img.complete ? Promise.resolve() :
             new Promise(r => { img.onload = img.onerror = r; })));
-        // Damos un toque de tiempo para que el layout se asiente
         await new Promise(r => setTimeout(r, 200));
 
         const ctx = leerParams();
         const fname = `MAXIFER_Catalogo_${ctx.vendor || 'Maxi'}_${(ctx.precio||'lista')}${ctx.desc?('-'+ctx.desc):''}.pdf`;
 
-        // jsPDF se expone como window.jspdf.jsPDF (UMD build)
         const JsPDF = window.jspdf && window.jspdf.jsPDF;
         if (!JsPDF) throw new Error('jsPDF no se cargó (revisar CDN)');
         if (typeof window.html2canvas !== 'function') throw new Error('html2canvas no se cargó');
@@ -741,7 +883,7 @@ async function descargarPDF(){
                 windowWidth: pages[i].offsetWidth,
                 windowHeight: pages[i].offsetHeight,
             });
-            const imgData = canvas.toDataURL('image/jpeg', 0.92);
+            const imgData = canvas.toDataURL('image/jpeg', 0.88);
             if (i > 0) pdf.addPage();
             pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
         }
@@ -756,22 +898,48 @@ async function descargarPDF(){
     }
 }
 
+// ── INICIALIZACIÓN ────────────────────────────────────────────
+async function init(){
+    const overlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const btn = document.getElementById('btnDescargar');
+
+    try {
+        loadingText.textContent = 'Descargando lista de precios…';
+        const wbListas = await maxiferLeerExcel(MAXIFER_EXCEL_URLS.listas);
+        loadingText.textContent = 'Descargando composición de surtidos…';
+        const wbSurtidos = await maxiferLeerExcel(MAXIFER_EXCEL_URLS.surtidos);
+        loadingText.textContent = 'Procesando precios…';
+        const mapaListas = maxiferMapListas(wbListas);
+        COMPOSICION_DATA = maxiferConstruirComposicion(wbSurtidos, mapaListas);
+        maxiferCrearAliases(SURTIDOS, COMPOSICION_DATA);
+        maxiferRecalcularPrecios(SURTIDOS, COMPOSICION_DATA);
+    } catch(err){
+        console.error('Error cargando precios:', err);
+        loadingText.textContent = 'No se pudieron cargar los precios — continuamos con $0';
+        await new Promise(r => setTimeout(r, 800));
+    }
+
+    render();
+
+    await new Promise(r => setTimeout(r, 300));
+    overlay.classList.add('gone');
+    btn.disabled = false;
+
+    // Si vino con autodl=1, dispara la descarga automáticamente
+    const ctx = leerParams();
+    if (ctx.autodl){
+        await Promise.all(Array.from(document.querySelectorAll('#book img')).map(img =>
+            img.complete ? Promise.resolve() : new Promise(r => { img.onload = img.onerror = r; })
+        ));
+        await new Promise(r => setTimeout(r, 400));
+        descargarPDF();
+    }
+}
+
 document.getElementById('btnDescargar').addEventListener('click', descargarPDF);
 window.addEventListener('hashchange', render);
-render();
-
-// Si vino desde pedido-links.html con autodl=1, dispara la descarga
-// automáticamente (una sola vez, después del primer render).
-let _autodlDone = false;
-function maybeAutoDownload(){
-    if (_autodlDone) return;
-    const ctx = leerParams();
-    if (!ctx.autodl) return;
-    _autodlDone = true;
-    // Esperar un toque a que el render + las imágenes estén OK
-    setTimeout(() => descargarPDF(), 400);
-}
-maybeAutoDownload();
+init();
 </script>
 </body>
 </html>
