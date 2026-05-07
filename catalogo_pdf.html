@@ -13,8 +13,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
 
-<!-- html2pdf bundle (jsPDF + html2canvas) para descarga real de PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- jsPDF + html2canvas por separado (necesitamos los globals jsPDF/html2canvas) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 :root{
@@ -719,9 +720,11 @@ async function descargarPDF(){
         const ctx = leerParams();
         const fname = `MAXIFER_Catalogo_${ctx.vendor || 'Maxi'}_${(ctx.precio||'lista')}${ctx.desc?('-'+ctx.desc):''}.pdf`;
 
-        // jsPDF y html2canvas vienen con el bundle html2pdf
-        const JSPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-        const pdf = new JSPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+        // jsPDF se expone como window.jspdf.jsPDF (UMD build)
+        const JsPDF = window.jspdf && window.jspdf.jsPDF;
+        if (!JsPDF) throw new Error('jsPDF no se cargó (revisar CDN)');
+        if (typeof window.html2canvas !== 'function') throw new Error('html2canvas no se cargó');
+        const pdf = new JsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
 
         const pages = document.querySelectorAll('#book .page');
         for (let i = 0; i < pages.length; i++){
