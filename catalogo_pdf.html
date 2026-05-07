@@ -11,16 +11,19 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
+
+<!-- html2pdf bundle (jsPDF + html2canvas) para descarga real de PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
 :root{
     --navy:#1a3a7a; --navy-dark:#13295a; --navy-light:#2151a8;
-    --green:#4ea83e; --green-dark:#3d8a30; --green-light:#6bc35a;
-    --orange:#e8510a;
+    --green:#0e8a4a; --green-dark:#0a6b39; --green-light:#3aa86b;
+    --red:#c8102e;
     --bg:#eef1f7; --bg-soft:#f5f7fb;
     --border:#dde3ee; --border-strong:#c5cee0;
-    --text:#1a2238; --text-muted:#5a6685; --text-dim:#8a94ae;
+    --text:#1a2238; --text-muted:#5a6685;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
@@ -29,71 +32,69 @@ html,body{
     -webkit-font-smoothing:antialiased;
 }
 
-/* Barra fija con acción imprimir (solo en pantalla) */
+/* Toolbar (solo pantalla) */
 .toolbar{
     position:fixed;top:14px;right:14px;z-index:1000;
     display:flex;gap:10px;align-items:center;
     background:#fff;border:1px solid var(--border);border-radius:14px;
     padding:10px 14px;box-shadow:0 8px 24px rgba(19,41,90,.18);
 }
-.toolbar .meta{
-    font-size:12px;color:var(--text-muted);line-height:1.3;
-}
+.toolbar .meta{font-size:12px;color:var(--text-muted);line-height:1.3}
 .toolbar .meta strong{color:var(--navy);display:block;font-size:13px}
 .btn-print{
     background:linear-gradient(180deg,var(--green-light),var(--green));
     color:#fff;border:none;padding:11px 18px;border-radius:10px;
     font-weight:800;font-size:13px;letter-spacing:.04em;cursor:pointer;
     text-transform:uppercase;
-    box-shadow:0 4px 10px rgba(78,168,62,.35);
+    box-shadow:0 4px 10px rgba(14,138,74,.35);
     display:inline-flex;align-items:center;gap:8px;
-    transition:transform .12s;
+    transition:transform .12s, opacity .15s;
 }
 .btn-print:hover{transform:translateY(-1px)}
+.btn-print:disabled{opacity:.6;cursor:wait;transform:none}
 
-/* Contenedor de páginas */
-.book{
-    max-width:210mm;margin:0 auto;padding:20px 0 60px;
-}
+.book{max-width:210mm;margin:0 auto;padding:20px 0 60px}
 
 /* PÁGINA A4 */
 .page{
-    width:210mm; min-height:297mm;
+    width:210mm; height:297mm;
     background:#fff;
     margin:0 auto 20px;
     box-shadow:0 4px 18px rgba(19,41,90,.10);
-    padding:14mm 14mm 12mm;
-    display:flex;flex-direction:column;
-    page-break-after:always;
     position:relative;
     overflow:hidden;
+    page-break-after:always;
 }
 .page:last-child{page-break-after:auto}
 
-/* Cintas superior/inferior decorativas */
-.page::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:6px;
-    background:linear-gradient(90deg,var(--navy) 0%,var(--navy-light) 60%,var(--green) 100%);
-}
-.page::after{
-    content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,var(--green) 0%,var(--navy) 100%);
+/* Marco decorativo (SVG ocupa toda la página) */
+.frame{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:0;
 }
 
-/* HEADER de página */
+/* Contenido con padding generoso para no chocar con el marco */
+.page-body{
+    position:relative;z-index:1;
+    width:100%;height:100%;
+    padding:24mm 18mm 22mm;
+    display:flex;flex-direction:column;
+}
+
+/* HEADER de página de surtido */
 .page-header{
     display:flex;align-items:center;justify-content:space-between;
-    padding-bottom:8mm;border-bottom:1px solid var(--border);
-    margin-bottom:6mm;
+    padding-bottom:5mm;border-bottom:1px solid var(--border);
+    margin-bottom:5mm;
 }
 .brand-block{display:flex;align-items:center;gap:10px}
 .brand-block img{
-    width:44px;height:44px;object-fit:contain;
-    border-radius:10px;background:#fff;padding:2px;
+    width:38px;height:38px;object-fit:contain;
+    border-radius:8px;background:#fff;padding:2px;
     border:1px solid var(--border);
 }
 .brand-block .b-name{
-    font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;
+    font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;
     color:var(--navy);letter-spacing:.06em;line-height:1;
 }
 .brand-block .b-sub{
@@ -114,23 +115,18 @@ html,body{
 
 /* TÍTULO del surtido */
 .surtido-title{
-    display:flex;align-items:center;gap:10px;margin-bottom:5mm;
+    display:flex;align-items:center;gap:12px;margin-bottom:5mm;
 }
-.surtido-num{
+.surtido-codigo-pill{
     background:linear-gradient(135deg,var(--navy),var(--navy-light));
     color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;
-    font-size:13px;padding:6px 12px;border-radius:8px;letter-spacing:.05em;
+    font-size:13px;padding:8px 14px;border-radius:8px;letter-spacing:.06em;
     box-shadow:0 2px 5px rgba(26,58,122,.25);
+    white-space:nowrap;text-transform:uppercase;
 }
 .surtido-name{
-    font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;
+    font-family:'Montserrat',sans-serif;font-size:21px;font-weight:800;
     color:var(--navy);line-height:1.15;flex:1;
-}
-.surtido-codigo{
-    font-family:ui-monospace,Menlo,monospace;font-size:11px;
-    color:var(--text-muted);background:var(--bg-soft);
-    padding:4px 9px;border-radius:6px;border:1px solid var(--border);
-    font-weight:700;
 }
 
 /* HERO: fotos exhibidor + gaveta */
@@ -140,13 +136,12 @@ html,body{
 .hero .photo{
     background:var(--bg-soft);border:1px solid var(--border);
     border-radius:10px;padding:6px;
-    height:90mm;
+    height:80mm;
     display:flex;flex-direction:column;
     align-items:center;justify-content:center;position:relative;
 }
 .hero .photo img{
-    max-width:100%;max-height:calc(100% - 18px);
-    object-fit:contain;
+    max-width:100%;max-height:calc(100% - 16px);object-fit:contain;
 }
 .hero .photo .ph-label{
     position:absolute;top:6px;left:8px;
@@ -163,46 +158,46 @@ html,body{
 .spec{
     background:var(--bg-soft);border:1px solid var(--border);
     border-left:3px solid var(--green);
-    border-radius:8px;padding:8px 10px;
+    border-radius:8px;padding:7px 10px;
 }
 .spec .s-label{
     font-size:9px;color:var(--text-muted);font-weight:700;
     text-transform:uppercase;letter-spacing:.08em;
 }
 .spec .s-value{
-    font-family:'Montserrat',sans-serif;font-size:14px;font-weight:800;
+    font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;
     color:var(--navy);margin-top:2px;line-height:1.2;
 }
 
 /* INCLUYE */
 .incluye{
     background:#fff;border:1px solid var(--border);border-radius:10px;
-    padding:10px 14px;margin-bottom:5mm;
+    padding:9px 14px;margin-bottom:4mm;
 }
 .incluye .h{
     font-size:10px;font-weight:800;color:var(--navy);
-    text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;
     display:flex;align-items:center;gap:6px;
 }
 .incluye .h::before{content:'✓';color:var(--green);font-weight:900}
 .incluye ul{list-style:none;margin:0}
 .incluye li{
-    font-size:12px;color:var(--text);padding:3px 0;
+    font-size:11.5px;color:var(--text);padding:2px 0;
     display:flex;gap:8px;align-items:flex-start;
 }
 .incluye li::before{
     content:'•';color:var(--green-dark);font-weight:900;flex-shrink:0;
 }
 
-/* TABLA de medidas (cuando aplica) */
+/* TABLA de medidas */
 .tabla-section{
     flex:1;display:flex;flex-direction:column;
     background:#fff;border:1px solid var(--border);border-radius:10px;
-    padding:10px 14px;margin-bottom:5mm;min-height:0;
+    padding:9px 14px;margin-bottom:4mm;min-height:0;
 }
 .tabla-section .h{
     font-size:10px;font-weight:800;color:var(--navy);
-    text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;
     display:flex;align-items:center;gap:6px;
 }
 .tabla-section .h::before{content:'📋'}
@@ -223,60 +218,153 @@ html,body{
     color:var(--text);font-family:ui-monospace,Menlo,monospace;font-size:10px;
 }
 
-/* UNIFORME info (cuando NO hay tabla) */
+/* UNIFORME info */
 .uniforme{
-    background:linear-gradient(135deg,rgba(78,168,62,.08),rgba(26,58,122,.05));
+    background:linear-gradient(135deg,rgba(14,138,74,.08),rgba(26,58,122,.05));
     border:1px solid var(--border);border-left:3px solid var(--green);
-    border-radius:10px;padding:14px 18px;margin-bottom:5mm;
+    border-radius:10px;padding:12px 18px;margin-bottom:4mm;
     display:flex;align-items:center;gap:14px;
 }
-.uniforme .u-icon{font-size:32px;line-height:1}
+.uniforme .u-icon{font-size:30px;line-height:1}
 .uniforme .u-text{flex:1}
 .uniforme .u-title{
     font-size:10px;font-weight:800;color:var(--text-muted);
-    text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;
 }
 .uniforme .u-value{
-    font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;
+    font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;
     color:var(--navy);
 }
 
-/* FOOTER de página: precio + cta */
+/* FOOTER de página de surtido: precio + cta */
 .page-footer{
     margin-top:auto;
-    display:flex;align-items:center;justify-content:space-between;gap:14px;
-    padding-top:6mm;border-top:1px solid var(--border);
+    display:flex;align-items:stretch;justify-content:space-between;gap:14px;
+    padding-top:4mm;border-top:1px solid var(--border);
 }
+/* Precio: ahora azul (navy) sobre fondo claro */
 .precio-box{
-    background:linear-gradient(135deg,var(--navy-dark),var(--navy));
-    color:#fff;border-radius:12px;padding:12px 18px;
-    box-shadow:0 4px 10px rgba(19,41,90,.25);
+    background:#fff;
+    border:2px solid var(--navy);
+    border-radius:12px;padding:10px 16px;
     flex:1;
+    display:flex;flex-direction:column;justify-content:center;
 }
 .precio-box .p-label{
-    font-size:10px;font-weight:700;text-transform:uppercase;
-    letter-spacing:.12em;opacity:.8;margin-bottom:4px;
+    font-size:10px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--navy);margin-bottom:2px;
 }
 .precio-box .p-value{
-    font-family:'Montserrat',sans-serif;font-size:24px;font-weight:900;
-    line-height:1.1;
+    font-family:'Montserrat',sans-serif;font-size:26px;font-weight:900;
+    line-height:1.05;color:var(--navy);
 }
 .precio-box .p-hint{
-    font-size:10px;opacity:.75;margin-top:3px;font-weight:600;
+    font-size:10px;color:var(--text-muted);margin-top:3px;font-weight:600;
 }
 .precio-box.sin{
-    background:linear-gradient(135deg,#444,#666);
+    border-color:#888;background:#fafafa;
 }
+.precio-box.sin .p-label, .precio-box.sin .p-value{color:#444}
 .precio-box.desc .p-old{
-    text-decoration:line-through;opacity:.55;font-size:13px;
+    text-decoration:line-through;color:var(--text-muted);font-size:14px;
     font-weight:600;margin-right:8px;
 }
 .cta-block{
     text-align:right;font-size:10px;color:var(--text-muted);line-height:1.4;
+    align-self:center;
 }
 .cta-block strong{
     display:block;color:var(--navy);font-size:11px;
     font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:.04em;
+}
+
+/* ── PORTADA ── */
+.cover-body{
+    position:relative;z-index:1;
+    width:100%;height:100%;
+    padding:60mm 30mm;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+}
+.cover-logo{
+    width:90px;height:90px;object-fit:contain;
+    background:#fff;border-radius:18px;padding:6px;
+    border:1px solid var(--border);margin-bottom:14mm;
+    box-shadow:0 6px 18px rgba(26,58,122,.18);
+}
+.cover-brand{
+    font-family:'Montserrat',sans-serif;font-size:42px;font-weight:900;
+    color:var(--navy);letter-spacing:.12em;line-height:1;margin-bottom:6mm;
+}
+.cover-tagline{
+    font-size:12px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.3em;margin-bottom:18mm;
+}
+.cover-title{
+    font-family:'Montserrat',sans-serif;font-size:26px;font-weight:800;
+    color:var(--navy);line-height:1.2;margin-bottom:6mm;
+}
+.cover-sub{
+    font-size:14px;color:var(--text);max-width:130mm;
+    line-height:1.5;margin-bottom:14mm;
+}
+.cover-vendor{
+    background:var(--bg-soft);border:1px solid var(--border);
+    border-radius:14px;padding:14px 22px;
+    display:inline-block;
+}
+.cover-vendor .cv-label{
+    font-size:10px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.12em;
+}
+.cover-vendor .cv-name{
+    font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;
+    color:var(--navy);margin:4px 0 2px;
+}
+.cover-vendor .cv-wa{
+    font-family:ui-monospace,Menlo,monospace;font-size:13px;
+    color:var(--green-dark);font-weight:700;
+}
+
+/* ── ÍNDICE ── */
+.idx-body{
+    position:relative;z-index:1;
+    width:100%;height:100%;
+    padding:30mm 22mm 24mm;
+    display:flex;flex-direction:column;
+}
+.idx-title{
+    font-family:'Montserrat',sans-serif;font-size:32px;font-weight:900;
+    color:var(--navy);letter-spacing:.12em;text-transform:uppercase;
+    margin-bottom:2mm;
+}
+.idx-sub{
+    font-size:11px;color:var(--text-muted);font-weight:700;
+    letter-spacing:.16em;text-transform:uppercase;margin-bottom:10mm;
+}
+.idx-list{flex:1}
+.idx-row{
+    display:flex;align-items:baseline;gap:6px;
+    padding:5px 0;border-bottom:1px dotted var(--border);
+    font-size:12px;
+}
+.idx-cod{
+    font-family:ui-monospace,Menlo,monospace;font-size:10px;
+    color:var(--text-muted);font-weight:700;
+    background:var(--bg-soft);padding:2px 7px;border-radius:5px;
+    border:1px solid var(--border);min-width:80px;text-align:center;
+}
+.idx-name{
+    flex:1;color:var(--text);font-weight:600;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.idx-dots{
+    color:var(--border-strong);overflow:hidden;letter-spacing:2px;
+    flex:0 1 auto;min-width:0;
+}
+.idx-page{
+    font-family:'Montserrat',sans-serif;font-weight:800;color:var(--navy);
+    font-size:13px;min-width:24px;text-align:right;
 }
 
 /* Print */
@@ -287,7 +375,7 @@ html,body{
     .book{padding:0;max-width:none}
     .page{
         margin:0;box-shadow:none;
-        width:210mm;min-height:297mm;height:297mm;
+        width:210mm;height:297mm;
         page-break-after:always;
     }
     .page:last-child{page-break-after:auto}
@@ -296,21 +384,19 @@ html,body{
 </head>
 <body>
 
-<!-- Barra de herramientas (solo pantalla) -->
+<!-- Toolbar -->
 <div class="toolbar">
     <div class="meta">
         <strong id="metaVendor">Maxi</strong>
         <span id="metaMode">Precio Lista</span>
     </div>
-    <button class="btn-print" onclick="window.print()">🖨 Descargar PDF</button>
+    <button class="btn-print" id="btnDescargar">📥 Descargar PDF</button>
 </div>
 
-<div class="book" id="book">
-    <!-- Las páginas se inyectan acá -->
-</div>
+<div class="book" id="book"></div>
 
 <script>
-// ── DATOS DE MUESTRA (paso 1: solo 2 surtidos para validar diseño) ──
+// ── DATOS DE MUESTRA (paso 1: 2 surtidos para validar diseño) ──
 const SURTIDOS_MUESTRA = [
     {
         id: 10,
@@ -335,7 +421,6 @@ const SURTIDOS_MUESTRA = [
             {cant:20,medida:"5 X 50"},{cant:20,medida:"5 X 60"},{cant:20,medida:"5 X 70"}
         ],
         cant_uniforme: null,
-        // Placeholder de precio (se reemplaza con data real en el paso siguiente)
         precio_lista: 154278
     },
     {
@@ -363,39 +448,111 @@ const VENDEDORES = {
     'Federico': { nombre:'Federico',             wa:'5493516017663' }
 };
 
-// Lee parámetros del hash (#wa=Maxi&precio=lista|sin&desc=30)
+const ANIO = '26'; // 2026
+
 function leerParams(){
     const h = (location.hash || '').replace(/^#/, '');
     const p = new URLSearchParams(h);
     return {
         vendor: p.get('wa') || 'Maxi',
-        precio: p.get('precio'),       // 'lista' | 'sin' | null
-        desc:   p.get('desc')           // '20', '30', etc.
+        precio: p.get('precio'),
+        desc:   p.get('desc')
     };
 }
 
-function formatPrecio(n){
+function formatNum(n){
     if (!n && n !== 0) return '—';
     return n.toLocaleString('es-AR');
 }
 
 function formatWA(num){
-    // 5491150408378 → +54 9 11 5040-8378
     if (!num) return '';
     const m = String(num).match(/^54(9?)(\d{2,3})(\d{4})(\d{4})$/);
     if (!m) return '+' + num;
     return '+54 ' + (m[1] ? '9 ' : '') + m[2] + ' ' + m[3] + '-' + m[4];
 }
 
-function renderPagina(s, ctx){
+// ── MARCO DECORATIVO (SVG) ──
+function frameSVG(pageNum){
+    return `
+    <svg class="frame" viewBox="0 0 210 297" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Bloque navy sup-izq -->
+        <path d="M 0,0 L 78,0 Q 64,18 50,32 Q 30,50 0,72 Z" fill="#1a3a7a"/>
+        <!-- Curva verde superior -->
+        <path d="M 0,68 Q 30,46 52,30 Q 70,17 88,8 Q 130,2 168,16 Q 192,24 210,12 L 210,2 Q 192,16 168,8 Q 130,-2 88,2 Q 68,10 50,24 Q 28,40 0,60 Z" fill="#0e8a4a"/>
+        <!-- Cuña roja sup-der -->
+        <path d="M 196,0 L 210,0 L 210,22 Q 204,11 196,0 Z" fill="#c8102e"/>
+
+        <!-- Año -->
+        <text x="14" y="42" font-family="'Playfair Display', Georgia, serif"
+              font-style="italic" font-weight="800" font-size="26" fill="#ffffff">${ANIO}</text>
+
+        <!-- Bloque navy inf-izq -->
+        <path d="M 0,253 Q 18,258 32,272 Q 44,284 56,297 L 0,297 Z" fill="#1a3a7a"/>
+        <!-- Curva verde inferior -->
+        <path d="M 0,275 Q 28,283 52,283 Q 88,283 130,288 Q 170,292 196,283 Q 204,279 210,288 L 210,297 L 0,297 Z" fill="#0e8a4a"/>
+        <!-- Cuña roja inf-der -->
+        <path d="M 199,297 L 210,297 L 210,278 Q 205,288 199,297 Z" fill="#c8102e"/>
+
+        <!-- Círculo blanco con número de página -->
+        <circle cx="14" cy="285" r="5.5" fill="#ffffff"/>
+        <text x="14" y="287.5" text-anchor="middle"
+              font-family="'Inter', sans-serif" font-weight="800" font-size="6.5" fill="#1a3a7a">${pageNum}</text>
+    </svg>`;
+}
+
+function renderPortada(ctx, totalSurtidos){
+    const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
+    let modeText = 'con precios de lista';
+    if (ctx.precio === 'sin') modeText = 'sin precios (consultar al vendedor)';
+    else if (ctx.desc) modeText = `con descuento aplicado (−${ctx.desc}%)`;
+
+    return `
+    <section class="page">
+        ${frameSVG(1)}
+        <div class="cover-body">
+            <img class="cover-logo" src="img/favicon-192.png" alt="MAXIFER">
+            <div class="cover-brand">MAXIFER</div>
+            <div class="cover-tagline">Fábrica · Importadora</div>
+            <div class="cover-title">Catálogo de Surtidos 20${ANIO}</div>
+            <div class="cover-sub">${totalSurtidos} surtidos para tu ferretería · Edición ${modeText}</div>
+            <div class="cover-vendor">
+                <div class="cv-label">Tu vendedor</div>
+                <div class="cv-name">${v.nombre}</div>
+                <div class="cv-wa">${formatWA(v.wa)}</div>
+            </div>
+        </div>
+    </section>`;
+}
+
+function renderIndice(surtidos, paginaInicio){
+    const filas = surtidos.map((s, i) => `
+        <div class="idx-row">
+            <span class="idx-cod">${s.codigo}</span>
+            <span class="idx-name">${s.nombre}</span>
+            <span class="idx-dots">······································································</span>
+            <span class="idx-page">${paginaInicio + i}</span>
+        </div>`).join('');
+
+    return `
+    <section class="page">
+        ${frameSVG(2)}
+        <div class="idx-body">
+            <h1 class="idx-title">Índice</h1>
+            <div class="idx-sub">${surtidos.length} surtidos · Catálogo MAXIFER 20${ANIO}</div>
+            <div class="idx-list">${filas}</div>
+        </div>
+    </section>`;
+}
+
+function renderPagina(s, ctx, pageNum){
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
     const sinPrecio = ctx.precio === 'sin';
     const descNum = ctx.desc ? parseInt(ctx.desc, 10) : 0;
     const precioLista = s.precio_lista || 0;
     const precioFinal = descNum > 0 ? Math.round(precioLista * (1 - descNum/100)) : precioLista;
 
-    // Bloque precio
-    let precioHTML = '';
+    let precioHTML;
     if (sinPrecio){
         precioHTML = `
             <div class="precio-box sin">
@@ -408,21 +565,20 @@ function renderPagina(s, ctx){
             <div class="precio-box desc">
                 <div class="p-label">Precio con −${descNum}%</div>
                 <div class="p-value">
-                    <span class="p-old">$${formatPrecio(precioLista)}</span>
-                    $${formatPrecio(precioFinal)}
+                    <span class="p-old">$${formatNum(precioLista)}</span>
+                    $${formatNum(precioFinal)}
                 </div>
-                <div class="p-hint">IVA incluido · Libre reposición</div>
+                <div class="p-hint">IVA incluido</div>
             </div>`;
     } else {
         precioHTML = `
             <div class="precio-box">
                 <div class="p-label">Precio Lista</div>
-                <div class="p-value">$${formatPrecio(precioLista)}</div>
-                <div class="p-hint">IVA incluido · Libre reposición</div>
+                <div class="p-value">$${formatNum(precioLista)}</div>
+                <div class="p-hint">IVA incluido</div>
             </div>`;
     }
 
-    // Bloque tabla o uniforme
     let stockHTML = '';
     if (s.tabla && s.tabla.length){
         const filas = s.tabla.map(r => `
@@ -448,68 +604,69 @@ function renderPagina(s, ctx){
 
     return `
     <section class="page">
-        <header class="page-header">
-            <div class="brand-block">
-                <img src="img/favicon-192.png" alt="MAXIFER">
-                <div>
-                    <div class="b-name">MAXIFER</div>
-                    <div class="b-sub">Fábrica Importadora</div>
+        ${frameSVG(pageNum)}
+        <div class="page-body">
+            <header class="page-header">
+                <div class="brand-block">
+                    <img src="img/favicon-192.png" alt="MAXIFER">
+                    <div>
+                        <div class="b-name">MAXIFER</div>
+                        <div class="b-sub">Fábrica Importadora</div>
+                    </div>
+                </div>
+                <div class="vendor-block">
+                    <span class="v-name">${v.nombre}</span>
+                    <span class="v-wa">${formatWA(v.wa)}</span>
+                </div>
+            </header>
+
+            <div class="surtido-title">
+                <span class="surtido-codigo-pill">${s.codigo}</span>
+                <h1 class="surtido-name">${s.nombre}</h1>
+            </div>
+
+            <div class="hero">
+                <div class="photo">
+                    <span class="ph-label">Exhibidor</span>
+                    <img src="${s.foto_exhibidor}" alt="Exhibidor ${s.nombre}">
+                </div>
+                <div class="photo">
+                    <span class="ph-label">Gaveta</span>
+                    <img src="${s.foto_gavetas}" alt="Gaveta ${s.nombre}">
                 </div>
             </div>
-            <div class="vendor-block">
-                Tu vendedor
-                <span class="v-name">${v.nombre}</span>
-                <span class="v-wa">${formatWA(v.wa)}</span>
-            </div>
-        </header>
 
-        <div class="surtido-title">
-            <span class="surtido-num">SURTIDO #${s.id}</span>
-            <h1 class="surtido-name">${s.nombre}</h1>
-            <span class="surtido-codigo">${s.codigo}</span>
+            <div class="specs">
+                <div class="spec">
+                    <div class="s-label">Piezas totales</div>
+                    <div class="s-value">${formatNum(s.piezas)}</div>
+                </div>
+                <div class="spec">
+                    <div class="s-label">Modelos diferentes</div>
+                    <div class="s-value">${s.modelos}</div>
+                </div>
+                <div class="spec">
+                    <div class="s-label">Stock en gaveta</div>
+                    <div class="s-value">${s.cantidades_gavetas}</div>
+                </div>
+            </div>
+
+            <div class="incluye">
+                <div class="h">Incluye</div>
+                <ul>${s.incluye.map(i => `<li>${i}</li>`).join('')}</ul>
+            </div>
+
+            ${stockHTML}
+
+            <footer class="page-footer">
+                ${precioHTML}
+                <div class="cta-block">
+                    <strong>${v.nombre}</strong>
+                    WhatsApp ${formatWA(v.wa)}<br>
+                    www.maxifer.com.ar
+                </div>
+            </footer>
         </div>
-
-        <div class="hero">
-            <div class="photo">
-                <span class="ph-label">Exhibidor</span>
-                <img src="${s.foto_exhibidor}" alt="Exhibidor ${s.nombre}">
-            </div>
-            <div class="photo">
-                <span class="ph-label">Gaveta</span>
-                <img src="${s.foto_gavetas}" alt="Gaveta ${s.nombre}">
-            </div>
-        </div>
-
-        <div class="specs">
-            <div class="spec">
-                <div class="s-label">Piezas totales</div>
-                <div class="s-value">${formatPrecio(s.piezas)}</div>
-            </div>
-            <div class="spec">
-                <div class="s-label">Modelos diferentes</div>
-                <div class="s-value">${s.modelos}</div>
-            </div>
-            <div class="spec">
-                <div class="s-label">Por gaveta</div>
-                <div class="s-value">${s.cantidades_gavetas}</div>
-            </div>
-        </div>
-
-        <div class="incluye">
-            <div class="h">Incluye</div>
-            <ul>${s.incluye.map(i => `<li>${i}</li>`).join('')}</ul>
-        </div>
-
-        ${stockHTML}
-
-        <footer class="page-footer">
-            ${precioHTML}
-            <div class="cta-block">
-                <strong>${v.nombre}</strong>
-                WhatsApp ${formatWA(v.wa)}<br>
-                www.maxifer.com.ar
-            </div>
-        </footer>
     </section>`;
 }
 
@@ -522,10 +679,52 @@ function render(){
     else if (ctx.desc) modeText = `Con −${ctx.desc}%`;
     document.getElementById('metaMode').textContent = modeText;
 
-    const html = SURTIDOS_MUESTRA.map(s => renderPagina(s, ctx)).join('');
+    const surtidos = SURTIDOS_MUESTRA;
+    const inicioSurtidos = 3; // portada=1, índice=2, surtidos desde 3
+
+    const html = [
+        renderPortada(ctx, surtidos.length),
+        renderIndice(surtidos, inicioSurtidos),
+        ...surtidos.map((s, i) => renderPagina(s, ctx, inicioSurtidos + i))
+    ].join('');
+
     document.getElementById('book').innerHTML = html;
 }
 
+// ── DESCARGA REAL DE PDF ──
+async function descargarPDF(){
+    const btn = document.getElementById('btnDescargar');
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Generando PDF…';
+
+    try {
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        const imgs = Array.from(document.querySelectorAll('#book img'));
+        await Promise.all(imgs.map(img => img.complete ? Promise.resolve() :
+            new Promise(r => { img.onload = img.onerror = r; })));
+
+        const ctx = leerParams();
+        const fname = `MAXIFER_Catalogo_${ctx.vendor || 'Maxi'}_${(ctx.precio||'lista')}${ctx.desc?('-'+ctx.desc):''}.pdf`;
+
+        await html2pdf().set({
+            margin: 0,
+            filename: fname,
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true, backgroundColor: '#ffffff' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css'], avoid: '.page' }
+        }).from(document.getElementById('book')).save();
+    } catch(err){
+        console.error(err);
+        alert('Hubo un error al generar el PDF: ' + (err && err.message || err));
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
+    }
+}
+
+document.getElementById('btnDescargar').addEventListener('click', descargarPDF);
 window.addEventListener('hashchange', render);
 render();
 </script>
