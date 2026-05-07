@@ -84,7 +84,8 @@ html,body{
 /* HEADER de página de surtido */
 .page-header{
     display:flex;align-items:center;justify-content:space-between;
-    padding-bottom:5mm;border-bottom:1px solid var(--border);
+    /* padding-left extra para que el brand-block no se choque con el bloque navy del marco (que contiene el "26") */
+    padding:0 0 5mm 44mm;border-bottom:1px solid var(--border);
     margin-bottom:5mm;
 }
 .brand-block{display:flex;align-items:center;gap:10px}
@@ -127,6 +128,7 @@ html,body{
 .surtido-name{
     font-family:'Montserrat',sans-serif;font-size:21px;font-weight:800;
     color:var(--navy);line-height:1.15;flex:1;
+    text-transform:uppercase;letter-spacing:.02em;
 }
 
 /* HERO: fotos exhibidor + gaveta */
@@ -569,14 +571,14 @@ function renderPagina(s, ctx, pageNum){
                     <span class="p-old">$${formatNum(precioLista)}</span>
                     $${formatNum(precioFinal)}
                 </div>
-                <div class="p-hint">IVA incluido</div>
+                <div class="p-hint">+ IVA</div>
             </div>`;
     } else {
         precioHTML = `
             <div class="precio-box">
                 <div class="p-label">Precio Lista</div>
                 <div class="p-value">$${formatNum(precioLista)}</div>
-                <div class="p-hint">IVA incluido</div>
+                <div class="p-hint">+ IVA</div>
             </div>`;
     }
 
