@@ -786,5 +786,60 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "164 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "3 - 10 - 5 piezas de c/u"
+  },
+  {
+    id: 63,
+    tamano: "grande",
+    nombre: "Tornillería Especial",
+    codigo: "Torn. Esp.",
+    precio: 0,
+    piezas: 471,
+    foto_exhibidor: "./img/s63_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "471 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+  {
+    id: 64,
+    tamano: "grande",
+    nombre: "Tuercas Rápidas y Tuercas Remaches",
+    codigo: "T. REM.+T. RAP.",
+    precio: 0,
+    piezas: 477,
+    foto_exhibidor: "./img/s64_exhibidor.webp",
+    foto_card: "./img/s64_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "477 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "10 - 5 piezas de c/u"
+  },
+  {
+    id: 65,
+    nombre: "Conectores Neumáticos Más Rotación",
+    codigo: "CON. NEU. +Rot.",
+    precio: 0,
+    piezas: 111,
+    foto_exhibidor: "./img/s65_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "111 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 - 9 piezas de c/u"
+  },
+  {
+    id: 66,
+    tamano: "grande",
+    nombre: "Conectores Neumáticos + Racord",
+    codigo: "CON. NEU. + RAC.",
+    precio: 0,
+    piezas: 411,
+    foto_exhibidor: "./img/s66_exhibidor.webp",
+    foto_card: "./img/s66_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "411 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 - 9 - 4 - 1 piezas de c/u"
   }
 ];
