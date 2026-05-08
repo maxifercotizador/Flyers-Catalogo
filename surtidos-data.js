@@ -1,5 +1,5 @@
 const SURTIDOS = [
-  {
+{
     id: 54,
     nombre: "Clips Plásticos Básico",
     codigo: "PL CH.",
@@ -12,7 +12,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "6 piezas de c/u"
   },
-  {
+{
     id: 4,
     tamano: "grande",
     nombre: "Clips Plásticos Línea Completa 160 Medidas",
@@ -26,7 +26,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "4 piezas de c/u"
   },
-  {
+{
     id: 41,
     tamano: "grande",
     nombre: "Clips Línea Importada",
@@ -41,7 +41,7 @@ const SURTIDOS = [
     cant_uniforme: "4 piezas de c/u",
     foto_exhibidor_2: "./img/s41_exhibidor_2.webp"
   },
-  {
+{
     id: 3,
     tamano: "grande",
     nombre: "Resortes Línea Ferretera",
@@ -55,7 +55,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "4 piezas de c/u"
   },
-  {
+{
     id: 6,
     tamano: "grande",
     nombre: "Resortes Línea Complementaria",
@@ -69,34 +69,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "4 piezas de c/u"
   },
-  {
-    id: 8,
-    tamano: "grande",
-    nombre: "Resortes Línea Bulonera",
-    codigo: "RES. LB",
-    precio: 0,
-    piezas: 108,
-    foto_exhibidor: "./img/s8_exhibidor.webp",
-    foto_card: "./img/s8_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "108 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 piezas de c/u"
-  },
-  {
-    id: 5,
-    nombre: "Resortes Línea Automotor",
-    codigo: "RES. LA",
-    precio: 0,
-    piezas: 150,
-    foto_exhibidor: "./img/s5_exhibidor.webp",
-    foto_card: "./img/s5_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "150 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 piezas de c/u"
-  },
-  {
+{
     id: 7,
     tamano: "grande",
     nombre: "Resortes Línea Pesada",
@@ -110,7 +83,34 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "3 piezas de c/u"
   },
-  {
+{
+    id: 8,
+    tamano: "grande",
+    nombre: "Resortes Línea Bulonera",
+    codigo: "RES. LB",
+    precio: 0,
+    piezas: 108,
+    foto_exhibidor: "./img/s8_exhibidor.webp",
+    foto_card: "./img/s8_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "108 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 piezas de c/u"
+  },
+{
+    id: 5,
+    nombre: "Resortes Línea Automotor",
+    codigo: "RES. LA",
+    precio: 0,
+    piezas: 150,
+    foto_exhibidor: "./img/s5_exhibidor.webp",
+    foto_card: "./img/s5_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "150 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 piezas de c/u"
+  },
+{
     id: 51,
     tamano: "grande",
     nombre: "Resortes Línea Completa",
@@ -126,7 +126,7 @@ const SURTIDOS = [
     foto_exhibidor_2: "./img/s51_exhibidor_2.webp",
     foto_exhibidor_3: "./img/s51_exhibidor_3.webp"
   },
-  {
+{
     id: 10,
     nombre: "Chavetas Partidas",
     codigo: "CHA. PART.",
@@ -139,7 +139,7 @@ const SURTIDOS = [
     tabla: [{"cant":50,"medida":"1,5 X 20"}, {"cant":50,"medida":"1,5 X 25"}, {"cant":50,"medida":"1,5 X 30"}, {"cant":50,"medida":"2 X 20"}, {"cant":50,"medida":"2 X 25"}, {"cant":50,"medida":"2 X 30"}, {"cant":50,"medida":"2 X 40"}, {"cant":50,"medida":"2 X 50"}, {"cant":30,"medida":"2,5 X 25"}, {"cant":30,"medida":"2,5 X 30"}, {"cant":30,"medida":"2,5 X 40"}, {"cant":30,"medida":"2,5 X 50"}, {"cant":30,"medida":"3 X 25"}, {"cant":30,"medida":"3 X 30"}, {"cant":30,"medida":"3 X 40"}, {"cant":30,"medida":"3 X 50"}, {"cant":30,"medida":"3,5 X 30"}, {"cant":30,"medida":"3,5 X 40"}, {"cant":30,"medida":"3,5 X 50"}, {"cant":30,"medida":"4 X 30"}, {"cant":20,"medida":"4 X 40"}, {"cant":20,"medida":"4 X 50"}, {"cant":20,"medida":"4 X 60"}, {"cant":20,"medida":"4,5 X 40"}, {"cant":20,"medida":"4,5 X 50"}, {"cant":20,"medida":"4,5 X 60"}, {"cant":20,"medida":"5 X 40"}, {"cant":20,"medida":"5 X 50"}, {"cant":20,"medida":"5 X 60"}, {"cant":20,"medida":"5 X 70"}],
     cant_uniforme: "50 - 30 - 20 piezas de c/u"
   },
-  {
+{
     id: 9,
     nombre: "Chavetas Tipo R - Alfiler - Traba G",
     codigo: "CHA. CH.",
@@ -152,7 +152,7 @@ const SURTIDOS = [
     tabla: [{"cant":6,"medida":"R 1,5 X 30"}, {"cant":6,"medida":"R 2 X 50"}, {"cant":6,"medida":"R 2,5 X 50"}, {"cant":6,"medida":"R 3 X 60"}, {"cant":6,"medida":"R 3 X 90"}, {"cant":6,"medida":"R 3,5 X 60"}, {"cant":6,"medida":"R 3,5 X 90"}, {"cant":6,"medida":"R 4 X 100"}, {"cant":6,"medida":"R 4 X 120"}, {"cant":6,"medida":"R 4,5 X 100"}, {"cant":6,"medida":"R 4,5 X 120"}, {"cant":6,"medida":"R 5 X 100"}, {"cant":6,"medida":"R 5 X 120"}, {"cant":4,"medida":"ALF 2,5 X 80"}, {"cant":4,"medida":"ALF 2,5 X 130"}, {"cant":4,"medida":"ALF 3 X 110"}, {"cant":4,"medida":"ALF 3,5 X 120"}, {"cant":4,"medida":"ALF 3,5 X 150"}, {"cant":4,"medida":"ALF 4 X 130"}, {"cant":4,"medida":"ALF 4 X 150"}, {"cant":4,"medida":"ALF 5 X 120"}, {"cant":4,"medida":"ALF 5 X 150"}, {"cant":4,"medida":"TRB 2,5 X 50"}, {"cant":4,"medida":"TRB 3 X 95"}, {"cant":4,"medida":"TRB 3,5 X 95"}, {"cant":4,"medida":"TRB 4 X 90"}, {"cant":4,"medida":"TRB 4,5 X 90"}, {"cant":4,"medida":"TRB 5 X 90"}],
     cant_uniforme: "6 - 4 piezas de c/u"
   },
-  {
+{
     id: 55,
     nombre: "Ganchos/Chavetas Tipo R, Alfiler, Traba G",
     codigo: "GA+CH COMP.",
@@ -165,7 +165,7 @@ const SURTIDOS = [
     tabla: [{"cant":3,"medida":"Gancho 5x100 A"}, {"cant":3,"medida":"Gancho 6x100 A"}, {"cant":3,"medida":"Gancho 8x110 A"}, {"cant":3,"medida":"Gancho 8x90 C"}, {"cant":5,"medida":"Gancho M1"}, {"cant":5,"medida":"Gancho M2"}, {"cant":5,"medida":"R 1,5 X 30"}, {"cant":5,"medida":"R 2 X 50"}, {"cant":5,"medida":"R 2,5 X 50"}, {"cant":5,"medida":"R 3 X 60"}, {"cant":5,"medida":"R 3 X 90"}, {"cant":5,"medida":"R 3,5 X 60"}, {"cant":5,"medida":"R 3,5 X 90"}, {"cant":5,"medida":"R 4 X 100"}, {"cant":5,"medida":"R 4x120"}, {"cant":5,"medida":"R 4,5 X 100"}, {"cant":5,"medida":"R 4,5x120"}, {"cant":5,"medida":"R 5 X 100"}, {"cant":5,"medida":"R 5x120"}, {"cant":3,"medida":"R 6 X 130"}, {"cant":3,"medida":"R 7 x 170"}, {"cant":2,"medida":"R 8 x 180"}, {"cant":5,"medida":"ALF 2,5 X 80"}, {"cant":5,"medida":"ALF 2,5 X 130"}, {"cant":5,"medida":"ALF 3 X 110"}, {"cant":5,"medida":"ALF 3,5 X 120"}, {"cant":5,"medida":"ALF 3,5 X 150"}, {"cant":5,"medida":"ALF 4 X 130"}, {"cant":5,"medida":"ALF 4x150"}, {"cant":5,"medida":"ALF 5 X 120"}, {"cant":5,"medida":"ALF 5x150"}, {"cant":3,"medida":"ALF 6 X 200"}, {"cant":3,"medida":"ALF 7 X 175"}, {"cant":2,"medida":"ALF 8 X 220"}, {"cant":5,"medida":"TRB 2,5x50"}, {"cant":5,"medida":"TRB 3x95"}, {"cant":5,"medida":"TRB 3,5x95"}, {"cant":5,"medida":"TRB 4 X 90"}, {"cant":5,"medida":"TRB 4,5 X 90"}, {"cant":5,"medida":"TRB 5 X 90"}],
     cant_uniforme: "3 - 5 - 2 piezas de c/u"
   },
-  {
+{
     id: 52,
     nombre: "Anillos O'Ring Nitrilo 70 Línea Inicial",
     codigo: "OR. CH.",
@@ -178,7 +178,7 @@ const SURTIDOS = [
     tabla: [{"cant":20,"medida":"5 al 20"}, {"cant":10,"medida":"21 al 36"}, {"cant":20,"medida":"106 al 120"}, {"cant":10,"medida":"121 al 138"}, {"cant":20,"medida":"201 al 210"}, {"cant":10,"medida":"211 al 227"}],
     cant_uniforme: "20 - 10 piezas de c/u"
   },
-  {
+{
     id: 53,
     nombre: "Anillos O'Ring Nitrilo 70 Línea Pesada",
     codigo: "OR. GR.",
@@ -191,7 +191,7 @@ const SURTIDOS = [
     tabla: [{"cant":10,"medida":"37 al 41"}, {"cant":5,"medida":"42 al 45"}, {"cant":5,"medida":"139 al 147"}, {"cant":10,"medida":"228 al 230"}, {"cant":5,"medida":"231 al 240"}, {"cant":5,"medida":"309 al 331"}],
     cant_uniforme: "10 - 5 piezas de c/u"
   },
-  {
+{
     id: 2,
     tamano: "grande",
     nombre: "Anillos O'Ring Nitrilo 70 Línea Completa",
@@ -205,7 +205,7 @@ const SURTIDOS = [
     tabla: [{"cant":25,"medida":"5 al 20"}, {"cant":10,"medida":"21 al 39"}, {"cant":5,"medida":"40 al 45"}, {"cant":20,"medida":"106 al 120"}, {"cant":10,"medida":"121 al 139"}, {"cant":5,"medida":"140 al 147"}, {"cant":10,"medida":"201 al 220"}, {"cant":5,"medida":"221 al 331"}],
     cant_uniforme: "25 - 10 - 5 - 20 piezas de c/u"
   },
-  {
+{
     id: 43,
     tamano: "grande",
     nombre: "Conexiones Aluminio Mangueras Automotor N°1",
@@ -219,7 +219,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
   },
-  {
+{
     id: 48,
     tamano: "grande",
     nombre: "Conexiones Aluminio Mangueras Automotor N°2",
@@ -233,7 +233,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
   },
-  {
+{
     id: 47,
     nombre: "Conexiones Aluminio Línea Reloj de Temperatura",
     codigo: "Conex. Alum. L. Temp.",
@@ -246,7 +246,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
   },
-  {
+{
     id: 46,
     nombre: "Conexiones Aluminio 27 Medidas Mayor Rotación",
     codigo: "Conex. Alum. Mayor Rot.",
@@ -259,7 +259,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
   },
-  {
+{
     id: 44,
     tamano: "grande",
     nombre: "Plástico Conexiones Mangueras Nylon",
@@ -273,7 +273,7 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "5 piezas de c/u"
   },
-  {
+{
     id: 42,
     nombre: "Conexiones Combustible Filtros Nafta/Diesel",
     codigo: "CONC. COMB. Red",
@@ -286,34 +286,21 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "3 piezas de c/u"
   },
-  {
-    id: 34,
+{
+    id: 66,
     tamano: "grande",
-    nombre: "Conectores Neumáticos Plásticos",
-    codigo: "CON. NEU.",
+    nombre: "Conectores Neumáticos + Racord",
+    codigo: "CON. NEU. + RAC.",
     precio: 0,
-    piezas: 230,
-    foto_exhibidor: "./img/s34_exhibidor.webp",
-    foto_card: "./img/s34_card.webp",
-    foto_gavetas: "./img/s34_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "230 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 - 10 - 5 piezas de c/u"
-  },
-  {
-    id: 65,
-    nombre: "Surtidito Conectores Neumáticos Plástico",
-    codigo: "RE-CNE-01",
-    precio: 0,
-    piezas: 106,
-    foto_exhibidor: "./img/s65_exhibidor.webp",
-    foto_card: "./img/s65_card.webp",
+    piezas: 411,
+    foto_exhibidor: "./img/s66_exhibidor.webp",
+    foto_card: "./img/s66_card.webp",
     foto_gavetas: "",
-    incluye: ["1 exhibidor", "1 gaveta", "106 piezas totales", "10 m de cada manguera", "Libre reposición"],
+    incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "411 piezas totales", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "4 piezas de c/u"
+    cant_uniforme: "2 - 9 - 4 - 1 piezas de c/u"
   },
-  {
+{
     id: 33,
     tamano: "grande",
     nombre: "Conectores Neumáticos Completo",
@@ -327,33 +314,34 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "3 - 10 - 5 - 2 piezas de c/u"
   },
-  {
-    id: 40,
-    nombre: "Unión Bronce con Virola Completo",
-    codigo: "BRONCE",
+{
+    id: 35,
+    nombre: "Conexiones Automáticas",
+    codigo: "CON. NEU. NUEV.",
     precio: 0,
-    piezas: 151,
-    foto_exhibidor: "./img/s40_exhibidor.webp",
-    foto_card: "./img/s40_card.webp",
-    foto_gavetas: "./img/s40_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "151 piezas totales", "Libre reposición"],
-    tabla: [{"cant":5,"medida":"1 al 27"}, {"cant":3,"medida":"30 al 36"}],
-    cant_uniforme: "5 - 3 piezas de c/u"
-  },
-  {
-    id: 57,
-    nombre: "Racord Varios",
-    codigo: "RAC. CH.",
-    precio: 0,
-    piezas: 163,
-    foto_exhibidor: "./img/s57_exhibidor.webp",
-    foto_card: "./img/s57_card.webp",
-    foto_gavetas: "./img/s57_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "163 piezas totales", "Libre reposición"],
+    piezas: 164,
+    foto_exhibidor: "./img/s35_exhibidor.webp",
+    foto_card: "./img/s35_card.webp",
+    foto_gavetas: "./img/s35_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "164 piezas totales", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "5 - 2 piezas de c/u"
+    cant_uniforme: "3 - 10 - 5 piezas de c/u"
   },
-  {
+{
+    id: 34,
+    tamano: "grande",
+    nombre: "Conectores Neumáticos Plásticos",
+    codigo: "CON. NEU.",
+    precio: 0,
+    piezas: 230,
+    foto_exhibidor: "./img/s34_exhibidor.webp",
+    foto_card: "./img/s34_card.webp",
+    foto_gavetas: "./img/s34_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "230 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 - 10 - 5 piezas de c/u"
+  },
+{
     id: 18,
     tamano: "grande",
     nombre: "Racord Completo",
@@ -367,20 +355,20 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "3 - 2 piezas de c/u"
   },
-  {
-    id: 67,
-    nombre: "Racord N°1",
-    codigo: "RE-RC1-01",
+{
+    id: 57,
+    nombre: "Racord Varios",
+    codigo: "RAC. CH.",
     precio: 0,
-    piezas: 89,
-    foto_exhibidor: "./img/s67_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "89 piezas totales", "Libre reposición"],
+    piezas: 163,
+    foto_exhibidor: "./img/s57_exhibidor.webp",
+    foto_card: "./img/s57_card.webp",
+    foto_gavetas: "./img/s57_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "163 piezas totales", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "2 - 1 piezas de c/u"
+    cant_uniforme: "5 - 2 piezas de c/u"
   },
-  {
+{
     id: 68,
     nombre: "Racord N°2",
     codigo: "RE-RC2-02",
@@ -393,543 +381,46 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "2 - 1 piezas de c/u"
   },
-  {
-    id: 45,
-    nombre: "Tuercas Rápidas y Tornillería Especial",
-    codigo: "TR Espec. + Torn.",
+{
+    id: 40,
+    nombre: "Unión Bronce con Virola Completo",
+    codigo: "BRONCE",
     precio: 0,
-    piezas: 660,
-    foto_exhibidor: "./img/s45_exhibidor.webp",
-    foto_card: "./img/s45_card.webp",
-    foto_gavetas: "./img/s45_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "660 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 59,
-    nombre: "Tuercas Rápidas Línea Completa",
-    codigo: "TR L. Compl.",
-    precio: 0,
-    piezas: 324,
-    foto_exhibidor: "./img/s59_exhibidor.webp",
-    foto_card: "./img/s59_card.webp",
-    foto_gavetas: "./img/s59_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "324 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "6 piezas de c/u"
-  },
-  {
-    id: 60,
-    nombre: "Tuercas Rápidas Línea Importada",
-    codigo: "TR IMP.",
-    precio: 0,
-    piezas: 210,
-    foto_exhibidor: "./img/s60_exhibidor.webp",
-    foto_card: "./img/s60_card.webp",
-    foto_gavetas: "./img/s60_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "210 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "6 piezas de c/u"
-  },
-  {
-    id: 12,
-    nombre: "Tuercas Remaches",
-    codigo: "TER. REM.",
-    precio: 0,
-    piezas: 350,
-    foto_exhibidor: "./img/s12_exhibidor.webp",
-    foto_card: "./img/s12_card.webp",
-    foto_gavetas: "./img/s12_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "350 piezas totales", "Libre reposición"],
-    tabla: [{"cant":20,"medida":"50 al 52"}, {"cant":10,"medida":"53 y 54"}, {"cant":20,"medida":"55 al 60"}, {"cant":10,"medida":"61"}, {"cant":20,"medida":"62 al 67"}, {"cant":10,"medida":"68 y 69"}],
-    cant_uniforme: "20 - 10 piezas de c/u"
-  },
-  {
-    id: 11,
-    nombre: "Tuercas Rápidas / Aranlock",
-    codigo: "TUER. RAP.",
-    precio: 0,
-    piezas: 555,
-    foto_exhibidor: "./img/s11_exhibidor.webp",
-    foto_card: "./img/s11_card.webp",
-    foto_gavetas: "./img/s11_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "555 piezas totales", "Libre reposición"],
-    tabla: [{"cant":6,"medida":"2 al 13"}, {"cant":11,"medida":"14 al 36"}, {"cant":6,"medida":"42 al 47"}],
-    cant_uniforme: "11 - 21 piezas de c/u"
-  },
-  {
-    id: 13,
-    nombre: "Tapones de Cárter y Diferencial",
-    codigo: "TAP. CAR.",
-    precio: 0,
-    piezas: 104,
-    foto_exhibidor: "./img/s13_exhibidor.webp",
-    foto_card: "./img/s13_card.webp",
-    foto_gavetas: "./img/s13_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "104 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "4 piezas de c/u"
-  },
-  {
-    id: 14,
-    nombre: "Arandelas de Goma Línea Inicial",
-    codigo: "ARAND. CH.",
-    precio: 0,
-    piezas: 1008,
-    foto_exhibidor: "./img/s14_exhibidor.webp",
-    foto_card: "./img/s14_card.webp",
-    foto_gavetas: "./img/s14_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "1.008 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "21 piezas de c/u"
-  },
-  {
-    id: 15,
-    nombre: "Arandelas de Goma Línea Pesada",
-    codigo: "ARAND. LP.",
-    precio: 0,
-    piezas: 280,
-    foto_exhibidor: "./img/s15_exhibidor.webp",
-    foto_card: "./img/s15_card.webp",
-    foto_gavetas: "./img/s15_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "280 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "10 piezas de c/u"
-  },
-  {
-    id: 62,
-    tamano: "grande",
-    nombre: "Arandelas de Goma Línea Completa",
-    codigo: "ARAND. COMP.",
-    precio: 0,
-    piezas: 1292,
-    foto_exhibidor: "./img/s62_exhibidor.webp",
-    foto_card: "./img/s62_card.webp",
-    foto_gavetas: "./img/s62_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "1.292 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "21 - 10 piezas de c/u"
-  },
-  {
-    id: 30,
-    nombre: "Arandelas Aluminio/Cobre/Fibra",
-    codigo: "ARAN. CO-FI-AL",
-    precio: 0,
-    piezas: 1180,
-    foto_exhibidor: "./img/s30_exhibidor.webp",
-    foto_card: "./img/s30_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "1.300 piezas totales", "Libre reposición"],
-    tabla: [{"cant":20,"medida":"FIBRA 1/8 3x8"}, {"cant":20,"medida":"FIBRA 5/32 4x10"}, {"cant":20,"medida":"FIBRA 3/16 5x12"}, {"cant":20,"medida":"FIBRA 1/4 6,5x14"}, {"cant":20,"medida":"FIBRA 5/16 8x16"}, {"cant":20,"medida":"FIBRA 3/8 10x18"}, {"cant":20,"medida":"FIBRA 1/2 13x24"}, {"cant":20,"medida":"FIBRA 6x10"}, {"cant":20,"medida":"FIBRA 8x13"}, {"cant":20,"medida":"FIBRA 9x14"}, {"cant":20,"medida":"FIBRA 10x14"}, {"cant":20,"medida":"FIBRA 11x17"}, {"cant":20,"medida":"FIBRA 12x17"}, {"cant":20,"medida":"FIBRA 13x20"}, {"cant":20,"medida":"FIBRA 14x20"}, {"cant":20,"medida":"FIBRA 15x21"}, {"cant":10,"medida":"FIBRA 16x21"}, {"cant":10,"medida":"FIBRA 17x22"}, {"cant":10,"medida":"FIBRA 18x23"}, {"cant":10,"medida":"FIBRA 19x24"}, {"cant":10,"medida":"FIBRA 20x26"}, {"cant":10,"medida":"FIBRA 21x26"}, {"cant":10,"medida":"FIBRA 22x28"}, {"cant":10,"medida":"FIBRA 24x30"}, {"cant":10,"medida":"FIBRA 26x34"}, {"cant":10,"medida":"FIBRA 28x36"}, {"cant":10,"medida":"FIBRA 30x40"}, {"cant":30,"medida":"POLIPROP. 1/8 3x8"}, {"cant":30,"medida":"POLIPROP. 5/32 4x10"}, {"cant":30,"medida":"POLIPROP. 3/16 5x12"}, {"cant":20,"medida":"POLIPROP. 1/4 6,5x14"}, {"cant":20,"medida":"POLIPROP. 5/16 8x16"}, {"cant":20,"medida":"POLIPROP. 3/8 10x18"}, {"cant":20,"medida":"ALUMINIO 1/8 3x8"}, {"cant":20,"medida":"ALUMINIO 5/32 4x10"}, {"cant":20,"medida":"ALUMINIO 3/16 5x12"}, {"cant":20,"medida":"ALUMINIO 1/4 6,5x14"}, {"cant":20,"medida":"ALUMINIO 5/16 8x16"}, {"cant":20,"medida":"ALUMINIO 3/8 10x18"}, {"cant":20,"medida":"ALUMINIO 1/2 13x24"}, {"cant":20,"medida":"ALUMINIO 6x10"}, {"cant":20,"medida":"ALUMINIO 8x13"}, {"cant":20,"medida":"ALUMINIO 9x14"}, {"cant":20,"medida":"ALUMINIO 10x14"}, {"cant":20,"medida":"ALUMINIO 11x17"}, {"cant":20,"medida":"ALUMINIO 12x17"}, {"cant":20,"medida":"ALUMINIO 13x20"}, {"cant":20,"medida":"ALUMINIO 14x20"}, {"cant":20,"medida":"ALUMINIO 15x21"}, {"cant":10,"medida":"ALUMINIO 16x21"}, {"cant":10,"medida":"ALUMINIO 17x22"}, {"cant":10,"medida":"ALUMINIO 18x23"}, {"cant":10,"medida":"ALUMINIO 19x24"}, {"cant":10,"medida":"ALUMINIO 20x26"}, {"cant":10,"medida":"ALUMINIO 21x26"}, {"cant":10,"medida":"ALUMINIO 22x28"}, {"cant":10,"medida":"ALUMINIO 24x30"}, {"cant":10,"medida":"ALUMINIO 26x34"}, {"cant":20,"medida":"COBRE 6x10"}, {"cant":20,"medida":"COBRE 8x13"}, {"cant":20,"medida":"COBRE 9x14"}, {"cant":20,"medida":"COBRE 10x14"}, {"cant":20,"medida":"COBRE 11x17"}, {"cant":20,"medida":"COBRE 12x17"}, {"cant":20,"medida":"COBRE 13x20"}, {"cant":20,"medida":"COBRE 14x20"}, {"cant":10,"medida":"COBRE 15x21"}, {"cant":10,"medida":"COBRE 16x21"}, {"cant":10,"medida":"COBRE 17x22"}, {"cant":10,"medida":"COBRE 18x23"}, {"cant":10,"medida":"COBRE 19x24"}, {"cant":10,"medida":"COBRE 20x26"}, {"cant":10,"medida":"COBRE 21x26"}, {"cant":10,"medida":"COBRE 22x28"}, {"cant":10,"medida":"COBRE 24x30"}, {"cant":10,"medida":"COBRE 26x34"}],
-    cant_uniforme: "20 - 10 - 30 piezas de c/u"
-  },
-  {
-    id: 38,
-    nombre: "Arandelas de Inyección",
-    codigo: "ARAND. INYEC.",
-    precio: 0,
-    piezas: 440,
-    foto_exhibidor: "./img/s38_exhibidor.webp",
-    foto_card: "./img/s38_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "440 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "11 piezas de c/u"
-  },
-  {
-    id: 39,
-    nombre: "Bulones Perforados / Uniones Orientables",
-    codigo: "UN. ORIENT.",
-    precio: 0,
-    piezas: 116,
-    foto_exhibidor: "./img/s39_exhibidor.webp",
-    foto_card: "./img/s39_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "116 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "4 piezas de c/u"
-  },
-  {
-    id: 78,
-    nombre: "Uniones Orientables",
-    codigo: "RE-UNO-01",
-    precio: 0,
-    piezas: 39,
-    foto_exhibidor: "./img/s78_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "39 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 piezas de c/u"
-  },
-  {
-    id: 69,
-    nombre: "Bulón Perforado",
-    codigo: "RE-BPF-01",
-    precio: 0,
-    piezas: 49,
-    foto_exhibidor: "./img/s69_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "49 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 36,
-    nombre: "Abrazaderas con Perfil de Goma",
-    codigo: "ABRA. GOMA",
-    precio: 0,
-    piezas: 252,
-    foto_exhibidor: "./img/s36_exhibidor.webp",
-    foto_card: "./img/s36_card.webp",
-    foto_gavetas: "./img/s36_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "252 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "7 piezas de c/u"
-  },
-  {
-    id: 1,
-    tamano: "grande",
-    nombre: "Regatones Plásticos y de Goma",
-    codigo: "REGAT.",
-    precio: 0,
-    piezas: 559,
-    foto_exhibidor: "./img/s1_exhibidor.webp",
-    foto_card: "./img/s1_card.webp",
-    foto_gavetas: "./img/s1_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "559 piezas totales", "Libre reposición"],
-    tabla: [{"cant":10,"medida":"1 al 15"}, {"cant":7,"medida":"17"}, {"cant":10,"medida":"19 al 32"}, {"cant":7,"medida":"34"}, {"cant":10,"medida":"35 al 41"}, {"cant":7,"medida":"42"}, {"cant":10,"medida":"44 al 54"}, {"cant":6,"medida":"60 al 78"}, {"cant":10,"medida":"120 al 125"}],
-    cant_uniforme: "10 - 7 - 6 piezas de c/u"
-  },
-  {
-    id: 16,
-    nombre: "Topes y Tapones de Goma",
-    codigo: "TOP. TAP. GOMA",
-    precio: 0,
-    piezas: 130,
-    foto_exhibidor: "./img/s16_exhibidor.webp",
-    foto_card: "./img/s16_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "130 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 22,
-    nombre: "Anillos Seeger DIN 471-472",
-    codigo: "SEEG.",
-    precio: 0,
-    piezas: 440,
-    foto_exhibidor: "./img/s22_exhibidor.webp",
-    foto_card: "./img/s22_card.webp",
-    foto_gavetas: "./img/s22_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "440 piezas totales", "Libre reposición"],
-    tabla: [{"cant":10,"medida":"471 — 5 al 20"}, {"cant":5,"medida":"471 — 21 al 35"}, {"cant":10,"medida":"472 — 8 al 20"}, {"cant":5,"medida":"472 — 21 al 35"}],
-    cant_uniforme: "10 - 5 piezas de c/u"
-  },
-  {
-    id: 77,
-    nombre: "Seeger DIN 471 - 472",
-    codigo: "RE-SEG-01",
-    precio: 0,
-    piezas: 350,
-    foto_exhibidor: "./img/s77_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "350 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "10 piezas de c/u"
-  },
-  {
-    id: 29,
-    nombre: "Alemites",
-    codigo: "ALEM.",
-    precio: 0,
-    piezas: 138,
-    foto_exhibidor: "./img/s29_exhibidor.webp",
-    foto_card: "./img/s29_card.webp",
-    foto_gavetas: "./img/s29_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "138 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "6 piezas de c/u"
-  },
-  {
-    id: 24,
-    nombre: "Retenes de Seguridad Aranlock",
-    codigo: "RET. ARAN.",
-    precio: 0,
-    piezas: 900,
-    foto_exhibidor: "./img/s24_exhibidor.webp",
-    foto_card: "./img/s24_card.webp",
-    foto_gavetas: "./img/s24_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "900 piezas totales", "Libre reposición"],
-    tabla: [{"cant":50,"medida":"2,3 al 9"}, {"cant":25,"medida":"10 al 15"}, {"cant":50,"medida":"3 X 11,3"}, {"cant":50,"medida":"4 X 11,3"}, {"cant":50,"medida":"5 X 11,3"}, {"cant":50,"medida":"6 X 15"}, {"cant":50,"medida":"7 X 15"}, {"cant":50,"medida":"8 X 15"}, {"cant":50,"medida":"9 X 18"}, {"cant":25,"medida":"10 X 18"}, {"cant":25,"medida":"11 X 21"}, {"cant":25,"medida":"12 X 21"}],
-    cant_uniforme: "50 - 25 piezas de c/u"
-  },
-  {
-    id: 19,
-    nombre: "Interruptores y Pulsadores",
-    codigo: "INTERR. PULSA.",
-    precio: 0,
-    piezas: 135,
-    foto_exhibidor: "./img/s19_exhibidor.webp",
-    foto_card: "./img/s19_card.webp",
-    foto_gavetas: "./img/s19_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "135 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 piezas de c/u"
-  },
-  {
-    id: 70,
-    nombre: "Interruptores y Pulsadores 1",
-    codigo: "RE-IP1-01",
-    precio: 0,
-    piezas: 82,
-    foto_exhibidor: "./img/s70_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "82 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 71,
-    nombre: "Interruptores y Pulsadores 2",
-    codigo: "RE-IP2-02",
-    precio: 0,
-    piezas: 55,
-    foto_exhibidor: "./img/s71_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "55 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 61,
-    nombre: "Terminales para Cable Línea Inicial",
-    codigo: "TERM. CH.",
-    precio: 0,
-    piezas: 1488,
-    foto_exhibidor: "./img/s61_exhibidor.webp",
-    foto_card: "./img/s61_card.webp",
-    foto_gavetas: "./img/s61_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "1.488 piezas totales", "Libre reposición"],
-    tabla: [{"cant":6,"medida":"1 al 12"}, {"cant":4,"medida":"13 al 23"}, {"cant":3,"medida":"24 y 25"}, {"cant":50,"medida":"30 al 60"}, {"cant":6,"medida":"61 al 63"}, {"cant":20,"medida":"64 al 69"}, {"cant":10,"medida":"70 al 75"}],
-    cant_uniforme: "50 - 6 - 20 - 10 piezas de c/u"
-  },
-  {
-    id: 21,
-    nombre: "Terminales para Cable",
-    codigo: "TERM. NU.",
-    precio: 0,
-    piezas: 134,
-    foto_card: "./img/s21_card.webp",
-    foto_exhibidor: "./img/s21_exhibidor.webp",
-    foto_gavetas: "./img/s21_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "134 piezas totales", "Libre reposición"],
-    tabla: [{"cant":6,"medida":"1 al 12"}, {"cant":4,"medida":"13 al 23"}, {"cant":3,"medida":"24 y 25"}],
-    cant_uniforme: "6 - 4 - 3 piezas de c/u"
-  },
-  {
-    id: 17,
-    nombre: "Insertos",
-    codigo: "INS.",
-    precio: 0,
-    piezas: 120,
-    foto_exhibidor: "./img/s17_exhibidor.webp",
-    foto_card: "./img/s17_card.webp",
-    foto_gavetas: "./img/s17_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "120 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 20,
-    nombre: "Terminales para Cable Completo",
-    codigo: "TEM. COMP.",
-    precio: 0,
-    piezas: 1742,
-    foto_exhibidor: "./img/s20_exhibidor.webp",
-    foto_card: "./img/s20_card.webp",
-    foto_gavetas: "./img/s20_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "1.742 piezas totales", "Libre reposición"],
-    tabla: [{"cant":50,"medida":"30 al 60"}, {"cant":6,"medida":"61 al 63"}, {"cant":20,"medida":"64 al 69"}, {"cant":10,"medida":"70 al 75"}],
-    cant_uniforme: "50 - 6 - 20 - 10 - 4 - 3 piezas de c/u"
-  },
-  {
-    id: 28,
-    nombre: "Tarugos Estriados",
-    codigo: "TAR. ESTR.",
-    precio: 0,
-    piezas: 1740,
-    foto_exhibidor: "./img/s28_exhibidor.webp",
-    foto_card: "./img/s28_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "1.740 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "120 - 100 piezas de c/u"
-  },
-  {
-    id: 23,
-    nombre: "Espinas Elásticas",
-    codigo: "ESP. ELAS.",
-    precio: 0,
-    piezas: 836,
-    foto_exhibidor: "./img/s23_exhibidor.webp",
-    foto_card: "./img/s23_card.webp",
-    foto_gavetas: "./img/s23_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "836 piezas totales", "Libre reposición"],
-    tabla: [{"cant":20,"medida":"2 x 12"}, {"cant":20,"medida":"2 x 16"}, {"cant":20,"medida":"2 x 20"}, {"cant":20,"medida":"2,5 x 14"}, {"cant":20,"medida":"2,5 x 16"}, {"cant":20,"medida":"2,5 x 26"}, {"cant":20,"medida":"2,5 x 30"}, {"cant":20,"medida":"3 x 14"}, {"cant":20,"medida":"3 x 16"}, {"cant":20,"medida":"3 x 20"}, {"cant":20,"medida":"3 x 26"}, {"cant":20,"medida":"3 x 30"}, {"cant":20,"medida":"3 x 36"}, {"cant":20,"medida":"3 x 40"}, {"cant":20,"medida":"3 x 45"}, {"cant":20,"medida":"3 x 50"}, {"cant":20,"medida":"3,5 x 20"}, {"cant":20,"medida":"3,5 x 30"}, {"cant":20,"medida":"3,5 x 40"}, {"cant":20,"medida":"3,5 x 50"}, {"cant":20,"medida":"4 x 20"}, {"cant":20,"medida":"4 x 26"}, {"cant":20,"medida":"4 x 30"}, {"cant":20,"medida":"4 x 40"}, {"cant":20,"medida":"4 x 50"}, {"cant":20,"medida":"4,5 x 20"}, {"cant":20,"medida":"4,5 x 30"}, {"cant":20,"medida":"4,5 x 40"}, {"cant":20,"medida":"4,5 x 50"}, {"cant":20,"medida":"5 x 24"}, {"cant":20,"medida":"5 x 30"}, {"cant":20,"medida":"5 x 40"}, {"cant":10,"medida":"5 x 50"}, {"cant":10,"medida":"5 x 60"}, {"cant":10,"medida":"5 x 70"}, {"cant":10,"medida":"5 x 80"}, {"cant":10,"medida":"6 x 30"}, {"cant":10,"medida":"6 x 40"}, {"cant":10,"medida":"6 x 50"}, {"cant":10,"medida":"6 x 60"}, {"cant":10,"medida":"6 x 70"}, {"cant":10,"medida":"6 x 80"}, {"cant":10,"medida":"7 x 40"}, {"cant":10,"medida":"8 x 40"}, {"cant":10,"medida":"8 x 50"}, {"cant":10,"medida":"8 x 60"}, {"cant":10,"medida":"8 x 70"}, {"cant":10,"medida":"8 x 80"}, {"cant":5,"medida":"10 x 50"}, {"cant":5,"medida":"10 x 60"}, {"cant":5,"medida":"10 x 70"}, {"cant":5,"medida":"10 x 80"}],
-    cant_uniforme: "20 - 10 - 5 - 3 piezas de c/u"
-  },
-  {
-    id: 74,
-    nombre: "Espinas Elásticas",
-    codigo: "RE-EEL-01",
-    precio: 0,
-    piezas: 155,
-    foto_exhibidor: "./img/s74_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "155 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 27,
-    nombre: "Espárragos de Acero",
-    codigo: "ESPARR.",
-    precio: 0,
-    piezas: 282,
-    foto_exhibidor: "./img/s27_exhibidor.webp",
-    foto_card: "./img/s27_card.webp",
-    foto_gavetas: "./img/s27_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "282 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "6 piezas de c/u"
-  },
-  {
-    id: 75,
-    nombre: "Espárragos de Acero",
-    codigo: "RE-ESA-01",
-    precio: 0,
-    piezas: 190,
-    foto_exhibidor: "./img/s75_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "190 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 25,
-    nombre: "Carbones Eléctricos N°1",
-    codigo: "CARB. 1",
-    precio: 0,
-    piezas: 100,
-    foto_exhibidor: "./img/s25_exhibidor.webp",
-    foto_card: "./img/s25_card.webp",
-    foto_gavetas: "./img/s25_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "100 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2,5 piezas de c/u (juego)"
-  },
-  {
-    id: 26,
-    tamano: "grande",
-    nombre: "Carbones Eléctricos Completo",
-    codigo: "CARB. COMPL.",
-    precio: 0,
-    piezas: 145,
-    foto_exhibidor: "./img/s26_exhibidor.webp",
-    foto_card: "./img/s26_card.webp",
-    foto_gavetas: "./img/s26_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "145 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2,5 piezas de c/u (juego)"
-  },
-  {
-    id: 72,
-    nombre: "Carbones N°1",
-    codigo: "RE-CB1-01",
-    precio: 0,
-    piezas: 60,
-    foto_exhibidor: "./img/s72_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "60 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 73,
-    nombre: "Carbones N°2",
-    codigo: "RE-CB2-02",
-    precio: 0,
-    piezas: 56,
-    foto_exhibidor: "./img/s73_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "56 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 32,
-    nombre: "Inyectores Picos para Gas Envasado",
-    codigo: "INYEC. GAS ENV.",
-    precio: 0,
-    piezas: 216,
-    foto_exhibidor: "./img/s32_exhibidor.webp",
-    foto_card: "./img/s32_card.webp",
-    foto_gavetas: "./img/s32_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "216 piezas totales", "Libre reposición"],
-    tabla: [{"cant":5,"medida":"1 al 78"}, {"cant":3,"medida":"80 al 168"}],
+    piezas: 151,
+    foto_exhibidor: "./img/s40_exhibidor.webp",
+    foto_card: "./img/s40_card.webp",
+    foto_gavetas: "./img/s40_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "151 piezas totales", "Libre reposición"],
+    tabla: [{"cant":5,"medida":"1 al 27"}, {"cant":3,"medida":"30 al 36"}],
     cant_uniforme: "5 - 3 piezas de c/u"
   },
-  {
-    id: 76,
-    nombre: "Picos para Gas",
-    codigo: "RE-PGS-01",
+{
+    id: 67,
+    nombre: "Racord N°1",
+    codigo: "RE-RC1-01",
     precio: 0,
-    piezas: 125,
-    foto_exhibidor: "./img/s76_exhibidor.webp",
+    piezas: 89,
+    foto_exhibidor: "./img/s67_exhibidor.webp",
     foto_card: "",
     foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "125 piezas totales", "Libre reposición"],
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "89 piezas totales", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "4 - 3 piezas de c/u"
+    cant_uniforme: "2 - 1 piezas de c/u"
   },
-  {
-    id: 49,
-    nombre: "Perillas de Cocina N°1",
-    codigo: "PER. 1",
+{
+    id: 65,
+    nombre: "Surtidito Conectores Neumáticos Plástico",
+    codigo: "RE-CNE-01",
     precio: 0,
-    piezas: 90,
-    foto_exhibidor: "./img/s49_exhibidor.webp",
-    foto_card: "./img/s49_card.webp",
-    foto_gavetas: "./img/s49_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "90 piezas totales", "Libre reposición"],
+    piezas: 106,
+    foto_exhibidor: "./img/s65_exhibidor.webp",
+    foto_card: "./img/s65_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor", "1 gaveta", "106 piezas totales", "10 m de cada manguera", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "3 piezas de c/u"
+    cant_uniforme: "4 piezas de c/u"
   },
-  {
-    id: 50,
-    nombre: "Perillas de Cocina N°2",
-    codigo: "PER. 2",
-    precio: 0,
-    piezas: 90,
-    foto_exhibidor: "./img/s50_exhibidor.webp",
-    foto_card: "./img/s50_card.webp",
-    foto_gavetas: "./img/s50_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "90 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 piezas de c/u"
-  },
-  {
+{
     id: 37,
     tamano: "grande",
     nombre: "Perillas de Cocina Completo",
@@ -943,20 +434,243 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "3 piezas de c/u"
   },
-  {
-    id: 35,
-    nombre: "Conexiones Automáticas",
-    codigo: "CON. NEU. NUEV.",
+{
+    id: 50,
+    nombre: "Perillas de Cocina N°2",
+    codigo: "PER. 2",
     precio: 0,
-    piezas: 164,
-    foto_exhibidor: "./img/s35_exhibidor.webp",
-    foto_card: "./img/s35_card.webp",
-    foto_gavetas: "./img/s35_gavetas.webp",
-    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "164 piezas totales", "Libre reposición"],
+    piezas: 90,
+    foto_exhibidor: "./img/s50_exhibidor.webp",
+    foto_card: "./img/s50_card.webp",
+    foto_gavetas: "./img/s50_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "90 piezas totales", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "3 - 10 - 5 piezas de c/u"
+    cant_uniforme: "3 piezas de c/u"
   },
-  {
+{
+    id: 49,
+    nombre: "Perillas de Cocina N°1",
+    codigo: "PER. 1",
+    precio: 0,
+    piezas: 90,
+    foto_exhibidor: "./img/s49_exhibidor.webp",
+    foto_card: "./img/s49_card.webp",
+    foto_gavetas: "./img/s49_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "90 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 piezas de c/u"
+  },
+{
+    id: 20,
+    nombre: "Terminales para Cable Completo",
+    codigo: "TEM. COMP.",
+    precio: 0,
+    piezas: 1742,
+    foto_exhibidor: "./img/s20_exhibidor.webp",
+    foto_card: "./img/s20_card.webp",
+    foto_gavetas: "./img/s20_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "1.742 piezas totales", "Libre reposición"],
+    tabla: [{"cant":50,"medida":"30 al 60"}, {"cant":6,"medida":"61 al 63"}, {"cant":20,"medida":"64 al 69"}, {"cant":10,"medida":"70 al 75"}],
+    cant_uniforme: "50 - 6 - 20 - 10 - 4 - 3 piezas de c/u"
+  },
+{
+    id: 21,
+    nombre: "Terminales para Cable",
+    codigo: "TERM. NU.",
+    precio: 0,
+    piezas: 134,
+    foto_card: "./img/s21_card.webp",
+    foto_exhibidor: "./img/s21_exhibidor.webp",
+    foto_gavetas: "./img/s21_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "134 piezas totales", "Libre reposición"],
+    tabla: [{"cant":6,"medida":"1 al 12"}, {"cant":4,"medida":"13 al 23"}, {"cant":3,"medida":"24 y 25"}],
+    cant_uniforme: "6 - 4 - 3 piezas de c/u"
+  },
+{
+    id: 61,
+    nombre: "Terminales para Cable Línea Inicial",
+    codigo: "TERM. CH.",
+    precio: 0,
+    piezas: 1488,
+    foto_exhibidor: "./img/s61_exhibidor.webp",
+    foto_card: "./img/s61_card.webp",
+    foto_gavetas: "./img/s61_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "1.488 piezas totales", "Libre reposición"],
+    tabla: [{"cant":6,"medida":"1 al 12"}, {"cant":4,"medida":"13 al 23"}, {"cant":3,"medida":"24 y 25"}, {"cant":50,"medida":"30 al 60"}, {"cant":6,"medida":"61 al 63"}, {"cant":20,"medida":"64 al 69"}, {"cant":10,"medida":"70 al 75"}],
+    cant_uniforme: "50 - 6 - 20 - 10 piezas de c/u"
+  },
+{
+    id: 26,
+    tamano: "grande",
+    nombre: "Carbones Eléctricos Completo",
+    codigo: "CARB. COMPL.",
+    precio: 0,
+    piezas: 145,
+    foto_exhibidor: "./img/s26_exhibidor.webp",
+    foto_card: "./img/s26_card.webp",
+    foto_gavetas: "./img/s26_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "145 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2,5 piezas de c/u (juego)"
+  },
+{
+    id: 25,
+    nombre: "Carbones Eléctricos N°1",
+    codigo: "CARB. 1",
+    precio: 0,
+    piezas: 100,
+    foto_exhibidor: "./img/s25_exhibidor.webp",
+    foto_card: "./img/s25_card.webp",
+    foto_gavetas: "./img/s25_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "100 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2,5 piezas de c/u (juego)"
+  },
+{
+    id: 72,
+    nombre: "Carbones N°1",
+    codigo: "RE-CB1-01",
+    precio: 0,
+    piezas: 60,
+    foto_exhibidor: "./img/s72_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "60 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+{
+    id: 73,
+    nombre: "Carbones N°2",
+    codigo: "RE-CB2-02",
+    precio: 0,
+    piezas: 56,
+    foto_exhibidor: "./img/s73_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "56 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+{
+    id: 13,
+    nombre: "Tapones de Cárter y Diferencial",
+    codigo: "TAP. CAR.",
+    precio: 0,
+    piezas: 104,
+    foto_exhibidor: "./img/s13_exhibidor.webp",
+    foto_card: "./img/s13_card.webp",
+    foto_gavetas: "./img/s13_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "104 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "4 piezas de c/u"
+  },
+{
+    id: 36,
+    nombre: "Abrazaderas con Perfil de Goma",
+    codigo: "ABRA. GOMA",
+    precio: 0,
+    piezas: 252,
+    foto_exhibidor: "./img/s36_exhibidor.webp",
+    foto_card: "./img/s36_card.webp",
+    foto_gavetas: "./img/s36_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "252 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "7 piezas de c/u"
+  },
+{
+    id: 1,
+    tamano: "grande",
+    nombre: "Regatones Plásticos y de Goma",
+    codigo: "REGAT.",
+    precio: 0,
+    piezas: 559,
+    foto_exhibidor: "./img/s1_exhibidor.webp",
+    foto_card: "./img/s1_card.webp",
+    foto_gavetas: "./img/s1_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "559 piezas totales", "Libre reposición"],
+    tabla: [{"cant":10,"medida":"1 al 15"}, {"cant":7,"medida":"17"}, {"cant":10,"medida":"19 al 32"}, {"cant":7,"medida":"34"}, {"cant":10,"medida":"35 al 41"}, {"cant":7,"medida":"42"}, {"cant":10,"medida":"44 al 54"}, {"cant":6,"medida":"60 al 78"}, {"cant":10,"medida":"120 al 125"}],
+    cant_uniforme: "10 - 7 - 6 piezas de c/u"
+  },
+{
+    id: 16,
+    nombre: "Topes y Tapones de Goma",
+    codigo: "TOP. TAP. GOMA",
+    precio: 0,
+    piezas: 130,
+    foto_exhibidor: "./img/s16_exhibidor.webp",
+    foto_card: "./img/s16_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "130 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+{
+    id: 29,
+    nombre: "Alemites",
+    codigo: "ALEM.",
+    precio: 0,
+    piezas: 138,
+    foto_exhibidor: "./img/s29_exhibidor.webp",
+    foto_card: "./img/s29_card.webp",
+    foto_gavetas: "./img/s29_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "138 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "6 piezas de c/u"
+  },
+{
+    id: 17,
+    nombre: "Insertos",
+    codigo: "INS.",
+    precio: 0,
+    piezas: 120,
+    foto_exhibidor: "./img/s17_exhibidor.webp",
+    foto_card: "./img/s17_card.webp",
+    foto_gavetas: "./img/s17_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "120 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+{
+    id: 28,
+    nombre: "Tarugos Estriados",
+    codigo: "TAR. ESTR.",
+    precio: 0,
+    piezas: 1740,
+    foto_exhibidor: "./img/s28_exhibidor.webp",
+    foto_card: "./img/s28_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "1.740 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "120 - 100 piezas de c/u"
+  },
+{
+    id: 24,
+    nombre: "Retenes de Seguridad Aranlock",
+    codigo: "RET. ARAN.",
+    precio: 0,
+    piezas: 900,
+    foto_exhibidor: "./img/s24_exhibidor.webp",
+    foto_card: "./img/s24_card.webp",
+    foto_gavetas: "./img/s24_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "900 piezas totales", "Libre reposición"],
+    tabla: [{"cant":50,"medida":"2,3 al 9"}, {"cant":25,"medida":"10 al 15"}, {"cant":50,"medida":"3 X 11,3"}, {"cant":50,"medida":"4 X 11,3"}, {"cant":50,"medida":"5 X 11,3"}, {"cant":50,"medida":"6 X 15"}, {"cant":50,"medida":"7 X 15"}, {"cant":50,"medida":"8 X 15"}, {"cant":50,"medida":"9 X 18"}, {"cant":25,"medida":"10 X 18"}, {"cant":25,"medida":"11 X 21"}, {"cant":25,"medida":"12 X 21"}],
+    cant_uniforme: "50 - 25 piezas de c/u"
+  },
+{
+    id: 45,
+    nombre: "Tuercas Rápidas y Tornillería Especial",
+    codigo: "TR Espec. + Torn.",
+    precio: 0,
+    piezas: 660,
+    foto_exhibidor: "./img/s45_exhibidor.webp",
+    foto_card: "./img/s45_card.webp",
+    foto_gavetas: "./img/s45_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "660 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+{
     id: 63,
     tamano: "grande",
     nombre: "Tornillería Especial",
@@ -970,7 +684,33 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "5 piezas de c/u"
   },
-  {
+{
+    id: 59,
+    nombre: "Tuercas Rápidas Línea Completa",
+    codigo: "TR L. Compl.",
+    precio: 0,
+    piezas: 324,
+    foto_exhibidor: "./img/s59_exhibidor.webp",
+    foto_card: "./img/s59_card.webp",
+    foto_gavetas: "./img/s59_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "324 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "6 piezas de c/u"
+  },
+{
+    id: 11,
+    nombre: "Tuercas Rápidas / Aranlock",
+    codigo: "TUER. RAP.",
+    precio: 0,
+    piezas: 555,
+    foto_exhibidor: "./img/s11_exhibidor.webp",
+    foto_card: "./img/s11_card.webp",
+    foto_gavetas: "./img/s11_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "555 piezas totales", "Libre reposición"],
+    tabla: [{"cant":6,"medida":"2 al 13"}, {"cant":11,"medida":"14 al 36"}, {"cant":6,"medida":"42 al 47"}],
+    cant_uniforme: "11 - 21 piezas de c/u"
+  },
+{
     id: 64,
     tamano: "grande",
     nombre: "Tuercas Rápidas y Tuercas Remaches",
@@ -984,19 +724,278 @@ const SURTIDOS = [
     tabla: null,
     cant_uniforme: "10 - 5 piezas de c/u"
   },
-  {
-    id: 66,
-    tamano: "grande",
-    nombre: "Conectores Neumáticos + Racord",
-    codigo: "CON. NEU. + RAC.",
+{
+    id: 60,
+    nombre: "Tuercas Rápidas Línea Importada",
+    codigo: "TR IMP.",
     precio: 0,
-    piezas: 411,
-    foto_exhibidor: "./img/s66_exhibidor.webp",
-    foto_card: "./img/s66_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "411 piezas totales", "Libre reposición"],
+    piezas: 210,
+    foto_exhibidor: "./img/s60_exhibidor.webp",
+    foto_card: "./img/s60_card.webp",
+    foto_gavetas: "./img/s60_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "210 piezas totales", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "2 - 9 - 4 - 1 piezas de c/u"
+    cant_uniforme: "6 piezas de c/u"
+  },
+{
+    id: 12,
+    nombre: "Tuercas Remaches",
+    codigo: "TER. REM.",
+    precio: 0,
+    piezas: 350,
+    foto_exhibidor: "./img/s12_exhibidor.webp",
+    foto_card: "./img/s12_card.webp",
+    foto_gavetas: "./img/s12_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "350 piezas totales", "Libre reposición"],
+    tabla: [{"cant":20,"medida":"50 al 52"}, {"cant":10,"medida":"53 y 54"}, {"cant":20,"medida":"55 al 60"}, {"cant":10,"medida":"61"}, {"cant":20,"medida":"62 al 67"}, {"cant":10,"medida":"68 y 69"}],
+    cant_uniforme: "20 - 10 piezas de c/u"
+  },
+{
+    id: 39,
+    nombre: "Bulones Perforados / Uniones Orientables",
+    codigo: "UN. ORIENT.",
+    precio: 0,
+    piezas: 116,
+    foto_exhibidor: "./img/s39_exhibidor.webp",
+    foto_card: "./img/s39_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "116 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "4 piezas de c/u"
+  },
+{
+    id: 78,
+    nombre: "Uniones Orientables",
+    codigo: "RE-UNO-01",
+    precio: 0,
+    piezas: 39,
+    foto_exhibidor: "./img/s78_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "39 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 piezas de c/u"
+  },
+{
+    id: 69,
+    nombre: "Bulón Perforado",
+    codigo: "RE-BPF-01",
+    precio: 0,
+    piezas: 49,
+    foto_exhibidor: "./img/s69_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "49 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+{
+    id: 27,
+    nombre: "Espárragos de Acero",
+    codigo: "ESPARR.",
+    precio: 0,
+    piezas: 282,
+    foto_exhibidor: "./img/s27_exhibidor.webp",
+    foto_card: "./img/s27_card.webp",
+    foto_gavetas: "./img/s27_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "282 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "6 piezas de c/u"
+  },
+{
+    id: 75,
+    nombre: "Espárragos de Acero",
+    codigo: "RE-ESA-01",
+    precio: 0,
+    piezas: 190,
+    foto_exhibidor: "./img/s75_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "190 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+{
+    id: 62,
+    tamano: "grande",
+    nombre: "Arandelas de Goma Línea Completa",
+    codigo: "ARAND. COMP.",
+    precio: 0,
+    piezas: 1292,
+    foto_exhibidor: "./img/s62_exhibidor.webp",
+    foto_card: "./img/s62_card.webp",
+    foto_gavetas: "./img/s62_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "1.292 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "21 - 10 piezas de c/u"
+  },
+{
+    id: 14,
+    nombre: "Arandelas de Goma Línea Inicial",
+    codigo: "ARAND. CH.",
+    precio: 0,
+    piezas: 1008,
+    foto_exhibidor: "./img/s14_exhibidor.webp",
+    foto_card: "./img/s14_card.webp",
+    foto_gavetas: "./img/s14_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "1.008 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "21 piezas de c/u"
+  },
+{
+    id: 15,
+    nombre: "Arandelas de Goma Línea Pesada",
+    codigo: "ARAND. LP.",
+    precio: 0,
+    piezas: 280,
+    foto_exhibidor: "./img/s15_exhibidor.webp",
+    foto_card: "./img/s15_card.webp",
+    foto_gavetas: "./img/s15_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "280 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "10 piezas de c/u"
+  },
+{
+    id: 30,
+    nombre: "Arandelas Aluminio/Cobre/Fibra",
+    codigo: "ARAN. CO-FI-AL",
+    precio: 0,
+    piezas: 1180,
+    foto_exhibidor: "./img/s30_exhibidor.webp",
+    foto_card: "./img/s30_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "1.300 piezas totales", "Libre reposición"],
+    tabla: [{"cant":20,"medida":"FIBRA 1/8 3x8"}, {"cant":20,"medida":"FIBRA 5/32 4x10"}, {"cant":20,"medida":"FIBRA 3/16 5x12"}, {"cant":20,"medida":"FIBRA 1/4 6,5x14"}, {"cant":20,"medida":"FIBRA 5/16 8x16"}, {"cant":20,"medida":"FIBRA 3/8 10x18"}, {"cant":20,"medida":"FIBRA 1/2 13x24"}, {"cant":20,"medida":"FIBRA 6x10"}, {"cant":20,"medida":"FIBRA 8x13"}, {"cant":20,"medida":"FIBRA 9x14"}, {"cant":20,"medida":"FIBRA 10x14"}, {"cant":20,"medida":"FIBRA 11x17"}, {"cant":20,"medida":"FIBRA 12x17"}, {"cant":20,"medida":"FIBRA 13x20"}, {"cant":20,"medida":"FIBRA 14x20"}, {"cant":20,"medida":"FIBRA 15x21"}, {"cant":10,"medida":"FIBRA 16x21"}, {"cant":10,"medida":"FIBRA 17x22"}, {"cant":10,"medida":"FIBRA 18x23"}, {"cant":10,"medida":"FIBRA 19x24"}, {"cant":10,"medida":"FIBRA 20x26"}, {"cant":10,"medida":"FIBRA 21x26"}, {"cant":10,"medida":"FIBRA 22x28"}, {"cant":10,"medida":"FIBRA 24x30"}, {"cant":10,"medida":"FIBRA 26x34"}, {"cant":10,"medida":"FIBRA 28x36"}, {"cant":10,"medida":"FIBRA 30x40"}, {"cant":30,"medida":"POLIPROP. 1/8 3x8"}, {"cant":30,"medida":"POLIPROP. 5/32 4x10"}, {"cant":30,"medida":"POLIPROP. 3/16 5x12"}, {"cant":20,"medida":"POLIPROP. 1/4 6,5x14"}, {"cant":20,"medida":"POLIPROP. 5/16 8x16"}, {"cant":20,"medida":"POLIPROP. 3/8 10x18"}, {"cant":20,"medida":"ALUMINIO 1/8 3x8"}, {"cant":20,"medida":"ALUMINIO 5/32 4x10"}, {"cant":20,"medida":"ALUMINIO 3/16 5x12"}, {"cant":20,"medida":"ALUMINIO 1/4 6,5x14"}, {"cant":20,"medida":"ALUMINIO 5/16 8x16"}, {"cant":20,"medida":"ALUMINIO 3/8 10x18"}, {"cant":20,"medida":"ALUMINIO 1/2 13x24"}, {"cant":20,"medida":"ALUMINIO 6x10"}, {"cant":20,"medida":"ALUMINIO 8x13"}, {"cant":20,"medida":"ALUMINIO 9x14"}, {"cant":20,"medida":"ALUMINIO 10x14"}, {"cant":20,"medida":"ALUMINIO 11x17"}, {"cant":20,"medida":"ALUMINIO 12x17"}, {"cant":20,"medida":"ALUMINIO 13x20"}, {"cant":20,"medida":"ALUMINIO 14x20"}, {"cant":20,"medida":"ALUMINIO 15x21"}, {"cant":10,"medida":"ALUMINIO 16x21"}, {"cant":10,"medida":"ALUMINIO 17x22"}, {"cant":10,"medida":"ALUMINIO 18x23"}, {"cant":10,"medida":"ALUMINIO 19x24"}, {"cant":10,"medida":"ALUMINIO 20x26"}, {"cant":10,"medida":"ALUMINIO 21x26"}, {"cant":10,"medida":"ALUMINIO 22x28"}, {"cant":10,"medida":"ALUMINIO 24x30"}, {"cant":10,"medida":"ALUMINIO 26x34"}, {"cant":20,"medida":"COBRE 6x10"}, {"cant":20,"medida":"COBRE 8x13"}, {"cant":20,"medida":"COBRE 9x14"}, {"cant":20,"medida":"COBRE 10x14"}, {"cant":20,"medida":"COBRE 11x17"}, {"cant":20,"medida":"COBRE 12x17"}, {"cant":20,"medida":"COBRE 13x20"}, {"cant":20,"medida":"COBRE 14x20"}, {"cant":10,"medida":"COBRE 15x21"}, {"cant":10,"medida":"COBRE 16x21"}, {"cant":10,"medida":"COBRE 17x22"}, {"cant":10,"medida":"COBRE 18x23"}, {"cant":10,"medida":"COBRE 19x24"}, {"cant":10,"medida":"COBRE 20x26"}, {"cant":10,"medida":"COBRE 21x26"}, {"cant":10,"medida":"COBRE 22x28"}, {"cant":10,"medida":"COBRE 24x30"}, {"cant":10,"medida":"COBRE 26x34"}],
+    cant_uniforme: "20 - 10 - 30 piezas de c/u"
+  },
+{
+    id: 38,
+    nombre: "Arandelas de Inyección",
+    codigo: "ARAND. INYEC.",
+    precio: 0,
+    piezas: 440,
+    foto_exhibidor: "./img/s38_exhibidor.webp",
+    foto_card: "./img/s38_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "440 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "11 piezas de c/u"
+  },
+{
+    id: 23,
+    nombre: "Espinas Elásticas",
+    codigo: "ESP. ELAS.",
+    precio: 0,
+    piezas: 836,
+    foto_exhibidor: "./img/s23_exhibidor.webp",
+    foto_card: "./img/s23_card.webp",
+    foto_gavetas: "./img/s23_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "836 piezas totales", "Libre reposición"],
+    tabla: [{"cant":20,"medida":"2 x 12"}, {"cant":20,"medida":"2 x 16"}, {"cant":20,"medida":"2 x 20"}, {"cant":20,"medida":"2,5 x 14"}, {"cant":20,"medida":"2,5 x 16"}, {"cant":20,"medida":"2,5 x 26"}, {"cant":20,"medida":"2,5 x 30"}, {"cant":20,"medida":"3 x 14"}, {"cant":20,"medida":"3 x 16"}, {"cant":20,"medida":"3 x 20"}, {"cant":20,"medida":"3 x 26"}, {"cant":20,"medida":"3 x 30"}, {"cant":20,"medida":"3 x 36"}, {"cant":20,"medida":"3 x 40"}, {"cant":20,"medida":"3 x 45"}, {"cant":20,"medida":"3 x 50"}, {"cant":20,"medida":"3,5 x 20"}, {"cant":20,"medida":"3,5 x 30"}, {"cant":20,"medida":"3,5 x 40"}, {"cant":20,"medida":"3,5 x 50"}, {"cant":20,"medida":"4 x 20"}, {"cant":20,"medida":"4 x 26"}, {"cant":20,"medida":"4 x 30"}, {"cant":20,"medida":"4 x 40"}, {"cant":20,"medida":"4 x 50"}, {"cant":20,"medida":"4,5 x 20"}, {"cant":20,"medida":"4,5 x 30"}, {"cant":20,"medida":"4,5 x 40"}, {"cant":20,"medida":"4,5 x 50"}, {"cant":20,"medida":"5 x 24"}, {"cant":20,"medida":"5 x 30"}, {"cant":20,"medida":"5 x 40"}, {"cant":10,"medida":"5 x 50"}, {"cant":10,"medida":"5 x 60"}, {"cant":10,"medida":"5 x 70"}, {"cant":10,"medida":"5 x 80"}, {"cant":10,"medida":"6 x 30"}, {"cant":10,"medida":"6 x 40"}, {"cant":10,"medida":"6 x 50"}, {"cant":10,"medida":"6 x 60"}, {"cant":10,"medida":"6 x 70"}, {"cant":10,"medida":"6 x 80"}, {"cant":10,"medida":"7 x 40"}, {"cant":10,"medida":"8 x 40"}, {"cant":10,"medida":"8 x 50"}, {"cant":10,"medida":"8 x 60"}, {"cant":10,"medida":"8 x 70"}, {"cant":10,"medida":"8 x 80"}, {"cant":5,"medida":"10 x 50"}, {"cant":5,"medida":"10 x 60"}, {"cant":5,"medida":"10 x 70"}, {"cant":5,"medida":"10 x 80"}],
+    cant_uniforme: "20 - 10 - 5 - 3 piezas de c/u"
+  },
+{
+    id: 74,
+    nombre: "Espinas Elásticas",
+    codigo: "RE-EEL-01",
+    precio: 0,
+    piezas: 155,
+    foto_exhibidor: "./img/s74_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "155 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+{
+    id: 19,
+    nombre: "Interruptores y Pulsadores",
+    codigo: "INTERR. PULSA.",
+    precio: 0,
+    piezas: 135,
+    foto_exhibidor: "./img/s19_exhibidor.webp",
+    foto_card: "./img/s19_card.webp",
+    foto_gavetas: "./img/s19_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "135 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 piezas de c/u"
+  },
+{
+    id: 70,
+    nombre: "Interruptores y Pulsadores 1",
+    codigo: "RE-IP1-01",
+    precio: 0,
+    piezas: 82,
+    foto_exhibidor: "./img/s70_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "82 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+{
+    id: 71,
+    nombre: "Interruptores y Pulsadores 2",
+    codigo: "RE-IP2-02",
+    precio: 0,
+    piezas: 55,
+    foto_exhibidor: "./img/s71_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "55 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+{
+    id: 32,
+    nombre: "Inyectores Picos para Gas Envasado",
+    codigo: "INYEC. GAS ENV.",
+    precio: 0,
+    piezas: 216,
+    foto_exhibidor: "./img/s32_exhibidor.webp",
+    foto_card: "./img/s32_card.webp",
+    foto_gavetas: "./img/s32_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "216 piezas totales", "Libre reposición"],
+    tabla: [{"cant":5,"medida":"1 al 78"}, {"cant":3,"medida":"80 al 168"}],
+    cant_uniforme: "5 - 3 piezas de c/u"
+  },
+{
+    id: 76,
+    nombre: "Picos para Gas",
+    codigo: "RE-PGS-01",
+    precio: 0,
+    piezas: 125,
+    foto_exhibidor: "./img/s76_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "125 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "4 - 3 piezas de c/u"
+  },
+{
+    id: 22,
+    nombre: "Anillos Seeger DIN 471-472",
+    codigo: "SEEG.",
+    precio: 0,
+    piezas: 440,
+    foto_exhibidor: "./img/s22_exhibidor.webp",
+    foto_card: "./img/s22_card.webp",
+    foto_gavetas: "./img/s22_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "440 piezas totales", "Libre reposición"],
+    tabla: [{"cant":10,"medida":"471 — 5 al 20"}, {"cant":5,"medida":"471 — 21 al 35"}, {"cant":10,"medida":"472 — 8 al 20"}, {"cant":5,"medida":"472 — 21 al 35"}],
+    cant_uniforme: "10 - 5 piezas de c/u"
+  },
+{
+    id: 77,
+    nombre: "Seeger DIN 471 - 472",
+    codigo: "RE-SEG-01",
+    precio: 0,
+    piezas: 350,
+    foto_exhibidor: "./img/s77_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "350 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "10 piezas de c/u"
   }
-
 ];
