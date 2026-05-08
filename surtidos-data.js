@@ -817,16 +817,16 @@ const SURTIDOS = [
   },
   {
     id: 65,
-    nombre: "Conectores Neumáticos Más Rotación",
-    codigo: "CON. NEU. +Rot.",
+    nombre: "Surtidito Conectores Neumáticos Plástico",
+    codigo: "RE-CNE-01",
     precio: 0,
-    piezas: 111,
+    piezas: 106,
     foto_exhibidor: "./img/s65_exhibidor.webp",
-    foto_card: "",
+    foto_card: "./img/s65_card.webp",
     foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "111 piezas totales", "Libre reposición"],
+    incluye: ["1 exhibidor", "1 gaveta", "106 piezas totales", "10 m de cada manguera", "Libre reposición"],
     tabla: null,
-    cant_uniforme: "3 - 9 piezas de c/u"
+    cant_uniforme: "4 piezas de c/u"
   },
   {
     id: 66,
