@@ -21,6 +21,8 @@
 <!-- Datos del catálogo (separados en archivos JS por límite de tool call API) -->
 <script src="catalogo-data.js"></script>
 <script src="surtidos-data.js"></script>
+<!-- Renderer basado en layout-config.json (editor.html) -->
+<script src="renderer-layout.js"></script>
 
 <style>
 :root{
@@ -471,6 +473,127 @@ html,body{
     font-size:10px;min-width:18px;text-align:right;
 }
 
+/* ── ESTILOS DEL RENDERER LAYOUT (driven by layout-config.json) ── */
+.rl-layout{position:absolute;inset:0;z-index:1}
+.rl-block{box-sizing:border-box;overflow:hidden}
+.rl-brand-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.rl-brand-img img{max-width:100%;max-height:100%;object-fit:contain;background:#fff;border-radius:8px;padding:2px;border:1px solid var(--border)}
+.rl-pill{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--navy),var(--navy-light));
+    color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;
+    border-radius:8px;letter-spacing:.06em;
+    box-shadow:0 2px 5px rgba(26,58,122,.25);
+    text-transform:uppercase;padding:0 10px;
+    width:100%;height:100%;
+}
+.rl-photo{
+    background:var(--bg-soft);border:1px solid var(--border);
+    border-radius:10px;padding:6px;
+    display:flex;align-items:center;justify-content:center;position:relative;
+    width:100%;height:100%;
+}
+.rl-photo.rl-no-bg{background:transparent;border:none;padding:0}
+.rl-photo img{max-width:100%;max-height:100%;object-fit:contain}
+.rl-ph-label{
+    position:absolute;top:6px;left:8px;
+    font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--text-muted);background:#fff;padding:3px 7px;border-radius:5px;
+    border:1px solid var(--border);
+}
+.rl-spec{
+    background:var(--bg-soft);border:1px solid var(--border);
+    border-left:3px solid var(--green);border-radius:8px;
+    padding:7px 10px;display:flex;flex-direction:column;justify-content:center;
+    width:100%;height:100%;
+}
+.rl-spec .rl-lbl{font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.rl-spec .rl-val{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;color:var(--navy);margin-top:2px;line-height:1.2}
+.rl-incluye{
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:9px 14px;width:100%;height:100%;
+}
+.rl-incluye .rl-h{font-size:10px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.rl-incluye .rl-h::before{content:'✓';color:var(--green);font-weight:900}
+.rl-incluye ul{list-style:none;margin:0;padding:0}
+.rl-incluye li{font-size:11.5px;color:var(--text);padding:2px 0;display:flex;gap:8px}
+.rl-incluye li::before{content:'•';color:var(--green-dark);font-weight:900}
+.rl-precio{
+    background:#fff;border:2px solid var(--navy);
+    border-radius:12px;padding:8px 14px;
+    width:100%;height:100%;
+    display:flex;flex-direction:column;justify-content:center;
+}
+.rl-precio.rl-sin{border-color:#888;background:#fafafa}
+.rl-precio.rl-sin .rl-lbl, .rl-precio.rl-sin .rl-val{color:#444}
+.rl-precio .rl-lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--navy);margin-bottom:2px}
+.rl-precio .rl-val{font-family:'Montserrat',sans-serif;font-size:21px;font-weight:900;line-height:1.05;color:var(--navy)}
+.rl-precio .rl-old{text-decoration:line-through;color:var(--text-muted);font-size:12px;font-weight:600;display:block;margin-bottom:2px}
+.rl-precio .rl-hint{font-size:9.5px;color:var(--text-muted);margin-top:3px;font-weight:600}
+.rl-tabla{
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:9px 14px;width:100%;height:100%;
+}
+.rl-tabla .rl-h{font-size:10px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.rl-tabla .rl-h::before{content:'📋'}
+.rl-tabla .rl-grid{display:grid;gap:4px 8px}
+.rl-tabla .rl-row{display:flex;align-items:center;gap:6px;padding:3px 6px;background:var(--bg-soft);border-radius:5px;border-left:2px solid var(--navy-light)}
+.rl-tabla .rl-cant{font-weight:800;color:var(--navy);font-family:'Montserrat',sans-serif;min-width:20px;text-align:right}
+.rl-tabla .rl-med{color:var(--text);font-family:ui-monospace,monospace;font-size:10px}
+.rl-uniforme{
+    background:linear-gradient(135deg,rgba(14,138,74,.08),rgba(26,58,122,.05));
+    border:1px solid var(--border);border-left:3px solid var(--green);
+    border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:14px;
+    width:100%;height:100%;
+}
+.rl-uniforme .rl-ico{font-size:30px;line-height:1}
+.rl-uniforme .rl-utext{flex:1}
+.rl-uniforme .rl-lbl{font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
+.rl-uniforme .rl-val{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;color:var(--navy)}
+.rl-footer{
+    border-top:1px solid var(--border);padding-top:4mm;
+    text-align:right;font-size:10px;color:var(--text-muted);line-height:1.5;
+    width:100%;height:100%;
+}
+.rl-footer strong{color:var(--navy);font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:.04em}
+.rl-footer .rl-wa{color:var(--green-dark);font-weight:700}
+.rl-cover-logo{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.rl-cover-logo img{
+    max-width:100%;max-height:100%;object-fit:contain;
+    background:#fff;border-radius:18px;padding:6px;border:1px solid var(--border);
+    box-shadow:0 6px 18px rgba(26,58,122,.18);
+}
+.rl-cover-stats{display:flex;justify-content:space-around;align-items:center;width:100%;height:100%;gap:8mm}
+.rl-cs-item{text-align:center}
+.rl-cs-num{font-family:'Montserrat',sans-serif;font-size:34px;font-weight:900;color:var(--green-dark);line-height:1}
+.rl-cs-lbl{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.rl-cover-vendor{
+    background:var(--bg-soft);border:1px solid var(--border);
+    border-radius:14px;padding:14px 22px;
+    text-align:center;width:100%;height:100%;
+    display:flex;flex-direction:column;justify-content:center;
+}
+.rl-cv-lbl{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+.rl-cv-name{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;color:var(--navy);margin:4px 0 2px}
+.rl-cv-wa{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--green-dark);font-weight:700}
+.rl-idx-cols{column-count:2;column-gap:8mm;width:100%;height:100%}
+.rl-idx-grupo{margin-bottom:3mm;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
+.rl-idx-grupo-h{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:900;color:var(--green-dark);text-transform:uppercase;letter-spacing:.1em;padding:3px 0;border-bottom:1.5px solid var(--green);margin-bottom:2mm;display:flex;align-items:center;gap:6px}
+.rl-idx-row{display:flex;align-items:baseline;gap:5px;padding:2px 0;font-size:10px}
+.rl-idx-cod{font-family:ui-monospace,Menlo,monospace;font-size:8.5px;color:var(--text-muted);font-weight:700;background:var(--bg-soft);padding:1px 5px;border-radius:4px;border:1px solid var(--border);min-width:62px;text-align:center}
+.rl-idx-name{flex:1;color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rl-idx-page{font-family:'Montserrat',sans-serif;font-weight:800;color:var(--navy);font-size:10px;min-width:18px;text-align:right}
+.rl-bcover-cta{
+    background:linear-gradient(135deg,var(--green-light),var(--green));
+    color:#fff;border-radius:14px;padding:14px 22px;
+    box-shadow:0 6px 18px rgba(14,138,74,.35);
+    width:100%;height:100%;
+    display:flex;flex-direction:column;justify-content:center;text-align:center;
+}
+.rl-bcta-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;opacity:.95;margin-bottom:5px}
+.rl-bcta-name{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;line-height:1.1}
+.rl-bcta-wa{font-family:ui-monospace,Menlo,monospace;font-size:14px;font-weight:700;margin-top:4px}
+
 /* Print */
 @media print{
     @page{size:A4;margin:0}
@@ -862,14 +985,30 @@ function render(){
     const totalSurt = surtidos.length;
     const pageContratapa = inicioSurtidos + totalSurt;
 
-    const html = [
-        renderPortada(ctx, totalSurt),
-        renderIndice(surtidos, inicioSurtidos),
-        ...surtidos.map((s, i) => renderPagina(s, ctx, inicioSurtidos + i)),
-        renderContratapa(ctx, pageContratapa)
-    ].join('');
-
-    document.getElementById('book').innerHTML = html;
+    // Si tenemos LAYOUT_CONFIG (de layout-config.json) usamos el renderer
+    // basado en posiciones absolutas. Si no, fallback al renderer viejo.
+    if (LAYOUT_CONFIG){
+        const idxCtx = { ...ctx, surtidos, paginaInicio: inicioSurtidos };
+        const html = [
+            renderPageFromLayout('portada', null, ctx, 1, v),
+            renderPageFromLayout('indice', null, idxCtx, 2, v),
+            ...surtidos.map((s, i) => {
+                const pageType = s.tamano === 'grande' ? 'surtido-grande' : 'surtido-normal';
+                return renderPageFromLayout(pageType, s, ctx, inicioSurtidos + i, v);
+            }),
+            renderPageFromLayout('contratapa', null, ctx, pageContratapa, v)
+        ].join('');
+        document.getElementById('book').innerHTML = html;
+    } else {
+        // Fallback (renderer viejo flex/flow)
+        const html = [
+            renderPortada(ctx, totalSurt),
+            renderIndice(surtidos, inicioSurtidos),
+            ...surtidos.map((s, i) => renderPagina(s, ctx, inicioSurtidos + i)),
+            renderContratapa(ctx, pageContratapa)
+        ].join('');
+        document.getElementById('book').innerHTML = html;
+    }
 }
 
 async function descargarPDF(){
@@ -928,8 +1067,11 @@ async function init(){
     const loadingText = document.getElementById('loadingText');
     const btn = document.getElementById('btnDescargar');
 
+    // Cargamos el layout-config.json en paralelo a los Excels
+    loadingText.textContent = 'Cargando layout y precios…';
+    const layoutPromise = (typeof cargarLayoutConfig === 'function') ? cargarLayoutConfig() : Promise.resolve(null);
+
     try {
-        loadingText.textContent = 'Descargando lista de precios…';
         const wbListas = await maxiferLeerExcel(MAXIFER_EXCEL_URLS.listas);
         loadingText.textContent = 'Descargando composición de surtidos…';
         const wbSurtidos = await maxiferLeerExcel(MAXIFER_EXCEL_URLS.surtidos);
@@ -944,6 +1086,8 @@ async function init(){
         await new Promise(r => setTimeout(r, 800));
     }
 
+    // Esperamos el layout antes de renderizar
+    await layoutPromise;
     render();
 
     await new Promise(r => setTimeout(r, 300));
