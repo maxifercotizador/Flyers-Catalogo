@@ -378,6 +378,7 @@
       cursor: pointer;
       min-height: 44px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
@@ -385,6 +386,16 @@
     .card-content {
       padding: 10px 12px 6px;
       text-align: center;
+    }
+    /* Etiqueta "(Reducido)" debajo del título de surtidos RE-* */
+    .reducido-tag {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: #888;
+      margin-top: 2px;
+      letter-spacing: 0.2px;
     }
     /* Compatibilidad: dejamos card-nombre por si alguna otra vista
        (revista/libro) lo sigue usando; en la grilla ya no se renderea. */
@@ -4357,7 +4368,7 @@ function renderFavBody() {
     return '<div class="fav-item" onclick="cerrarFavoritos();abrirModal(' + id + ')">'
       + (foto ? '<img class="fav-item-img" src="' + foto + '">' : '<div class="fav-item-img"></div>')
       + '<div class="fav-item-info">'
-      +   '<div class="fav-item-nombre">' + s.nombre + '</div>'
+      +   '<div class="fav-item-nombre">' + s.nombre + (s.codigo && s.codigo.startsWith('RE-') ? '<span class="reducido-tag">(Reducido)</span>' : '') + '</div>'
       +   '<div class="fav-item-cod">Cód: ' + s.codigo + (s.piezas ? ' · ' + s.piezas + ' piezas' : '') + '</div>'
       + '</div>'
       + '<div class="fav-item-actions">'
@@ -4473,7 +4484,7 @@ function cardHTML(s) {
     ? `<div class="card-badge badge-${badge}">${badge === 'top' ? '⭐ Más vendido' : '✨ Nuevo'}</div>`
     : '';
   return `<div class="surtido-card">
-    <div class="card-titulo" onclick="abrirModal(${s.id})">${s.nombre}</div>
+    <div class="card-titulo" onclick="abrirModal(${s.id})">${s.nombre}${s.codigo && s.codigo.startsWith('RE-') ? '<span class="reducido-tag">(Reducido)</span>' : ''}</div>
     <div class="card-img-wrap" onclick="abrirModal(${s.id})">
       ${foto
         ? `<img src="${foto}" alt="Surtido ${s.nombre} — MAXIFER ${s.codigo}" loading="lazy">`
@@ -4715,7 +4726,7 @@ function abrirModal(id) {
   }
   surtidoActual = s;
 
-  document.getElementById('modalNombre').textContent = s.nombre;
+  document.getElementById('modalNombre').innerHTML = s.nombre + (s.codigo && s.codigo.startsWith('RE-') ? '<span class="reducido-tag">(Reducido)</span>' : '');
   document.getElementById('modalCod').textContent = 'Código: ' + s.codigo;
 
   const modal = document.getElementById('modal');
@@ -5610,7 +5621,7 @@ function revConstruir(lista) {
       + '<div class="rev-info">'
       +   '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px">'
       +     '<div>'
-      +       '<div class="rev-nombre">' + s.nombre + '</div>'
+      +       '<div class="rev-nombre">' + s.nombre + (s.codigo && s.codigo.startsWith('RE-') ? '<span class="reducido-tag">(Reducido)</span>' : '') + '</div>'
       +       '<div class="rev-cod">' + s.codigo + '</div>'
       +     '</div>'
       +     '<button class="btn-fav btn-fav-vista ' + (esFav ? 'fav-on' : '') + '" id="revFav' + s.id + '" onclick="toggleFavVista(' + s.id + ', \'rev\')" style="flex-shrink:0;margin-left:8px;position:relative;top:auto;right:auto;left:auto;bottom:auto">' + (esFav ? '❤️' : '🤍') + '</button>'
@@ -5738,7 +5749,7 @@ function libroHacerCard(idx, cls) {
     + '<div class="libro-bottom lb-c' + colIdx + '">'
     +   '<div>'
     +     '<div class="libro-num">Página ' + (idx + 1) + '</div>'
-    +     '<div class="libro-page-nombre">' + s.nombre + '</div>'
+    +     '<div class="libro-page-nombre">' + s.nombre + (s.codigo && s.codigo.startsWith('RE-') ? '<span class="reducido-tag">(Reducido)</span>' : '') + '</div>'
     +     '<div class="libro-page-cod">' + s.codigo + '</div>'
     +   '</div>'
     +   '<div class="libro-divider"></div>'
