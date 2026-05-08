@@ -95,6 +95,13 @@ const MODELOS_DIFERENTES = {
   "RE-BPF-01": 16,
   "RE-IP1-01": 27,
   "RE-IP2-02": 18,
+  "RE-CB1-01": 30,
+  "RE-CB2-02": 28,
+  "RE-EEL-01": 31,
+  "RE-ESA-01": 38,
+  "RE-PGS-01": 35,
+  "RE-SEG-01": 35,
+  "RE-UNO-01": 13,
 };
 
 // ── CANTIDADES POR GAVETA (POR SURTIDO) ───────────────────────
@@ -171,6 +178,13 @@ const CANTIDADES_GAVETAS = {
   "RE-BPF-01": "2",
   "RE-IP1-01": "2",
   "RE-IP2-02": "2",
+  "RE-CB1-01": "2",
+  "RE-CB2-02": "2",
+  "RE-EEL-01": "5",
+  "RE-ESA-01": "5",
+  "RE-PGS-01": "4 - 3",
+  "RE-SEG-01": "10",
+  "RE-UNO-01": "3",
 };
 
 // Devuelve el texto a insertar en "Incluye" según la cantidad por

@@ -2739,6 +2739,13 @@ const MODELOS_DIFERENTES = {
   "RE-BPF-01": 16,
   "RE-IP1-01": 27,
   "RE-IP2-02": 18,
+  "RE-CB1-01": 30,
+  "RE-CB2-02": 28,
+  "RE-EEL-01": 31,
+  "RE-ESA-01": 38,
+  "RE-PGS-01": 35,
+  "RE-SEG-01": 35,
+  "RE-UNO-01": 13,
 };
 
 // ── CANTIDADES POR GAVETA (POR SURTIDO) ───────────────────────
@@ -2815,6 +2822,13 @@ const CANTIDADES_GAVETAS = {
   "RE-BPF-01": "2",
   "RE-IP1-01": "2",
   "RE-IP2-02": "2",
+  "RE-CB1-01": "2",
+  "RE-CB2-02": "2",
+  "RE-EEL-01": "5",
+  "RE-ESA-01": "5",
+  "RE-PGS-01": "4 - 3",
+  "RE-SEG-01": "10",
+  "RE-UNO-01": "3",
 };
 
 // Devuelve el texto a insertar en "Incluye" según la cantidad por
@@ -4123,6 +4137,97 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "55 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
+  },
+  {
+    id: 72,
+    nombre: "Carbones N°1",
+    codigo: "RE-CB1-01",
+    precio: 0,
+    piezas: 60,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "60 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
+    id: 73,
+    nombre: "Carbones N°2",
+    codigo: "RE-CB2-02",
+    precio: 0,
+    piezas: 56,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "56 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
+    id: 74,
+    nombre: "Espinas Elásticas",
+    codigo: "RE-EEL-01",
+    precio: 0,
+    piezas: 155,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "155 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+  {
+    id: 75,
+    nombre: "Espárragos de Acero",
+    codigo: "RE-ESA-01",
+    precio: 0,
+    piezas: 190,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "190 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+  {
+    id: 76,
+    nombre: "Picos para Gas",
+    codigo: "RE-PGS-01",
+    precio: 0,
+    piezas: 125,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "125 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "4 - 3 piezas de c/u"
+  },
+  {
+    id: 77,
+    nombre: "Seeger DIN 471 - 472",
+    codigo: "RE-SEG-01",
+    precio: 0,
+    piezas: 350,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "350 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "10 piezas de c/u"
+  },
+  {
+    id: 78,
+    nombre: "Uniones Orientables",
+    codigo: "RE-UNO-01",
+    precio: 0,
+    piezas: 39,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "39 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 piezas de c/u"
   }
 ];
 // ── ESTADO ───────────────────────────────────────────────────
@@ -5362,8 +5467,8 @@ function fotosDelSurtido(s) {
 // ╚══════════════════════════════════════════════════════════╝
 
 // ── FILTRO POR URL ────────────────────────────────────────
-var CODIGOS_FERRETERO = ["PL CH.","RES. LF","RES. LC","RES. LB","RES. LP","RES. COMP.","CHA. PART.","CHA. CH.","GA+CH COMP.","OR. CH.","OR. GR.","ARAND. CH.","ARAND. LP.","ARAND. COMP.","ARAN. CO-FI-AL","TAR. ESTR.","CARB. 1","CARB. COMPL.","REGAT.","TOP. TAP. GOMA","INYEC. GAS ENV.","PER. 1","PER. 2","PER. COMP.","TERM. CH.","TEM. COMP.","INTERR. PULSA."];
-var CODIGOS_AUTOMOTOR = ["PL Nac. 160 M.","CL. IMP COM","RES. LA","OR. CH.","OR. GR.","OR. COMP.","CONEX. ALUM. 1","CONEX. ALUM. 2","Conex. Alum. L. Temp.","Conex. Alum. Mayor Rot.","CONC. PL","CONC. COMB. Red","CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","RE-CNE-01","CON. NEU. + RAC.","BRONCE","RAC. CH.","RAC. GR.","SEEG.","INS.","RET. ARAN.","ALEM.","TERM. CH.","TERM. NU.","TEM. COMP.","ARAND. INYEC.","UN. ORIENT.","ABRA. GOMA","ESP. ELAS.","ESPARR.","TUER. RAP.","TER. REM.","TR L. Compl.","TR IMP.","TR Espec. + Torn.","Torn. Esp.","T. REM.+T. RAP.","TAP. CAR.","RE-RC1-01","RE-RC2-02","RE-BPF-01","RE-IP1-01","RE-IP2-02"];
+var CODIGOS_FERRETERO = ["PL CH.","RES. LF","RES. LC","RES. LB","RES. LP","RES. COMP.","CHA. PART.","CHA. CH.","GA+CH COMP.","OR. CH.","OR. GR.","ARAND. CH.","ARAND. LP.","ARAND. COMP.","ARAN. CO-FI-AL","TAR. ESTR.","CARB. 1","CARB. COMPL.","REGAT.","TOP. TAP. GOMA","INYEC. GAS ENV.","PER. 1","PER. 2","PER. COMP.","TERM. CH.","TEM. COMP.","INTERR. PULSA.","RE-CB1-01","RE-CB2-02","RE-PGS-01"];
+var CODIGOS_AUTOMOTOR = ["PL Nac. 160 M.","CL. IMP COM","RES. LA","OR. CH.","OR. GR.","OR. COMP.","CONEX. ALUM. 1","CONEX. ALUM. 2","Conex. Alum. L. Temp.","Conex. Alum. Mayor Rot.","CONC. PL","CONC. COMB. Red","CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","RE-CNE-01","CON. NEU. + RAC.","BRONCE","RAC. CH.","RAC. GR.","SEEG.","INS.","RET. ARAN.","ALEM.","TERM. CH.","TERM. NU.","TEM. COMP.","ARAND. INYEC.","UN. ORIENT.","ABRA. GOMA","ESP. ELAS.","ESPARR.","TUER. RAP.","TER. REM.","TR L. Compl.","TR IMP.","TR Espec. + Torn.","Torn. Esp.","T. REM.+T. RAP.","TAP. CAR.","RE-RC1-01","RE-RC2-02","RE-BPF-01","RE-IP1-01","RE-IP2-02","RE-EEL-01","RE-ESA-01","RE-SEG-01","RE-UNO-01"];
 
 var urlParams = new URLSearchParams(window.location.search);
 var tipoParam = (urlParams.get('tipo') || 'completo').toLowerCase();
