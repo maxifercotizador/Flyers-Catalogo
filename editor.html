@@ -15,6 +15,7 @@
 <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
 <!-- Datos del catálogo para usar surtidos reales como muestra -->
+<script src="editor-layout-defaults.js"></script>
 <script src="catalogo-data.js"></script>
 <script src="surtidos-data.js"></script>
 
@@ -276,6 +277,91 @@ html,body{
 .b-footer strong{color:var(--navy);font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:.04em}
 .b-footer .wa{color:var(--green-dark);font-weight:700}
 
+/* Bloques de portada / contratapa / índice */
+.b-cover-logo{
+    display:flex;align-items:center;justify-content:center;width:100%;height:100%;
+}
+.b-cover-logo img{
+    max-width:100%;max-height:100%;object-fit:contain;
+    background:#fff;border-radius:18px;padding:6px;
+    border:1px solid var(--border);
+    box-shadow:0 6px 18px rgba(26,58,122,.18);
+}
+.b-cover-stats{
+    display:flex;justify-content:space-around;align-items:center;
+    width:100%;height:100%;gap:8mm;
+}
+.b-cover-stats .cs-item{text-align:center}
+.b-cover-stats .cs-num{
+    font-family:'Montserrat',sans-serif;font-size:34px;font-weight:900;
+    color:var(--green-dark);line-height:1;
+}
+.b-cover-stats .cs-lbl{
+    font-size:10px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.1em;margin-top:4px;
+}
+.b-cover-vendor{
+    background:var(--bg-page-soft);border:1px solid var(--border);
+    border-radius:14px;padding:14px 22px;
+    text-align:center;width:100%;height:100%;
+    display:flex;flex-direction:column;justify-content:center;
+}
+.b-cover-vendor .cv-lbl{
+    font-size:10px;color:var(--text-muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.12em;
+}
+.b-cover-vendor .cv-name{
+    font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;
+    color:var(--navy);margin:4px 0 2px;
+}
+.b-cover-vendor .cv-wa{
+    font-family:ui-monospace,Menlo,monospace;font-size:13px;
+    color:var(--green-dark);font-weight:700;
+}
+.b-idx-content{
+    width:100%;height:100%;overflow:hidden;
+    border:1.5px dashed rgba(59,130,246,.4);border-radius:8px;
+    background:rgba(59,130,246,.04);
+    padding:8mm;color:var(--text-muted);
+}
+.b-idx-content .idxc-h{
+    font-size:11px;font-weight:800;color:var(--navy);
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:4mm;
+}
+.b-idx-content .idxc-msg{
+    font-size:10px;line-height:1.5;margin-bottom:4mm;color:var(--text-muted);
+}
+.b-idx-content .idxc-grid{
+    display:grid;grid-template-columns:1fr 1fr;column-gap:8mm;
+    font-size:10px;
+}
+.b-idx-content .idxc-grupo{
+    grid-column:1 / -1;
+    font-family:'Montserrat',sans-serif;font-size:10px;font-weight:900;
+    color:var(--green-dark);text-transform:uppercase;letter-spacing:.1em;
+    padding:3px 0;border-bottom:1.5px solid var(--green);
+    margin:2mm 0 1mm;
+}
+.b-idx-content .idxc-row{font-size:10px;color:var(--text);padding:1px 0}
+.b-bcover-cta{
+    background:linear-gradient(135deg,var(--green-light),var(--green));
+    color:#fff;border-radius:14px;padding:14px 22px;
+    box-shadow:0 6px 18px rgba(14,138,74,.35);
+    width:100%;height:100%;
+    display:flex;flex-direction:column;justify-content:center;text-align:center;
+}
+.b-bcover-cta .bcta-lbl{
+    font-size:11px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.16em;opacity:.95;margin-bottom:5px;
+}
+.b-bcover-cta .bcta-name{
+    font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;line-height:1.1;
+}
+.b-bcover-cta .bcta-wa{
+    font-family:ui-monospace,Menlo,monospace;font-size:14px;
+    font-weight:700;margin-top:4px;
+}
+
 .frame-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .block{z-index:1}
 
@@ -302,11 +388,11 @@ html,body{
     <div class="group" style="margin-left:18px">
         <label>Página</label>
         <select id="selPage">
-            <option value="surtido-normal">Surtido Normal</option>
-            <option value="surtido-grande" disabled>Surtido Grande (próx.)</option>
-            <option value="portada" disabled>Portada (próx.)</option>
-            <option value="indice" disabled>Índice (próx.)</option>
-            <option value="contratapa" disabled>Contratapa (próx.)</option>
+            <option value="surtido-normal">Surtido Normal (42 hojas)</option>
+            <option value="surtido-grande">Surtido Grande (17 hojas)</option>
+            <option value="portada">Portada</option>
+            <option value="indice">Índice</option>
+            <option value="contratapa">Contratapa</option>
         </select>
     </div>
 
@@ -363,47 +449,7 @@ html,body{
 <div class="toast" id="toast"></div>
 
 <script>
-const LAYOUT_DEFAULTS = {
-    'surtido-normal': {
-        pageW: 210, pageH: 297,
-        blocks: [
-            { id:'brand-img', label:'Logo MAXIFER', type:'brand-img',
-              x: 62, y: 24, w: 11, h: 11 },
-            { id:'brand-name', label:'Nombre marca', type:'text',
-              x: 75, y: 23.5, w: 32, h: 5, fontSize: 16, color:'navy', weight: 900, family:'Montserrat', upper:false },
-            { id:'brand-sub', label:'Subtítulo marca', type:'text',
-              x: 75, y: 30, w: 32, h: 3, fontSize: 9, color:'muted', weight: 700, family:'Inter', upper:true, letterSpacing:0.18 },
-            { id:'vendor-name', label:'Nombre vendedor', type:'text',
-              x: 142, y: 25, w: 50, h: 4.5, fontSize: 13, color:'navy', weight: 800, family:'Montserrat', align:'right' },
-            { id:'vendor-wa', label:'WhatsApp vendedor', type:'text',
-              x: 142, y: 30, w: 50, h: 4, fontSize: 11, color:'green-dark', weight: 700, family:'mono', align:'right' },
-            { id:'header-line', label:'Línea bajo header', type:'line',
-              x: 18, y: 39, w: 174, h: 0.3 },
-            { id:'codigo-pill', label:'Código pill', type:'pill',
-              x: 18, y: 46, w: 32, h: 9, fontSize: 13 },
-            { id:'title', label:'Título del surtido', type:'text',
-              x: 54, y: 46, w: 138, h: 9, fontSize: 21, color:'navy', weight: 800, family:'Montserrat', upper:true, letterSpacing:0.02 },
-            { id:'foto-exhibidor', label:'Foto Exhibidor', type:'photo',
-              x: 18, y: 60, w: 84, h: 80, photoKey:'foto_exhibidor', photoLabel:'Exhibidor' },
-            { id:'foto-gaveta', label:'Foto Gaveta', type:'photo',
-              x: 108, y: 60, w: 84, h: 80, photoKey:'foto_gavetas', photoLabel:'Gaveta' },
-            { id:'spec-piezas', label:'Spec: Piezas totales', type:'spec',
-              x: 18, y: 145, w: 56, h: 13, label_text:'Piezas totales', valueKey:'piezas' },
-            { id:'spec-modelos', label:'Spec: Modelos', type:'spec',
-              x: 77, y: 145, w: 56, h: 13, label_text:'Modelos diferentes', valueKey:'modelos' },
-            { id:'spec-stock', label:'Spec: Stock en gaveta', type:'spec',
-              x: 136, y: 145, w: 56, h: 13, label_text:'Stock en gaveta', valueKey:'stockGav' },
-            { id:'incluye', label:'Cuadro Incluye (lista)', type:'incluye',
-              x: 18, y: 162, w: 116, h: 26 },
-            { id:'precio', label:'Precio', type:'precio',
-              x: 138, y: 162, w: 54, h: 26 },
-            { id:'stock-section', label:'Tabla / Uniforme', type:'stock',
-              x: 18, y: 192, w: 174, h: 70 },
-            { id:'footer', label:'Footer (vendor + web)', type:'footer',
-              x: 18, y: 270, w: 174, h: 8 }
-        ]
-    }
-};
+// LAYOUT_DEFAULTS viene de editor-layout-defaults.js
 
 const STORAGE_KEY = 'maxifer-editor-layout-v1';
 
@@ -471,19 +517,23 @@ function renderBlockContent(b, s){
         case 'text': {
             const align = b.align === 'right' ? 'right' : (b.align === 'center' ? 'center' : '');
             const upper = b.upper ? 'upper' : '';
-            const txt = (b.id === 'brand-name') ? 'MAXIFER'
+            const txt = b.text
+                      ? b.text
+                      : (b.id === 'brand-name') ? 'MAXIFER'
                       : (b.id === 'brand-sub') ? 'Fábrica Importadora'
                       : (b.id === 'vendor-name') ? VENDEDOR.nombre
                       : (b.id === 'vendor-wa') ? formatWA(VENDEDOR.wa)
                       : (b.id === 'title') ? (s.nombre || 'Título')
-                      : (b.text || b.label);
-            return `<div class="b-text ${align} ${upper}" style="font-family:${FAMILIES[b.family]||FAMILIES.Inter};font-size:${b.fontSize}px;font-weight:${b.weight||500};color:${COLORS[b.color]||'inherit'};letter-spacing:${(b.letterSpacing||0)}em">${txt}</div>`;
+                      : b.label;
+            const italic = b.italic ? 'italic' : 'normal';
+            return `<div class="b-text ${align} ${upper}" style="font-family:${FAMILIES[b.family]||FAMILIES.Inter};font-size:${b.fontSize}px;font-weight:${b.weight||500};font-style:${italic};color:${COLORS[b.color]||'inherit'};letter-spacing:${(b.letterSpacing||0)}em">${txt}</div>`;
         }
         case 'pill':
             return `<div class="b-pill" style="font-size:${b.fontSize||13}px">${s.codigo || 'COD.'}</div>`;
         case 'photo': {
             const src = s[b.photoKey] || s.foto_card || '';
-            return `<div class="b-photo">
+            const noBgClass = b.noBg ? 'no-bg' : '';
+            return `<div class="b-photo ${noBgClass}">
                 <span class="ph-label">${b.photoLabel || 'Foto'}</span>
                 ${src ? `<img src="${src}" alt="${b.photoLabel}">` : ''}
             </div>`;
@@ -520,6 +570,40 @@ function renderBlockContent(b, s){
             return `<div class="b-footer"><strong>${VENDEDOR.nombre}</strong> · <span class="wa">WhatsApp ${formatWA(VENDEDOR.wa)}</span> · www.fabricamaxifer.com</div>`;
         case 'line':
             return `<div style="width:100%;height:100%;background:var(--border)"></div>`;
+        case 'cover-logo':
+            return `<div class="b-cover-logo"><img src="img/favicon-192.png" alt="MAXIFER"></div>`;
+        case 'cover-stats':
+            return `<div class="b-cover-stats">
+                <div class="cs-item"><div class="cs-num">59</div><div class="cs-lbl">Surtidos</div></div>
+                <div class="cs-item"><div class="cs-num">14.957</div><div class="cs-lbl">Piezas</div></div>
+                <div class="cs-item"><div class="cs-num">100%</div><div class="cs-lbl">Libre reposición</div></div>
+            </div>`;
+        case 'cover-vendor':
+            return `<div class="b-cover-vendor">
+                <div class="cv-lbl">Tu vendedor</div>
+                <div class="cv-name">${VENDEDOR.nombre}</div>
+                <div class="cv-wa">${formatWA(VENDEDOR.wa)}</div>
+            </div>`;
+        case 'idx-content':
+            return `<div class="b-idx-content">
+                <div class="idxc-h">📋 Listado de surtidos</div>
+                <div class="idxc-msg">Acá se inserta automáticamente el índice agrupado por categoría<br>(Clips, Resortes, O'Ring, Chavetas, Conexiones, etc.)<br>en 2 columnas tipo "diario".</div>
+                <div class="idxc-grid">
+                    <div class="idxc-grupo">🔩 Clips Plásticos</div>
+                    <div class="idxc-row">PL CH. — Clips Plásticos Básico …… 3</div>
+                    <div class="idxc-row">PL Nac. — Clips 160 Medidas …… 4</div>
+                    <div class="idxc-row">CL. IMP COM — Clips Importada …… 5</div>
+                    <div class="idxc-grupo">🌀 Resortes</div>
+                    <div class="idxc-row">RES. LF — Línea Ferretera …… 6</div>
+                    <div class="idxc-row">…</div>
+                </div>
+            </div>`;
+        case 'bcover-cta':
+            return `<div class="b-bcover-cta">
+                <div class="bcta-lbl">Tu vendedor MAXIFER</div>
+                <div class="bcta-name">${VENDEDOR.nombre}</div>
+                <div class="bcta-wa">${formatWA(VENDEDOR.wa)}</div>
+            </div>`;
         default:
             return `<div style="background:rgba(255,200,200,.5);border:1px dashed red;padding:4px;font-size:10px">${b.label}</div>`;
     }
@@ -801,7 +885,7 @@ document.getElementById('canvas').addEventListener('click', (e) => {
 });
 
 function init(){
-    if (typeof SURTIDOS === 'undefined' || typeof MODELOS_DIFERENTES === 'undefined'){
+    if (typeof SURTIDOS === 'undefined' || typeof MODELOS_DIFERENTES === 'undefined' || typeof LAYOUT_DEFAULTS === 'undefined'){
         setTimeout(init, 100);
         return;
     }
