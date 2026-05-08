@@ -160,6 +160,16 @@ html,body{
     display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:5mm;
 }
 .hero.single{grid-template-columns:1fr}
+/* Layout GRANDE: exhibidor full-width arriba, gaveta más chica abajo centrada */
+.hero.grande{
+    display:flex;flex-direction:column;gap:4mm;margin-bottom:4mm;
+}
+.hero.grande .photo.exhibidor-grande{
+    height:100mm;width:100%;
+}
+.hero.grande .photo.gaveta-bajo{
+    height:46mm;max-width:55%;align-self:center;
+}
 .hero .photo{
     background:var(--bg-soft);border:1px solid var(--border);
     border-radius:10px;padding:6px;
@@ -704,8 +714,24 @@ function renderPagina(s, ctx, pageNum){
     const hasGaveta = s.foto_gavetas && s.foto_gavetas.length;
     const hasExhibidor = s.foto_exhibidor && s.foto_exhibidor.length;
     const fotoGavetaSrc = hasGaveta ? s.foto_gavetas : (s.foto_card || '');
+    const esGrande = s.tamano === 'grande';
     let heroHTML;
-    if (hasExhibidor && fotoGavetaSrc){
+    if (esGrande && hasExhibidor){
+        // Layout grande: exhibidor full-width arriba, gaveta más chica abajo
+        const gavetaBajoHTML = fotoGavetaSrc ? `
+                <div class="photo gaveta-bajo">
+                    <span class="ph-label">${hasGaveta ? 'Gaveta' : 'Vista'}</span>
+                    <img src="${fotoGavetaSrc}" alt="Gaveta ${s.nombre}">
+                </div>` : '';
+        heroHTML = `
+            <div class="hero grande">
+                <div class="photo exhibidor-grande">
+                    <span class="ph-label">Exhibidor</span>
+                    <img src="${s.foto_exhibidor}" alt="Exhibidor ${s.nombre}">
+                </div>
+                ${gavetaBajoHTML}
+            </div>`;
+    } else if (hasExhibidor && fotoGavetaSrc){
         heroHTML = `
             <div class="hero">
                 <div class="photo">
