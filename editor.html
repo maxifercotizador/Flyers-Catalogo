@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXIFER · Editor de Layout</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="favicon.ico" sizes="any">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
+
+<!-- interact.js para drag/resize -->
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+<!-- Datos del catálogo para usar surtidos reales como muestra -->
+<script src="catalogo-data.js"></script>
+<script src="surtidos-data.js"></script>
+
+<style>
+:root{
+    --navy:#1a3a7a; --navy-dark:#13295a; --navy-light:#2151a8;
+    --green:#0e8a4a; --green-dark:#0a6b39; --green-light:#3aa86b;
+    --red:#c8102e;
+    --bg:#1a1f2e; --bg-soft:#252b3d; --panel:#2d334a;
+    --bg-page:#eef1f7; --bg-page-soft:#f5f7fb;
+    --border:#dde3ee;
+    --text:#1a2238; --text-muted:#5a6685;
+    --edit-blue:#3b82f6; --edit-blue-light:#60a5fa;
+    --canvas-scale:0.66;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+    background:var(--bg);color:#e5e9f0;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;height:100vh;
+}
+
+.topbar{
+    height:54px;background:var(--bg-soft);
+    display:flex;align-items:center;gap:12px;
+    padding:0 18px;border-bottom:1px solid #3a4159;
+    position:relative;z-index:10;
+}
+.topbar .logo{
+    font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;
+    color:#fff;letter-spacing:.1em;
+}
+.topbar .logo span{color:var(--green-light);font-weight:600;font-size:11px;letter-spacing:.2em;margin-left:8px}
+.topbar .group{display:flex;align-items:center;gap:8px}
+.topbar label{font-size:11px;color:#a0a8c0;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.topbar select{
+    background:var(--panel);color:#fff;border:1px solid #3a4159;border-radius:6px;
+    padding:6px 10px;font-size:12px;font-family:inherit;cursor:pointer;
+}
+.topbar select:focus{outline:1px solid var(--edit-blue)}
+.topbar .spacer{flex:1}
+.topbar button{
+    background:var(--panel);color:#fff;border:1px solid #3a4159;border-radius:6px;
+    padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;
+    font-family:inherit;letter-spacing:.04em;text-transform:uppercase;
+    transition:all .12s;
+}
+.topbar button:hover{background:#3a4159;border-color:var(--edit-blue)}
+.topbar button.primary{background:var(--green-dark);border-color:var(--green)}
+.topbar button.primary:hover{background:var(--green)}
+.topbar button.danger:hover{border-color:var(--red);color:var(--red)}
+
+.main{
+    display:flex;height:calc(100vh - 54px);
+}
+.canvas-area{
+    flex:1;overflow:auto;
+    background:#0f1322;
+    background-image:
+        radial-gradient(circle at 20% 20%,rgba(59,130,246,.08),transparent 40%),
+        radial-gradient(circle at 80% 80%,rgba(14,138,74,.06),transparent 40%);
+    padding:30px;
+    display:flex;align-items:flex-start;justify-content:center;
+}
+.canvas-wrap{
+    transform:scale(var(--canvas-scale));
+    transform-origin:top center;
+    margin-bottom:calc((1 - var(--canvas-scale)) * -120vh);
+}
+.canvas-page{
+    width:210mm;height:297mm;
+    background:#fff;
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
+    position:relative;
+    overflow:hidden;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+}
+
+.sidebar{
+    width:300px;background:var(--bg-soft);
+    border-left:1px solid #3a4159;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+}
+.sidebar-h{
+    padding:14px 16px;background:var(--panel);
+    border-bottom:1px solid #3a4159;
+    font-size:11px;font-weight:800;color:#fff;
+    text-transform:uppercase;letter-spacing:.12em;
+}
+.sidebar-content{flex:1;overflow-y:auto;padding:14px 16px}
+.sidebar-section{margin-bottom:18px}
+.sidebar-section-h{
+    font-size:10px;font-weight:700;color:#a0a8c0;
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;
+}
+.sidebar-info{
+    background:var(--panel);border:1px solid #3a4159;border-radius:6px;
+    padding:10px 12px;font-size:12px;color:#cbd2e0;line-height:1.5;
+}
+.sidebar-info strong{color:var(--edit-blue-light);display:block;margin-bottom:4px;font-size:13px}
+.sidebar-empty{
+    text-align:center;color:#6b7290;font-size:12px;
+    padding:28px 12px;line-height:1.6;
+}
+.sidebar-empty .ico{font-size:32px;display:block;margin-bottom:8px;opacity:.6}
+.sidebar-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.sidebar-grid .field{display:flex;flex-direction:column;gap:3px}
+.sidebar-grid .field span{font-size:9.5px;color:#6b7290;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.sidebar-grid input{
+    background:var(--bg);color:#fff;border:1px solid #3a4159;border-radius:5px;
+    padding:6px 8px;font-size:12px;
+    font-family:ui-monospace,monospace;
+}
+.sidebar-grid input:focus{outline:1px solid var(--edit-blue);border-color:var(--edit-blue)}
+.sidebar-grid input[type="number"]{font-variant-numeric:tabular-nums}
+
+.blocks-list{
+    margin-top:6px;display:flex;flex-direction:column;gap:3px;
+}
+.block-item{
+    display:flex;align-items:center;gap:8px;
+    padding:7px 10px;border-radius:5px;cursor:pointer;
+    background:var(--panel);border:1px solid transparent;
+    font-size:11px;color:#cbd2e0;
+    transition:all .12s;
+}
+.block-item:hover{background:#3a4159}
+.block-item.active{background:rgba(59,130,246,.15);border-color:var(--edit-blue);color:#fff}
+.block-item .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--edit-blue-light);flex-shrink:0;
+}
+.block-item.active .dot{background:var(--edit-blue);box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+
+.block{
+    position:absolute;
+    cursor:move;
+    user-select:none;
+    box-sizing:border-box;
+}
+.block.selected{
+    outline:2px solid var(--edit-blue);
+    outline-offset:0;
+    z-index:100;
+}
+.block.hover:not(.selected){
+    outline:1px dashed rgba(59,130,246,.6);
+}
+.block .block-tag{
+    position:absolute;top:-18px;left:-2px;
+    background:var(--edit-blue);color:#fff;
+    font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px 3px 3px 0;
+    text-transform:uppercase;letter-spacing:.04em;
+    pointer-events:none;
+    white-space:nowrap;
+    display:none;
+    font-family:'Inter',sans-serif;
+}
+.block.selected .block-tag{display:block}
+
+.resize-handle{
+    position:absolute;width:10px;height:10px;
+    background:#fff;border:2px solid var(--edit-blue);
+    border-radius:50%;
+    z-index:200;display:none;
+}
+.block.selected .resize-handle{display:block}
+.rh-nw{top:-5px;left:-5px;cursor:nwse-resize}
+.rh-ne{top:-5px;right:-5px;cursor:nesw-resize}
+.rh-sw{bottom:-5px;left:-5px;cursor:nesw-resize}
+.rh-se{bottom:-5px;right:-5px;cursor:nwse-resize}
+.rh-n{top:-5px;left:50%;margin-left:-5px;cursor:ns-resize}
+.rh-s{bottom:-5px;left:50%;margin-left:-5px;cursor:ns-resize}
+.rh-e{right:-5px;top:50%;margin-top:-5px;cursor:ew-resize}
+.rh-w{left:-5px;top:50%;margin-top:-5px;cursor:ew-resize}
+
+.b-brand-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.b-brand-img img{max-width:100%;max-height:100%;object-fit:contain;background:#fff;border-radius:8px;padding:2px;border:1px solid var(--border)}
+.b-text{display:flex;flex-direction:column;justify-content:center;line-height:1.15;overflow:hidden;width:100%;height:100%}
+.b-text.center{align-items:center;text-align:center}
+.b-text.right{align-items:flex-end;text-align:right}
+.b-text.upper{text-transform:uppercase}
+.b-pill{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--navy),var(--navy-light));
+    color:#fff;font-family:'Montserrat',sans-serif;font-weight:900;
+    border-radius:8px;letter-spacing:.06em;
+    box-shadow:0 2px 5px rgba(26,58,122,.25);
+    text-transform:uppercase;padding:0 10px;
+    overflow:hidden;width:100%;height:100%;
+}
+.b-photo{
+    background:var(--bg-page-soft);border:1px solid var(--border);
+    border-radius:10px;padding:6px;
+    display:flex;align-items:center;justify-content:center;position:relative;
+    overflow:hidden;width:100%;height:100%;
+}
+.b-photo.no-bg{background:transparent;border:none;padding:0}
+.b-photo img{max-width:100%;max-height:100%;object-fit:contain}
+.b-photo .ph-label{
+    position:absolute;top:6px;left:8px;
+    font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--text-muted);background:#fff;padding:3px 7px;border-radius:5px;
+    border:1px solid var(--border);font-family:'Inter',sans-serif;
+}
+.b-spec{
+    background:var(--bg-page-soft);border:1px solid var(--border);
+    border-left:3px solid var(--green);border-radius:8px;
+    padding:7px 10px;display:flex;flex-direction:column;justify-content:center;
+    width:100%;height:100%;overflow:hidden;
+}
+.b-spec .lbl{font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.b-spec .val{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;color:var(--navy);margin-top:2px;line-height:1.2}
+.b-incluye{
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:9px 14px;overflow:hidden;width:100%;height:100%;
+}
+.b-incluye .h{font-size:10px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.b-incluye .h::before{content:'✓';color:var(--green);font-weight:900}
+.b-incluye ul{list-style:none;margin:0}
+.b-incluye li{font-size:11.5px;color:var(--text);padding:2px 0;display:flex;gap:8px}
+.b-incluye li::before{content:'•';color:var(--green-dark);font-weight:900}
+.b-precio{
+    background:#fff;border-left:1.5px solid var(--navy);
+    padding:2px 0 2px 14px;display:flex;flex-direction:column;justify-content:center;
+    overflow:hidden;width:100%;height:100%;
+}
+.b-precio .lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--navy);margin-bottom:2px}
+.b-precio .val{font-family:'Montserrat',sans-serif;font-size:21px;font-weight:900;line-height:1.05;color:var(--navy)}
+.b-precio .hint{font-size:9.5px;color:var(--text-muted);margin-top:3px;font-weight:600}
+.b-tabla{
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:9px 14px;overflow:hidden;width:100%;height:100%;
+}
+.b-tabla .h{font-size:10px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.b-tabla .h::before{content:'📋'}
+.b-tabla .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 8px;font-size:10.5px}
+.b-tabla .grid .row{display:flex;align-items:center;gap:6px;padding:3px 6px;background:var(--bg-page-soft);border-radius:5px;border-left:2px solid var(--navy-light)}
+.b-tabla .grid .cant{font-weight:800;color:var(--navy);font-family:'Montserrat',sans-serif;min-width:20px;text-align:right}
+.b-tabla .grid .med{color:var(--text);font-family:ui-monospace,monospace;font-size:10px}
+.b-uniforme{
+    background:linear-gradient(135deg,rgba(14,138,74,.08),rgba(26,58,122,.05));
+    border:1px solid var(--border);border-left:3px solid var(--green);
+    border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:14px;
+    overflow:hidden;width:100%;height:100%;
+}
+.b-uniforme .ico{font-size:30px;line-height:1}
+.b-uniforme .lbl{font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
+.b-uniforme .val{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;color:var(--navy)}
+.b-footer{
+    border-top:1px solid var(--border);padding-top:4mm;
+    text-align:right;font-size:10px;color:var(--text-muted);line-height:1.5;
+    overflow:hidden;width:100%;height:100%;
+}
+.b-footer strong{color:var(--navy);font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:.04em}
+.b-footer .wa{color:var(--green-dark);font-weight:700}
+
+.frame-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.block{z-index:1}
+
+.toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--green-dark);color:#fff;padding:10px 22px;border-radius:6px;
+    font-size:13px;font-weight:600;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    opacity:0;pointer-events:none;transition:opacity .25s;z-index:1000;
+}
+.toast.show{opacity:1}
+
+@media (max-width:1100px){
+    :root{--canvas-scale:0.5}
+    .sidebar{width:240px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">MAXIFER <span>EDITOR DE LAYOUT</span></div>
+
+    <div class="group" style="margin-left:18px">
+        <label>Página</label>
+        <select id="selPage">
+            <option value="surtido-normal">Surtido Normal</option>
+            <option value="surtido-grande" disabled>Surtido Grande (próx.)</option>
+            <option value="portada" disabled>Portada (próx.)</option>
+            <option value="indice" disabled>Índice (próx.)</option>
+            <option value="contratapa" disabled>Contratapa (próx.)</option>
+        </select>
+    </div>
+
+    <div class="group">
+        <label>Surtido muestra</label>
+        <select id="selSurtido"></select>
+    </div>
+
+    <div class="spacer"></div>
+
+    <button class="danger" id="btnReset">↺ Restaurar defaults</button>
+    <button id="btnExport">📋 Copiar JSON</button>
+    <button class="primary" id="btnSave">💾 Guardar layout.json</button>
+</div>
+
+<div class="main">
+    <div class="canvas-area">
+        <div class="canvas-wrap">
+            <div class="canvas-page" id="canvas"></div>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-h">Propiedades</div>
+        <div class="sidebar-content">
+            <div id="sidebarBody">
+                <div class="sidebar-empty">
+                    <span class="ico">🖱️</span>
+                    Click en cualquier bloque del lienzo para editarlo.<br>
+                    O elegí uno de la lista de abajo.
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-h">Bloques</div>
+                <div class="blocks-list" id="blocksList"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-h">Atajos</div>
+                <div class="sidebar-info" style="font-size:11px;line-height:1.6">
+                    Click → Seleccionar<br>
+                    Drag centro → Mover<br>
+                    Drag esquina → Redimensionar<br>
+                    ← → ↑ ↓ → Mover 1mm<br>
+                    Shift + ← → ↑ ↓ → 5mm<br>
+                    Esc → Deseleccionar
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LAYOUT_DEFAULTS = {
+    'surtido-normal': {
+        pageW: 210, pageH: 297,
+        blocks: [
+            { id:'brand-img', label:'Logo MAXIFER', type:'brand-img',
+              x: 62, y: 24, w: 11, h: 11 },
+            { id:'brand-name', label:'Nombre marca', type:'text',
+              x: 75, y: 23.5, w: 32, h: 5, fontSize: 16, color:'navy', weight: 900, family:'Montserrat', upper:false },
+            { id:'brand-sub', label:'Subtítulo marca', type:'text',
+              x: 75, y: 30, w: 32, h: 3, fontSize: 9, color:'muted', weight: 700, family:'Inter', upper:true, letterSpacing:0.18 },
+            { id:'vendor-name', label:'Nombre vendedor', type:'text',
+              x: 142, y: 25, w: 50, h: 4.5, fontSize: 13, color:'navy', weight: 800, family:'Montserrat', align:'right' },
+            { id:'vendor-wa', label:'WhatsApp vendedor', type:'text',
+              x: 142, y: 30, w: 50, h: 4, fontSize: 11, color:'green-dark', weight: 700, family:'mono', align:'right' },
+            { id:'header-line', label:'Línea bajo header', type:'line',
+              x: 18, y: 39, w: 174, h: 0.3 },
+            { id:'codigo-pill', label:'Código pill', type:'pill',
+              x: 18, y: 46, w: 32, h: 9, fontSize: 13 },
+            { id:'title', label:'Título del surtido', type:'text',
+              x: 54, y: 46, w: 138, h: 9, fontSize: 21, color:'navy', weight: 800, family:'Montserrat', upper:true, letterSpacing:0.02 },
+            { id:'foto-exhibidor', label:'Foto Exhibidor', type:'photo',
+              x: 18, y: 60, w: 84, h: 80, photoKey:'foto_exhibidor', photoLabel:'Exhibidor' },
+            { id:'foto-gaveta', label:'Foto Gaveta', type:'photo',
+              x: 108, y: 60, w: 84, h: 80, photoKey:'foto_gavetas', photoLabel:'Gaveta' },
+            { id:'spec-piezas', label:'Spec: Piezas totales', type:'spec',
+              x: 18, y: 145, w: 56, h: 13, label_text:'Piezas totales', valueKey:'piezas' },
+            { id:'spec-modelos', label:'Spec: Modelos', type:'spec',
+              x: 77, y: 145, w: 56, h: 13, label_text:'Modelos diferentes', valueKey:'modelos' },
+            { id:'spec-stock', label:'Spec: Stock en gaveta', type:'spec',
+              x: 136, y: 145, w: 56, h: 13, label_text:'Stock en gaveta', valueKey:'stockGav' },
+            { id:'incluye', label:'Cuadro Incluye (lista)', type:'incluye',
+              x: 18, y: 162, w: 116, h: 26 },
+            { id:'precio', label:'Precio', type:'precio',
+              x: 138, y: 162, w: 54, h: 26 },
+            { id:'stock-section', label:'Tabla / Uniforme', type:'stock',
+              x: 18, y: 192, w: 174, h: 70 },
+            { id:'footer', label:'Footer (vendor + web)', type:'footer',
+              x: 18, y: 270, w: 174, h: 8 }
+        ]
+    }
+};
+
+const STORAGE_KEY = 'maxifer-editor-layout-v1';
+
+let currentPageType = 'surtido-normal';
+let currentLayout = JSON.parse(JSON.stringify(LAYOUT_DEFAULTS));
+let selectedBlockId = null;
+let currentSurtido = null;
+const ANIO = '26';
+const VENDEDOR = { nombre: 'Maximiliano Gordillo', wa: '5491150408378' };
+
+try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved){
+        const overrides = JSON.parse(saved);
+        for (const pageType of Object.keys(overrides)){
+            if (currentLayout[pageType] && overrides[pageType].blocks){
+                for (const savedBlock of overrides[pageType].blocks){
+                    const idx = currentLayout[pageType].blocks.findIndex(b => b.id === savedBlock.id);
+                    if (idx >= 0) currentLayout[pageType].blocks[idx] = { ...currentLayout[pageType].blocks[idx], ...savedBlock };
+                }
+            }
+        }
+    }
+} catch(e){ console.warn('Error cargando layout guardado:', e); }
+
+function formatNum(n){ if (!n && n !== 0) return '—'; return n.toLocaleString('es-AR'); }
+function formatWA(num){
+    if (!num) return '';
+    const m = String(num).match(/^54(9?)(\d{2,3})(\d{4})(\d{4})$/);
+    if (!m) return '+' + num;
+    return '+54 ' + (m[1] ? '9 ' : '') + m[2] + ' ' + m[3] + '-' + m[4];
+}
+
+const COLORS = {
+    'navy':'var(--navy)', 'navy-dark':'var(--navy-dark)', 'navy-light':'var(--navy-light)',
+    'green':'var(--green)', 'green-dark':'var(--green-dark)',
+    'red':'var(--red)', 'muted':'var(--text-muted)', 'text':'var(--text)'
+};
+const FAMILIES = {
+    'Montserrat':"'Montserrat',sans-serif",
+    'Inter':"'Inter',sans-serif",
+    'Playfair':"'Playfair Display',serif",
+    'mono':"ui-monospace,Menlo,monospace"
+};
+
+function frameSVG(){
+    return `
+    <svg class="frame-svg" viewBox="0 0 210 297" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 0,0 L 78,0 Q 64,18 50,32 Q 30,50 0,72 Z" fill="#1a3a7a"/>
+        <path d="M 0,68 Q 30,46 52,30 Q 70,17 88,8 Q 130,2 168,16 Q 192,24 210,12 L 210,2 Q 192,16 168,8 Q 130,-2 88,2 Q 68,10 50,24 Q 28,40 0,60 Z" fill="#0e8a4a"/>
+        <path d="M 196,0 L 210,0 L 210,22 Q 204,11 196,0 Z" fill="#c8102e"/>
+        <text x="14" y="30" font-family="'Playfair Display', Georgia, serif" font-style="italic" font-weight="800" font-size="26" fill="#ffffff">${ANIO}</text>
+        <path d="M 0,253 Q 18,258 32,272 Q 44,284 56,297 L 0,297 Z" fill="#1a3a7a"/>
+        <path d="M 0,275 Q 28,283 52,283 Q 88,283 130,288 Q 170,292 196,283 Q 204,279 210,288 L 210,297 L 0,297 Z" fill="#0e8a4a"/>
+        <path d="M 199,297 L 210,297 L 210,278 Q 205,288 199,297 Z" fill="#c8102e"/>
+        <circle cx="14" cy="285" r="5.5" fill="#ffffff"/>
+        <text x="14" y="287.5" text-anchor="middle" font-family="'Inter',sans-serif" font-weight="800" font-size="6.5" fill="#1a3a7a">3</text>
+    </svg>`;
+}
+
+function renderBlockContent(b, s){
+    switch(b.type){
+        case 'brand-img':
+            return `<div class="b-brand-img"><img src="img/favicon-192.png" alt="MAXIFER"></div>`;
+        case 'text': {
+            const align = b.align === 'right' ? 'right' : (b.align === 'center' ? 'center' : '');
+            const upper = b.upper ? 'upper' : '';
+            const txt = (b.id === 'brand-name') ? 'MAXIFER'
+                      : (b.id === 'brand-sub') ? 'Fábrica Importadora'
+                      : (b.id === 'vendor-name') ? VENDEDOR.nombre
+                      : (b.id === 'vendor-wa') ? formatWA(VENDEDOR.wa)
+                      : (b.id === 'title') ? (s.nombre || 'Título')
+                      : (b.text || b.label);
+            return `<div class="b-text ${align} ${upper}" style="font-family:${FAMILIES[b.family]||FAMILIES.Inter};font-size:${b.fontSize}px;font-weight:${b.weight||500};color:${COLORS[b.color]||'inherit'};letter-spacing:${(b.letterSpacing||0)}em">${txt}</div>`;
+        }
+        case 'pill':
+            return `<div class="b-pill" style="font-size:${b.fontSize||13}px">${s.codigo || 'COD.'}</div>`;
+        case 'photo': {
+            const src = s[b.photoKey] || s.foto_card || '';
+            return `<div class="b-photo">
+                <span class="ph-label">${b.photoLabel || 'Foto'}</span>
+                ${src ? `<img src="${src}" alt="${b.photoLabel}">` : ''}
+            </div>`;
+        }
+        case 'spec': {
+            let val = '—';
+            if (b.valueKey === 'piezas') val = formatNum(s.piezas);
+            else if (b.valueKey === 'modelos') val = MODELOS_DIFERENTES[s.codigo] || '—';
+            else if (b.valueKey === 'stockGav') val = CANTIDADES_GAVETAS[s.codigo] || '—';
+            return `<div class="b-spec"><div class="lbl">${b.label_text}</div><div class="val">${val}</div></div>`;
+        }
+        case 'incluye': {
+            const items = (s.incluye || []).map(i => `<li>${i}</li>`).join('');
+            return `<div class="b-incluye"><div class="h">Incluye</div><ul>${items}</ul></div>`;
+        }
+        case 'precio': {
+            const precio = s.precio || 567894;
+            return `<div class="b-precio">
+                <div class="lbl">Precio Lista</div>
+                <div class="val">$${formatNum(precio)}</div>
+                <div class="hint">+ IVA</div>
+            </div>`;
+        }
+        case 'stock': {
+            if (s.tabla && s.tabla.length){
+                const filas = s.tabla.slice(0, 12).map(r => `<div class="row"><span class="cant">${r.cant}</span><span class="med">${r.medida}</span></div>`).join('');
+                const more = s.tabla.length > 12 ? `<div class="row" style="grid-column:1/-1;text-align:center;color:#888">+${s.tabla.length - 12} medidas más</div>` : '';
+                return `<div class="b-tabla"><div class="h">Composición · ${s.tabla.length} medidas</div><div class="grid">${filas}${more}</div></div>`;
+            } else {
+                return `<div class="b-uniforme"><div class="ico">📦</div><div><div class="lbl">Cantidades por modelo</div><div class="val">${s.cant_uniforme || '— piezas de c/u'}</div></div></div>`;
+            }
+        }
+        case 'footer':
+            return `<div class="b-footer"><strong>${VENDEDOR.nombre}</strong> · <span class="wa">WhatsApp ${formatWA(VENDEDOR.wa)}</span> · www.fabricamaxifer.com</div>`;
+        case 'line':
+            return `<div style="width:100%;height:100%;background:var(--border)"></div>`;
+        default:
+            return `<div style="background:rgba(255,200,200,.5);border:1px dashed red;padding:4px;font-size:10px">${b.label}</div>`;
+    }
+}
+
+function renderCanvas(){
+    const layout = currentLayout[currentPageType];
+    if (!layout || !currentSurtido){ return; }
+    const canvas = document.getElementById('canvas');
+
+    let html = frameSVG();
+    for (const b of layout.blocks){
+        const handles = `
+            <div class="resize-handle rh-nw"></div><div class="resize-handle rh-ne"></div>
+            <div class="resize-handle rh-sw"></div><div class="resize-handle rh-se"></div>
+            <div class="resize-handle rh-n"></div><div class="resize-handle rh-s"></div>
+            <div class="resize-handle rh-e"></div><div class="resize-handle rh-w"></div>`;
+        html += `<div class="block" data-id="${b.id}" style="left:${b.x}mm;top:${b.y}mm;width:${b.w}mm;height:${b.h}mm">
+                  <span class="block-tag">${b.label}</span>
+                  ${renderBlockContent(b, currentSurtido)}
+                  ${handles}
+              </div>`;
+    }
+    canvas.innerHTML = html;
+
+    setupInteractions();
+    updateBlocksList();
+    updateSidebar();
+}
+
+function setupInteractions(){
+    const SCALE = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--canvas-scale')) || 0.66;
+    const PX_PER_MM = 3.7795275591;
+    const PX_PER_MM_VISUAL = PX_PER_MM * SCALE;
+
+    interact('.block').draggable({
+        listeners: {
+            move(event){
+                const id = event.target.dataset.id;
+                const b = findBlock(id);
+                if (!b) return;
+                b.x += event.dx / PX_PER_MM_VISUAL;
+                b.y += event.dy / PX_PER_MM_VISUAL;
+                event.target.style.left = b.x + 'mm';
+                event.target.style.top = b.y + 'mm';
+                if (id === selectedBlockId) updateSidebarFields(b);
+            },
+            end(){ persistLayout(); }
+        },
+        modifiers: [
+            interact.modifiers.restrictRect({ restriction: 'parent', endOnly: false })
+        ]
+    }).on('tap', function(event){
+        const id = event.currentTarget.dataset.id;
+        selectBlock(id);
+    });
+
+    interact('.block').resizable({
+        edges: { top: '.rh-n, .rh-nw, .rh-ne', left: '.rh-w, .rh-nw, .rh-sw',
+                 bottom: '.rh-s, .rh-sw, .rh-se', right: '.rh-e, .rh-ne, .rh-se' },
+        listeners: {
+            move(event){
+                const id = event.target.dataset.id;
+                const b = findBlock(id);
+                if (!b) return;
+                b.w += event.deltaRect.width / PX_PER_MM_VISUAL;
+                b.h += event.deltaRect.height / PX_PER_MM_VISUAL;
+                b.x += event.deltaRect.left / PX_PER_MM_VISUAL;
+                b.y += event.deltaRect.top / PX_PER_MM_VISUAL;
+                if (b.w < 5) b.w = 5;
+                if (b.h < 3) b.h = 3;
+                event.target.style.left = b.x + 'mm';
+                event.target.style.top = b.y + 'mm';
+                event.target.style.width = b.w + 'mm';
+                event.target.style.height = b.h + 'mm';
+                if (id === selectedBlockId) updateSidebarFields(b);
+            },
+            end(){ persistLayout(); }
+        }
+    });
+
+    document.querySelectorAll('.block').forEach(el => {
+        el.addEventListener('mousedown', () => selectBlock(el.dataset.id));
+    });
+}
+
+function findBlock(id){
+    const layout = currentLayout[currentPageType];
+    return layout ? layout.blocks.find(b => b.id === id) : null;
+}
+
+function selectBlock(id){
+    selectedBlockId = id;
+    document.querySelectorAll('.block').forEach(el => {
+        el.classList.toggle('selected', el.dataset.id === id);
+    });
+    document.querySelectorAll('.block-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+    });
+    updateSidebar();
+}
+
+function updateBlocksList(){
+    const layout = currentLayout[currentPageType];
+    if (!layout) return;
+    const html = layout.blocks.map(b => `
+        <div class="block-item ${selectedBlockId === b.id ? 'active' : ''}" data-id="${b.id}">
+            <span class="dot"></span><span>${b.label}</span>
+        </div>`).join('');
+    document.getElementById('blocksList').innerHTML = html;
+    document.querySelectorAll('.blocks-list .block-item').forEach(el => {
+        el.addEventListener('click', () => selectBlock(el.dataset.id));
+    });
+}
+
+function updateSidebar(){
+    const body = document.getElementById('sidebarBody');
+    if (!selectedBlockId){
+        body.innerHTML = `<div class="sidebar-empty">
+            <span class="ico">🖱️</span>
+            Click en cualquier bloque del lienzo para editarlo.<br>
+            O elegí uno de la lista.
+        </div>`;
+        return;
+    }
+    const b = findBlock(selectedBlockId);
+    if (!b) return;
+
+    let html = `
+        <div class="sidebar-info">
+            <strong>${b.label}</strong>
+            ID: <code>${b.id}</code> · Tipo: <code>${b.type}</code>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-h">Posición · Tamaño (mm)</div>
+            <div class="sidebar-grid">
+                <div class="field"><span>X</span><input type="number" id="inX" step="0.5" value="${b.x.toFixed(1)}"></div>
+                <div class="field"><span>Y</span><input type="number" id="inY" step="0.5" value="${b.y.toFixed(1)}"></div>
+                <div class="field"><span>Ancho</span><input type="number" id="inW" step="0.5" value="${b.w.toFixed(1)}"></div>
+                <div class="field"><span>Alto</span><input type="number" id="inH" step="0.5" value="${b.h.toFixed(1)}"></div>
+            </div>
+        </div>`;
+
+    if (b.fontSize !== undefined){
+        html += `
+        <div class="sidebar-section">
+            <div class="sidebar-section-h">Tipografía</div>
+            <div class="sidebar-grid">
+                <div class="field"><span>Tamaño (px)</span><input type="number" id="inFontSize" step="1" value="${b.fontSize}"></div>
+                <div class="field"><span>Peso</span><input type="number" id="inWeight" step="100" min="100" max="900" value="${b.weight||500}"></div>
+            </div>
+        </div>`;
+    }
+
+    body.innerHTML = html;
+
+    const fields = [['inX','x'],['inY','y'],['inW','w'],['inH','h']];
+    if (b.fontSize !== undefined){ fields.push(['inFontSize','fontSize'], ['inWeight','weight']); }
+    fields.forEach(([id, prop]) => {
+        const inp = document.getElementById(id);
+        if (!inp) return;
+        inp.addEventListener('input', () => {
+            const val = parseFloat(inp.value);
+            if (isNaN(val)) return;
+            b[prop] = val;
+            const el = document.querySelector(`.block[data-id="${b.id}"]`);
+            if (el){
+                if (prop === 'x') el.style.left = b.x + 'mm';
+                if (prop === 'y') el.style.top = b.y + 'mm';
+                if (prop === 'w') el.style.width = b.w + 'mm';
+                if (prop === 'h') el.style.height = b.h + 'mm';
+                if (prop === 'fontSize' || prop === 'weight'){
+                    renderCanvas();
+                }
+            }
+            persistLayout();
+        });
+    });
+}
+
+function updateSidebarFields(b){
+    const map = {inX:'x',inY:'y',inW:'w',inH:'h'};
+    for (const [id, prop] of Object.entries(map)){
+        const inp = document.getElementById(id);
+        if (inp) inp.value = b[prop].toFixed(1);
+    }
+}
+
+function persistLayout(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(currentLayout)); } catch(e){}
+}
+
+function downloadJSON(){
+    const data = JSON.stringify(currentLayout, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'layout-config.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('💾 layout-config.json descargado');
+}
+
+function copyJSON(){
+    const data = JSON.stringify(currentLayout, null, 2);
+    navigator.clipboard.writeText(data).then(() => {
+        toast('📋 JSON copiado al portapapeles');
+    }, () => {
+        prompt('Copiá el JSON:', data);
+    });
+}
+
+function resetLayout(){
+    if (!confirm('¿Restaurar TODOS los valores a defaults? Se pierden tus cambios actuales.')) return;
+    currentLayout = JSON.parse(JSON.stringify(LAYOUT_DEFAULTS));
+    selectedBlockId = null;
+    persistLayout();
+    renderCanvas();
+    toast('↺ Layout restaurado a defaults');
+}
+
+function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function populateSurtidoSelector(){
+    const sel = document.getElementById('selSurtido');
+    sel.innerHTML = SURTIDOS.map(s => `<option value="${s.id}">${s.codigo} — ${s.nombre}</option>`).join('');
+    sel.value = '2';
+    currentSurtido = SURTIDOS.find(s => s.id === 2) || SURTIDOS[0];
+    sel.addEventListener('change', () => {
+        const id = parseInt(sel.value, 10);
+        currentSurtido = SURTIDOS.find(s => s.id === id) || SURTIDOS[0];
+        renderCanvas();
+    });
+}
+
+document.getElementById('btnSave').addEventListener('click', downloadJSON);
+document.getElementById('btnExport').addEventListener('click', copyJSON);
+document.getElementById('btnReset').addEventListener('click', resetLayout);
+document.getElementById('selPage').addEventListener('change', (e) => {
+    currentPageType = e.target.value;
+    selectedBlockId = null;
+    renderCanvas();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape'){ selectedBlockId = null; renderCanvas(); return; }
+    if (!selectedBlockId) return;
+    const b = findBlock(selectedBlockId);
+    if (!b) return;
+    const target = e.target;
+    if (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') return;
+    const step = e.shiftKey ? 5 : 1;
+    let moved = false;
+    if (e.key === 'ArrowLeft'){ b.x -= step; moved = true; }
+    if (e.key === 'ArrowRight'){ b.x += step; moved = true; }
+    if (e.key === 'ArrowUp'){ b.y -= step; moved = true; }
+    if (e.key === 'ArrowDown'){ b.y += step; moved = true; }
+    if (moved){
+        e.preventDefault();
+        const el = document.querySelector(`.block[data-id="${b.id}"]`);
+        if (el){ el.style.left = b.x + 'mm'; el.style.top = b.y + 'mm'; }
+        updateSidebarFields(b);
+        persistLayout();
+    }
+});
+
+document.getElementById('canvas').addEventListener('click', (e) => {
+    if (e.target.id === 'canvas' || e.target.classList.contains('frame-svg')){
+        selectedBlockId = null;
+        document.querySelectorAll('.block.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.block-item.active').forEach(el => el.classList.remove('active'));
+        updateSidebar();
+    }
+});
+
+function init(){
+    if (typeof SURTIDOS === 'undefined' || typeof MODELOS_DIFERENTES === 'undefined'){
+        setTimeout(init, 100);
+        return;
+    }
+    populateSurtidoSelector();
+    renderCanvas();
+}
+init();
+</script>
+</body>
+</html>
