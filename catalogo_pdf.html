@@ -160,12 +160,18 @@ html,body{
     display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:5mm;
 }
 .hero.single{grid-template-columns:1fr}
-/* Layout GRANDE: exhibidor full-width arriba, gaveta más chica abajo centrada */
+/* Layout GRANDE: exhibidor full-width arriba (sin recuadro), gaveta más chica abajo */
 .hero.grande{
-    display:flex;flex-direction:column;gap:4mm;margin-bottom:4mm;
+    display:flex;flex-direction:column;gap:3mm;margin-bottom:4mm;
 }
 .hero.grande .photo.exhibidor-grande{
     height:100mm;width:100%;
+    /* Sin recuadro celeste — el exhibidor flota libre */
+    background:transparent;border:none;padding:0;
+}
+.hero.grande .photo.exhibidor-grande .ph-label{
+    /* La etiqueta sigue visible aunque sin fondo */
+    background:#fff;
 }
 .hero.grande .photo.gaveta-bajo{
     height:46mm;max-width:55%;align-self:center;
@@ -208,7 +214,10 @@ html,body{
 .incluye{
     background:#fff;border:1px solid var(--border);border-radius:10px;
     padding:9px 14px;margin-bottom:4mm;
+    /* Layout 2 columnas: lista izq, precio der separado por borde navy */
+    display:flex;gap:14px;align-items:stretch;
 }
+.incluye-list{flex:1;min-width:0}
 .incluye .h{
     font-size:10px;font-weight:800;color:var(--navy);
     text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;
@@ -222,6 +231,30 @@ html,body{
 }
 .incluye li::before{
     content:'•';color:var(--green-dark);font-weight:900;flex-shrink:0;
+}
+/* Precio inline dentro del Incluye (lado derecho) */
+.precio-inline{
+    flex:0 0 140px;
+    border-left:1.5px solid var(--navy);
+    padding:2px 0 2px 14px;
+    display:flex;flex-direction:column;justify-content:center;
+}
+.precio-inline .p-label{
+    font-size:9.5px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--navy);margin-bottom:2px;
+}
+.precio-inline .p-value{
+    font-family:'Montserrat',sans-serif;font-size:21px;font-weight:900;
+    line-height:1.05;color:var(--navy);
+}
+.precio-inline .p-hint{
+    font-size:9.5px;color:var(--text-muted);margin-top:3px;font-weight:600;
+}
+.precio-inline.sin .p-label, .precio-inline.sin .p-value{color:#444}
+.precio-inline.sin .p-value{font-size:13px;line-height:1.2}
+.precio-inline.desc .p-old{
+    text-decoration:line-through;color:var(--text-muted);font-size:12px;
+    font-weight:600;display:block;margin-bottom:2px;
 }
 
 .tabla-section{
@@ -274,41 +307,16 @@ html,body{
 
 .page-footer{
     margin-top:auto;
-    display:flex;align-items:stretch;justify-content:space-between;gap:14px;
     padding-top:4mm;border-top:1px solid var(--border);
 }
-.precio-box{
-    background:#fff;
-    border:2px solid var(--navy);
-    border-radius:12px;padding:10px 16px;
-    flex:1;
-    display:flex;flex-direction:column;justify-content:center;
-}
-.precio-box .p-label{
-    font-size:10px;font-weight:800;text-transform:uppercase;
-    letter-spacing:.12em;color:var(--navy);margin-bottom:2px;
-}
-.precio-box .p-value{
-    font-family:'Montserrat',sans-serif;font-size:26px;font-weight:900;
-    line-height:1.05;color:var(--navy);
-}
-.precio-box .p-hint{
-    font-size:10px;color:var(--text-muted);margin-top:3px;font-weight:600;
-}
-.precio-box.sin{border-color:#888;background:#fafafa}
-.precio-box.sin .p-label, .precio-box.sin .p-value{color:#444}
-.precio-box.desc .p-old{
-    text-decoration:line-through;color:var(--text-muted);font-size:14px;
-    font-weight:600;margin-right:8px;
-}
 .cta-block{
-    text-align:right;font-size:10px;color:var(--text-muted);line-height:1.4;
-    align-self:center;
+    text-align:right;font-size:10px;color:var(--text-muted);line-height:1.5;
 }
 .cta-block strong{
-    display:block;color:var(--navy);font-size:11px;
+    color:var(--navy);font-size:11px;
     font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:.04em;
 }
+.cta-block .cta-wa{color:var(--green-dark);font-weight:700}
 
 /* ── PORTADA ── */
 .cover-body{
@@ -429,13 +437,10 @@ html,body{
 }
 .idx-cols{
     flex:1;
-    /* Layout tipo "diario" — la columna izq se llena de arriba a abajo,
-       lo que sobra fluye automáticamente a la columna derecha. */
     column-count:2;column-gap:8mm;
 }
 .idx-grupo{
     margin-bottom:3mm;
-    /* Mantiene cada grupo (header + items) en una sola columna si entra. */
     break-inside:avoid;
     -webkit-column-break-inside:avoid;
     page-break-inside:avoid;
@@ -549,7 +554,6 @@ function getGrupo(s){
     return { key:'otros', label:'Otros', icono:'📦', color:'#9ca3af', codigos:[] };
 }
 
-// ── MARCO DECORATIVO (SVG) ────────────────────────────────────
 function frameSVG(pageNum, opts){
     opts = opts || {};
     const showPage = opts.showPage !== false;
@@ -571,7 +575,6 @@ function frameSVG(pageNum, opts){
     </svg>`;
 }
 
-// ── PORTADA ───────────────────────────────────────────────────
 function renderPortada(ctx, totalSurtidos){
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
     let modeText = 'Edición precio lista';
@@ -612,7 +615,6 @@ function renderPortada(ctx, totalSurtidos){
     </section>`;
 }
 
-// ── ÍNDICE (agrupado por GRUPO, 2 columnas tipo diario) ───────
 function renderIndice(surtidos, paginaInicio){
     const grupoMap = new Map();
     for (let i = 0; i < surtidos.length; i++){
@@ -650,7 +652,6 @@ function renderIndice(surtidos, paginaInicio){
     </section>`;
 }
 
-// ── PÁGINA DE SURTIDO ─────────────────────────────────────────
 function renderPagina(s, ctx, pageNum){
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
     const sinPrecio = ctx.precio === 'sin';
@@ -661,24 +662,22 @@ function renderPagina(s, ctx, pageNum){
     let precioHTML;
     if (sinPrecio){
         precioHTML = `
-            <div class="precio-box sin">
+            <div class="precio-inline sin">
                 <div class="p-label">Consultar precio</div>
                 <div class="p-value">Contactar al vendedor</div>
-                <div class="p-hint">Coordiná condiciones por WhatsApp</div>
+                <div class="p-hint">Coordiná por WhatsApp</div>
             </div>`;
     } else if (descNum > 0){
         precioHTML = `
-            <div class="precio-box desc">
+            <div class="precio-inline desc">
                 <div class="p-label">Precio con −${descNum}%</div>
-                <div class="p-value">
-                    <span class="p-old">$${formatNum(precioLista)}</span>
-                    $${formatNum(precioFinal)}
-                </div>
+                <span class="p-old">$${formatNum(precioLista)}</span>
+                <div class="p-value">$${formatNum(precioFinal)}</div>
                 <div class="p-hint">+ IVA</div>
             </div>`;
     } else {
         precioHTML = `
-            <div class="precio-box">
+            <div class="precio-inline">
                 <div class="p-label">Precio Lista</div>
                 <div class="p-value">$${formatNum(precioLista)}</div>
                 <div class="p-hint">+ IVA</div>
@@ -717,7 +716,6 @@ function renderPagina(s, ctx, pageNum){
     const esGrande = s.tamano === 'grande';
     let heroHTML;
     if (esGrande && hasExhibidor){
-        // Layout grande: exhibidor full-width arriba, gaveta más chica abajo
         const gavetaBajoHTML = fotoGavetaSrc ? `
                 <div class="photo gaveta-bajo">
                     <span class="ph-label">${hasGaveta ? 'Gaveta' : 'Vista'}</span>
@@ -807,25 +805,24 @@ function renderPagina(s, ctx, pageNum){
             </div>
 
             <div class="incluye">
-                <div class="h">Incluye</div>
-                <ul>${s.incluye.map(i => `<li>${i}</li>`).join('')}</ul>
+                <div class="incluye-list">
+                    <div class="h">Incluye</div>
+                    <ul>${s.incluye.map(i => `<li>${i}</li>`).join('')}</ul>
+                </div>
+                ${precioHTML}
             </div>
 
             ${stockHTML}
 
             <footer class="page-footer">
-                ${precioHTML}
                 <div class="cta-block">
-                    <strong>${v.nombre}</strong>
-                    WhatsApp ${formatWA(v.wa)}<br>
-                    www.fabricamaxifer.com
+                    <strong>${v.nombre}</strong> · <span class="cta-wa">WhatsApp ${formatWA(v.wa)}</span> · www.fabricamaxifer.com
                 </div>
             </footer>
         </div>
     </section>`;
 }
 
-// ── CONTRATAPA ────────────────────────────────────────────────
 function renderContratapa(ctx, pageNum){
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
     return `
@@ -851,7 +848,6 @@ function renderContratapa(ctx, pageNum){
     </section>`;
 }
 
-// ── RENDER PRINCIPAL ──────────────────────────────────────────
 function render(){
     const ctx = leerParams();
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
@@ -876,7 +872,6 @@ function render(){
     document.getElementById('book').innerHTML = html;
 }
 
-// ── DESCARGA REAL DE PDF ──────────────────────────────────────
 async function descargarPDF(){
     const btn = document.getElementById('btnDescargar');
     const original = btn.innerHTML;
@@ -928,7 +923,6 @@ async function descargarPDF(){
     }
 }
 
-// ── INICIALIZACIÓN ────────────────────────────────────────────
 async function init(){
     const overlay = document.getElementById('loadingOverlay');
     const loadingText = document.getElementById('loadingText');
