@@ -14,6 +14,7 @@ const SURTIDOS = [
   },
   {
     id: 4,
+    tamano: "grande",
     nombre: "Clips Plásticos Línea Completa 160 Medidas",
     codigo: "PL Nac. 160 M.",
     precio: 0,
@@ -27,6 +28,7 @@ const SURTIDOS = [
   },
   {
     id: 41,
+    tamano: "grande",
     nombre: "Clips Línea Importada",
     codigo: "CL. IMP COM",
     precio: 0,
@@ -41,6 +43,7 @@ const SURTIDOS = [
   },
   {
     id: 3,
+    tamano: "grande",
     nombre: "Resortes Línea Ferretera",
     codigo: "RES. LF",
     precio: 0,
@@ -54,6 +57,7 @@ const SURTIDOS = [
   },
   {
     id: 6,
+    tamano: "grande",
     nombre: "Resortes Línea Complementaria",
     codigo: "RES. LC",
     precio: 0,
@@ -67,6 +71,7 @@ const SURTIDOS = [
   },
   {
     id: 8,
+    tamano: "grande",
     nombre: "Resortes Línea Bulonera",
     codigo: "RES. LB",
     precio: 0,
@@ -93,6 +98,7 @@ const SURTIDOS = [
   },
   {
     id: 7,
+    tamano: "grande",
     nombre: "Resortes Línea Pesada",
     codigo: "RES. LP",
     precio: 0,
@@ -106,6 +112,7 @@ const SURTIDOS = [
   },
   {
     id: 51,
+    tamano: "grande",
     nombre: "Resortes Línea Completa",
     codigo: "RES. COMP.",
     precio: 0,
@@ -186,6 +193,7 @@ const SURTIDOS = [
   },
   {
     id: 2,
+    tamano: "grande",
     nombre: "Anillos O'Ring Nitrilo 70 Línea Completa",
     codigo: "OR. COMP.",
     precio: 0,
@@ -199,6 +207,7 @@ const SURTIDOS = [
   },
   {
     id: 43,
+    tamano: "grande",
     nombre: "Conexiones Aluminio Mangueras Automotor N°1",
     codigo: "CONEX. ALUM. 1",
     precio: 0,
@@ -212,6 +221,7 @@ const SURTIDOS = [
   },
   {
     id: 48,
+    tamano: "grande",
     nombre: "Conexiones Aluminio Mangueras Automotor N°2",
     codigo: "CONEX. ALUM. 2",
     precio: 0,
@@ -251,6 +261,7 @@ const SURTIDOS = [
   },
   {
     id: 44,
+    tamano: "grande",
     nombre: "Plástico Conexiones Mangueras Nylon",
     codigo: "CONC. PL",
     precio: 0,
@@ -277,6 +288,7 @@ const SURTIDOS = [
   },
   {
     id: 34,
+    tamano: "grande",
     nombre: "Conectores Neumáticos Plásticos",
     codigo: "CON. NEU.",
     precio: 0,
@@ -290,6 +302,7 @@ const SURTIDOS = [
   },
   {
     id: 33,
+    tamano: "grande",
     nombre: "Conectores Neumáticos Completo",
     codigo: "CON. NEU. COMPL.",
     precio: 0,
@@ -329,6 +342,7 @@ const SURTIDOS = [
   },
   {
     id: 18,
+    tamano: "grande",
     nombre: "Racord Completo",
     codigo: "RAC. GR.",
     precio: 0,
@@ -498,6 +512,7 @@ const SURTIDOS = [
   },
   {
     id: 1,
+    tamano: "grande",
     nombre: "Regatones Plásticos y de Goma",
     codigo: "REGAT.",
     precio: 0,
@@ -680,6 +695,7 @@ const SURTIDOS = [
   },
   {
     id: 26,
+    tamano: "grande",
     nombre: "Carbones Eléctricos Completo",
     codigo: "CARB. COMPL.",
     precio: 0,
@@ -732,6 +748,7 @@ const SURTIDOS = [
   },
   {
     id: 37,
+    tamano: "grande",
     nombre: "Perillas de Cocina Completo",
     codigo: "PER. COMP.",
     precio: 0,
