@@ -419,11 +419,16 @@ html,body{
 }
 .idx-cols{
     flex:1;
-    display:grid;grid-template-columns:1fr 1fr;column-gap:8mm;row-gap:0;
-    align-content:start;
+    /* Layout tipo "diario" — la columna izq se llena de arriba a abajo,
+       lo que sobra fluye automáticamente a la columna derecha. */
+    column-count:2;column-gap:8mm;
 }
 .idx-grupo{
-    margin-bottom:3mm;break-inside:avoid;
+    margin-bottom:3mm;
+    /* Mantiene cada grupo (header + items) en una sola columna si entra. */
+    break-inside:avoid;
+    -webkit-column-break-inside:avoid;
+    page-break-inside:avoid;
 }
 .idx-grupo-h{
     font-family:'Montserrat',sans-serif;font-size:10px;font-weight:900;
@@ -597,7 +602,7 @@ function renderPortada(ctx, totalSurtidos){
     </section>`;
 }
 
-// ── ÍNDICE (agrupado por GRUPO, 2 columnas) ───────────────────
+// ── ÍNDICE (agrupado por GRUPO, 2 columnas tipo diario) ───────
 function renderIndice(surtidos, paginaInicio){
     const grupoMap = new Map();
     for (let i = 0; i < surtidos.length; i++){
@@ -831,7 +836,6 @@ function render(){
     document.getElementById('metaMode').textContent = modeText;
 
     const surtidos = SURTIDOS;
-    // Páginas: portada=1, índice=2, surtidos=3..N, contratapa=N+1
     const inicioSurtidos = 3;
     const totalSurt = surtidos.length;
     const pageContratapa = inicioSurtidos + totalSurt;
@@ -926,7 +930,6 @@ async function init(){
     overlay.classList.add('gone');
     btn.disabled = false;
 
-    // Si vino con autodl=1, dispara la descarga automáticamente
     const ctx = leerParams();
     if (ctx.autodl){
         await Promise.all(Array.from(document.querySelectorAll('#book img')).map(img =>
