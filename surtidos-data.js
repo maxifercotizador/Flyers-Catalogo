@@ -841,5 +841,70 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "411 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 - 9 - 4 - 1 piezas de c/u"
+  },
+  {
+    id: 67,
+    nombre: "Racord N°1",
+    codigo: "RE-RC1-01",
+    precio: 0,
+    piezas: 89,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "89 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 - 1 piezas de c/u"
+  },
+  {
+    id: 68,
+    nombre: "Racord N°2",
+    codigo: "RE-RC2-02",
+    precio: 0,
+    piezas: 66,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "66 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 - 1 piezas de c/u"
+  },
+  {
+    id: 69,
+    nombre: "Bulón Perforado",
+    codigo: "RE-BPF-01",
+    precio: 0,
+    piezas: 49,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "49 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
+    id: 70,
+    nombre: "Interruptores y Pulsadores 1",
+    codigo: "RE-IP1-01",
+    precio: 0,
+    piezas: 82,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "82 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
+    id: 71,
+    nombre: "Interruptores y Pulsadores 2",
+    codigo: "RE-IP2-02",
+    precio: 0,
+    piezas: 55,
+    foto_exhibidor: "",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "55 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
   }
 ];

@@ -11,7 +11,7 @@ const GRUPOS = [
   { key: 'aluminio',   label: "Conexiones de Agua — Aluminio y Plásticas", icono: "🔧", color: "#06b6d4",
     codigos: ["CONEX. ALUM. 1","CONEX. ALUM. 2","Conex. Alum. L. Temp.","Conex. Alum. Mayor Rot.","CONC. PL"] },
   { key: 'neumaticas', label: "Conexiones de Aire Plásticas y de Acero", icono: "💨", color: "#f97316",
-    codigos: ["CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","RE-CNE-01","CON. NEU. + RAC.","BRONCE","RAC. CH.","RAC. GR."] },
+    codigos: ["CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","RE-CNE-01","CON. NEU. + RAC.","BRONCE","RAC. CH.","RAC. GR.","RE-RC1-01","RE-RC2-02"] },
   { key: 'arandelas',  label: "Arandelas de Goma",       icono: "🔘", color: "#8b5cf6",
     codigos: ["ARAND. CH.","ARAND. LP.","ARAND. COMP.","ARAN. CO-FI-AL","ARAND. INYEC."] },
   { key: 'terminales', label: "Terminales",              icono: "⚡", color: "#84cc16",
@@ -90,6 +90,11 @@ const MODELOS_DIFERENTES = {
   "UN. ORIENT.": 29,
   "REGAT.": 62,
   "ABRA. GOMA": 36,
+  "RE-RC1-01": 30,
+  "RE-RC2-02": 22,
+  "RE-BPF-01": 16,
+  "RE-IP1-01": 27,
+  "RE-IP2-02": 18,
 };
 
 // ── CANTIDADES POR GAVETA (POR SURTIDO) ───────────────────────
@@ -161,6 +166,11 @@ const CANTIDADES_GAVETAS = {
   "UN. ORIENT.": "3 - 2",
   "REGAT.": "9 - 6 - 5",
   "ABRA. GOMA": "6",
+  "RE-RC1-01": "2 - 1",
+  "RE-RC2-02": "2 - 1",
+  "RE-BPF-01": "2",
+  "RE-IP1-01": "2",
+  "RE-IP2-02": "2",
 };
 
 // Devuelve el texto a insertar en "Incluye" según la cantidad por
