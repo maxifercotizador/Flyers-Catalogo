@@ -2706,6 +2706,7 @@ const MODELOS_DIFERENTES = {
   "TAP. CAR.": 26,
   "ARAND. CH.": 48,
   "ARAND. LP.": 28,
+  "ARAND. COMP.": 77,
   "ARAN. CO-FI-AL": 75,
   "TOP. TAP. GOMA": 26,
   "SEEG.": 59,
@@ -2772,6 +2773,7 @@ const CANTIDADES_GAVETAS = {
   "TAP. CAR.": "3",
   "ARAND. CH.": "20 - 10",
   "ARAND. LP.": "9",
+  "ARAND. COMP.": "20 - 9",
   "ARAN. CO-FI-AL": "19 - 9 - 29",
   "TOP. TAP. GOMA": "4",
   "SEEG.": "9 - 4",
@@ -2850,6 +2852,7 @@ const VERSION_REDUCIDA = {
   "TAP. CAR.": { piezas: 78, precio: 582196 },
   "ARAND. CH.": { piezas: 480, precio: 169736 },
   "ARAND. LP.": { piezas: 168, precio: 178709 },
+  "ARAND. COMP.": { piezas: 460, precio: 282471 },
   "ARAN. CO-FI-AL": { piezas: 375, precio: 475069 },
   "TOP. TAP. GOMA": { piezas: 78, precio: 204765 },
   "SEEG.": { piezas: 295, precio: 238351 },
@@ -2894,7 +2897,7 @@ const GRUPOS = [
   { key: 'neumaticas', label: "Conexiones de Aire Plásticas y de Acero", icono: "💨", color: "#f97316",
     codigos: ["CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","BRONCE","RAC. CH.","RAC. GR."] },
   { key: 'arandelas',  label: "Arandelas de Goma",       icono: "🔘", color: "#8b5cf6",
-    codigos: ["ARAND. CH.","ARAND. LP.","ARAN. CO-FI-AL","ARAND. INYEC."] },
+    codigos: ["ARAND. CH.","ARAND. LP.","ARAND. COMP.","ARAN. CO-FI-AL","ARAND. INYEC."] },
   { key: 'terminales', label: "Terminales",              icono: "⚡", color: "#84cc16",
     codigos: ["TERM. CH.","TERM. NU.","TEM. COMP."] },
   { key: 'carbones',   label: "Carbones",                icono: "🔋", color: "#374151",
@@ -3653,6 +3656,20 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "280 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "10 piezas de c/u"
+  },
+  {
+    id: 62,
+    tamano: "grande",
+    nombre: "Arandelas de Goma Línea Completa",
+    codigo: "ARAND. COMP.",
+    precio: 0,
+    piezas: 1292,
+    foto_exhibidor: "./img/s62_exhibidor.webp",
+    foto_card: "./img/s62_card.webp",
+    foto_gavetas: "./img/s62_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "1.292 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "21 - 10 piezas de c/u"
   },
   {
     id: 30,
@@ -5217,7 +5234,7 @@ function fotosDelSurtido(s) {
 // ╚══════════════════════════════════════════════════════════╝
 
 // ── FILTRO POR URL ────────────────────────────────────────
-var CODIGOS_FERRETERO = ["PL CH.","RES. LF","RES. LC","RES. LB","RES. LP","RES. COMP.","CHA. PART.","CHA. CH.","GA+CH COMP.","OR. CH.","OR. GR.","ARAND. CH.","ARAND. LP.","ARAN. CO-FI-AL","TAR. ESTR.","CARB. 1","CARB. COMPL.","REGAT.","TOP. TAP. GOMA","INYEC. GAS ENV.","PER. 1","PER. 2","PER. COMP.","TERM. CH.","TEM. COMP.","INTERR. PULSA."];
+var CODIGOS_FERRETERO = ["PL CH.","RES. LF","RES. LC","RES. LB","RES. LP","RES. COMP.","CHA. PART.","CHA. CH.","GA+CH COMP.","OR. CH.","OR. GR.","ARAND. CH.","ARAND. LP.","ARAND. COMP.","ARAN. CO-FI-AL","TAR. ESTR.","CARB. 1","CARB. COMPL.","REGAT.","TOP. TAP. GOMA","INYEC. GAS ENV.","PER. 1","PER. 2","PER. COMP.","TERM. CH.","TEM. COMP.","INTERR. PULSA."];
 var CODIGOS_AUTOMOTOR = ["PL Nac. 160 M.","CL. IMP COM","RES. LA","OR. CH.","OR. GR.","OR. COMP.","CONEX. ALUM. 1","CONEX. ALUM. 2","Conex. Alum. L. Temp.","Conex. Alum. Mayor Rot.","CONC. PL","CONC. COMB. Red","CON. NEU.","CON. NEU. COMPL.","CON. NEU. NUEV.","BRONCE","RAC. CH.","RAC. GR.","SEEG.","INS.","RET. ARAN.","ALEM.","TERM. CH.","TERM. NU.","TEM. COMP.","ARAND. INYEC.","UN. ORIENT.","ABRA. GOMA","ESP. ELAS.","ESPARR.","TUER. RAP.","TER. REM.","TR L. Compl.","TR IMP.","TR Espec. + Torn.","TAP. CAR."];
 
 var urlParams = new URLSearchParams(window.location.search);

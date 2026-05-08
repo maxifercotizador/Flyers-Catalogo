@@ -459,6 +459,20 @@ const SURTIDOS = [
     cant_uniforme: "10 piezas de c/u"
   },
   {
+    id: 62,
+    tamano: "grande",
+    nombre: "Arandelas de Goma Línea Completa",
+    codigo: "ARAND. COMP.",
+    precio: 0,
+    piezas: 1292,
+    foto_exhibidor: "./img/s62_exhibidor.webp",
+    foto_card: "./img/s62_card.webp",
+    foto_gavetas: "./img/s62_gavetas.webp",
+    incluye: ["1 exhibidor con su protector", "4 gavetas codificadas", "1.292 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "21 - 10 piezas de c/u"
+  },
+  {
     id: 30,
     nombre: "Arandelas Aluminio/Cobre/Fibra",
     codigo: "ARAN. CO-FI-AL",
