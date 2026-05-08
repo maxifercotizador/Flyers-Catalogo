@@ -301,6 +301,19 @@ const SURTIDOS = [
     cant_uniforme: "3 - 10 - 5 piezas de c/u"
   },
   {
+    id: 65,
+    nombre: "Surtidito Conectores Neumáticos Plástico",
+    codigo: "RE-CNE-01",
+    precio: 0,
+    piezas: 106,
+    foto_exhibidor: "./img/s65_exhibidor.webp",
+    foto_card: "./img/s65_card.webp",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor", "1 gaveta", "106 piezas totales", "10 m de cada manguera", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "4 piezas de c/u"
+  },
+  {
     id: 33,
     tamano: "grande",
     nombre: "Conectores Neumáticos Completo",
@@ -353,6 +366,32 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "169 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "3 - 2 piezas de c/u"
+  },
+  {
+    id: 67,
+    nombre: "Racord N°1",
+    codigo: "RE-RC1-01",
+    precio: 0,
+    piezas: 89,
+    foto_exhibidor: "./img/s67_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "89 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 - 1 piezas de c/u"
+  },
+  {
+    id: 68,
+    nombre: "Racord N°2",
+    codigo: "RE-RC2-02",
+    precio: 0,
+    piezas: 66,
+    foto_exhibidor: "./img/s68_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "66 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 - 1 piezas de c/u"
   },
   {
     id: 45,
@@ -512,6 +551,32 @@ const SURTIDOS = [
     cant_uniforme: "4 piezas de c/u"
   },
   {
+    id: 78,
+    nombre: "Uniones Orientables",
+    codigo: "RE-UNO-01",
+    precio: 0,
+    piezas: 39,
+    foto_exhibidor: "./img/s78_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "39 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "3 piezas de c/u"
+  },
+  {
+    id: 69,
+    nombre: "Bulón Perforado",
+    codigo: "RE-BPF-01",
+    precio: 0,
+    piezas: 49,
+    foto_exhibidor: "./img/s69_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "49 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
     id: 36,
     nombre: "Abrazaderas con Perfil de Goma",
     codigo: "ABRA. GOMA",
@@ -565,6 +630,19 @@ const SURTIDOS = [
     cant_uniforme: "10 - 5 piezas de c/u"
   },
   {
+    id: 77,
+    nombre: "Seeger DIN 471 - 472",
+    codigo: "RE-SEG-01",
+    precio: 0,
+    piezas: 350,
+    foto_exhibidor: "./img/s77_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "350 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "10 piezas de c/u"
+  },
+  {
     id: 29,
     nombre: "Alemites",
     codigo: "ALEM.",
@@ -602,6 +680,32 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "135 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "3 piezas de c/u"
+  },
+  {
+    id: 70,
+    nombre: "Interruptores y Pulsadores 1",
+    codigo: "RE-IP1-01",
+    precio: 0,
+    piezas: 82,
+    foto_exhibidor: "./img/s70_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "82 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
+    id: 71,
+    nombre: "Interruptores y Pulsadores 2",
+    codigo: "RE-IP2-02",
+    precio: 0,
+    piezas: 55,
+    foto_exhibidor: "./img/s71_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "55 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
   },
   {
     id: 61,
@@ -682,6 +786,19 @@ const SURTIDOS = [
     cant_uniforme: "20 - 10 - 5 - 3 piezas de c/u"
   },
   {
+    id: 74,
+    nombre: "Espinas Elásticas",
+    codigo: "RE-EEL-01",
+    precio: 0,
+    piezas: 155,
+    foto_exhibidor: "./img/s74_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "155 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
+  },
+  {
     id: 27,
     nombre: "Espárragos de Acero",
     codigo: "ESPARR.",
@@ -693,6 +810,19 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "282 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "6 piezas de c/u"
+  },
+  {
+    id: 75,
+    nombre: "Espárragos de Acero",
+    codigo: "RE-ESA-01",
+    precio: 0,
+    piezas: 190,
+    foto_exhibidor: "./img/s75_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "190 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "5 piezas de c/u"
   },
   {
     id: 25,
@@ -722,6 +852,32 @@ const SURTIDOS = [
     cant_uniforme: "2,5 piezas de c/u (juego)"
   },
   {
+    id: 72,
+    nombre: "Carbones N°1",
+    codigo: "RE-CB1-01",
+    precio: 0,
+    piezas: 60,
+    foto_exhibidor: "./img/s72_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "60 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
+    id: 73,
+    nombre: "Carbones N°2",
+    codigo: "RE-CB2-02",
+    precio: 0,
+    piezas: 56,
+    foto_exhibidor: "./img/s73_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "56 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "2 piezas de c/u"
+  },
+  {
     id: 32,
     nombre: "Inyectores Picos para Gas Envasado",
     codigo: "INYEC. GAS ENV.",
@@ -733,6 +889,19 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "2 gavetas codificadas", "216 piezas totales", "Libre reposición"],
     tabla: [{"cant":5,"medida":"1 al 78"}, {"cant":3,"medida":"80 al 168"}],
     cant_uniforme: "5 - 3 piezas de c/u"
+  },
+  {
+    id: 76,
+    nombre: "Picos para Gas",
+    codigo: "RE-PGS-01",
+    precio: 0,
+    piezas: 125,
+    foto_exhibidor: "./img/s76_exhibidor.webp",
+    foto_card: "",
+    foto_gavetas: "",
+    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "125 piezas totales", "Libre reposición"],
+    tabla: null,
+    cant_uniforme: "4 - 3 piezas de c/u"
   },
   {
     id: 49,
@@ -816,19 +985,6 @@ const SURTIDOS = [
     cant_uniforme: "10 - 5 piezas de c/u"
   },
   {
-    id: 65,
-    nombre: "Surtidito Conectores Neumáticos Plástico",
-    codigo: "RE-CNE-01",
-    precio: 0,
-    piezas: 106,
-    foto_exhibidor: "./img/s65_exhibidor.webp",
-    foto_card: "./img/s65_card.webp",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor", "1 gaveta", "106 piezas totales", "10 m de cada manguera", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "4 piezas de c/u"
-  },
-  {
     id: 66,
     tamano: "grande",
     nombre: "Conectores Neumáticos + Racord",
@@ -841,161 +997,6 @@ const SURTIDOS = [
     incluye: ["1 exhibidor con su protector", "5 gavetas codificadas", "411 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 - 9 - 4 - 1 piezas de c/u"
-  },
-  {
-    id: 67,
-    nombre: "Racord N°1",
-    codigo: "RE-RC1-01",
-    precio: 0,
-    piezas: 89,
-    foto_exhibidor: "./img/s67_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "89 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 - 1 piezas de c/u"
-  },
-  {
-    id: 68,
-    nombre: "Racord N°2",
-    codigo: "RE-RC2-02",
-    precio: 0,
-    piezas: 66,
-    foto_exhibidor: "./img/s68_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "66 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 - 1 piezas de c/u"
-  },
-  {
-    id: 69,
-    nombre: "Bulón Perforado",
-    codigo: "RE-BPF-01",
-    precio: 0,
-    piezas: 49,
-    foto_exhibidor: "./img/s69_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "49 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 70,
-    nombre: "Interruptores y Pulsadores 1",
-    codigo: "RE-IP1-01",
-    precio: 0,
-    piezas: 82,
-    foto_exhibidor: "./img/s70_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "82 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 71,
-    nombre: "Interruptores y Pulsadores 2",
-    codigo: "RE-IP2-02",
-    precio: 0,
-    piezas: 55,
-    foto_exhibidor: "./img/s71_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "55 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 72,
-    nombre: "Carbones N°1",
-    codigo: "RE-CB1-01",
-    precio: 0,
-    piezas: 60,
-    foto_exhibidor: "./img/s72_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "60 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 73,
-    nombre: "Carbones N°2",
-    codigo: "RE-CB2-02",
-    precio: 0,
-    piezas: 56,
-    foto_exhibidor: "./img/s73_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "56 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "2 piezas de c/u"
-  },
-  {
-    id: 74,
-    nombre: "Espinas Elásticas",
-    codigo: "RE-EEL-01",
-    precio: 0,
-    piezas: 155,
-    foto_exhibidor: "./img/s74_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "155 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 75,
-    nombre: "Espárragos de Acero",
-    codigo: "RE-ESA-01",
-    precio: 0,
-    piezas: 190,
-    foto_exhibidor: "./img/s75_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "190 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "5 piezas de c/u"
-  },
-  {
-    id: 76,
-    nombre: "Picos para Gas",
-    codigo: "RE-PGS-01",
-    precio: 0,
-    piezas: 125,
-    foto_exhibidor: "./img/s76_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "125 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "4 - 3 piezas de c/u"
-  },
-  {
-    id: 77,
-    nombre: "Seeger DIN 471 - 472",
-    codigo: "RE-SEG-01",
-    precio: 0,
-    piezas: 350,
-    foto_exhibidor: "./img/s77_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "350 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "10 piezas de c/u"
-  },
-  {
-    id: 78,
-    nombre: "Uniones Orientables",
-    codigo: "RE-UNO-01",
-    precio: 0,
-    piezas: 39,
-    foto_exhibidor: "./img/s78_exhibidor.webp",
-    foto_card: "",
-    foto_gavetas: "",
-    incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "39 piezas totales", "Libre reposición"],
-    tabla: null,
-    cant_uniforme: "3 piezas de c/u"
   }
+
 ];
