@@ -1,0 +1,611 @@
+{
+  "surtido-normal": {
+    "pageW": 210,
+    "pageH": 297,
+    "blocks": [
+      {
+        "id": "brand-img",
+        "label": "Logo MAXIFER",
+        "type": "brand-img",
+        "x": 52.16011729396597,
+        "y": 20.355606474100863,
+        "w": 19.01767676758156,
+        "h": 17.195476946131034
+      },
+      {
+        "id": "brand-name",
+        "label": "Nombre marca",
+        "type": "text",
+        "x": 75,
+        "y": 23.5,
+        "w": 32.36445097489357,
+        "h": 5.72887748177944,
+        "fontSize": 20,
+        "color": "navy",
+        "weight": 900,
+        "family": "Montserrat",
+        "upper": false
+      },
+      {
+        "id": "brand-sub",
+        "label": "Subtítulo marca",
+        "type": "text",
+        "x": 75,
+        "y": 30,
+        "w": 32,
+        "h": 3,
+        "fontSize": 9,
+        "color": "muted",
+        "weight": 700,
+        "family": "Inter",
+        "upper": true,
+        "letterSpacing": 0.18
+      },
+      {
+        "id": "vendor-name",
+        "label": "Nombre vendedor",
+        "type": "text",
+        "x": 142,
+        "y": 25,
+        "w": 50,
+        "h": 4.5,
+        "fontSize": 13,
+        "color": "navy",
+        "weight": 800,
+        "family": "Montserrat",
+        "align": "right"
+      },
+      {
+        "id": "vendor-wa",
+        "label": "WhatsApp vendedor",
+        "type": "text",
+        "x": 142,
+        "y": 30,
+        "w": 50,
+        "h": 4,
+        "fontSize": 11,
+        "color": "green-dark",
+        "weight": 700,
+        "family": "mono",
+        "align": "right"
+      },
+      {
+        "id": "header-line",
+        "label": "Línea bajo header",
+        "type": "line",
+        "x": 18,
+        "y": 39,
+        "w": 174,
+        "h": 0.3
+      },
+      {
+        "id": "codigo-pill",
+        "label": "Código pill",
+        "type": "pill",
+        "x": 18,
+        "y": 46,
+        "w": 32,
+        "h": 9,
+        "fontSize": 13
+      },
+      {
+        "id": "title",
+        "label": "Título del surtido",
+        "type": "text",
+        "x": 54,
+        "y": 46,
+        "w": 138,
+        "h": 9,
+        "fontSize": 21,
+        "color": "navy",
+        "weight": 800,
+        "family": "Montserrat",
+        "upper": true,
+        "letterSpacing": 0.02
+      },
+      {
+        "id": "foto-exhibidor",
+        "label": "Foto Exhibidor",
+        "type": "photo",
+        "x": 14.82220593845246,
+        "y": 56.63556125911028,
+        "w": 134.29269305082758,
+        "h": 78.17779406154752,
+        "photoKey": "foto_exhibidor",
+        "photoLabel": "Exhibidor"
+      },
+      {
+        "id": "foto-gaveta",
+        "label": "Foto Gaveta",
+        "type": "photo",
+        "x": 81.03148423814541,
+        "y": 139.44787184303053,
+        "w": 117.52846203388492,
+        "h": 62.14245887739024,
+        "photoKey": "foto_gavetas",
+        "photoLabel": "Gaveta"
+      },
+      {
+        "id": "spec-piezas",
+        "label": "Spec: Piezas totales",
+        "type": "spec",
+        "x": 153.0026981260071,
+        "y": 100.90276554429768,
+        "w": 47.617872257524844,
+        "h": 13,
+        "label_text": "Piezas totales",
+        "valueKey": "piezas"
+      },
+      {
+        "id": "spec-modelos",
+        "label": "Spec: Modelos",
+        "type": "spec",
+        "x": 152.99894914626037,
+        "y": 81.31634082290637,
+        "w": 48.34677420731201,
+        "h": 13,
+        "label_text": "Modelos diferentes",
+        "valueKey": "modelos"
+      },
+      {
+        "id": "spec-stock",
+        "label": "Spec: Stock en gaveta",
+        "type": "spec",
+        "x": 153.23082436429235,
+        "y": 62.27216113795635,
+        "w": 47.982298764410714,
+        "h": 13,
+        "label_text": "Stock en gaveta",
+        "valueKey": "stockGav"
+      },
+      {
+        "id": "incluye",
+        "label": "Cuadro Incluye (lista)",
+        "type": "incluye",
+        "x": 16.16893120974922,
+        "y": 141.22689389725483,
+        "w": 62.062895072267516,
+        "h": 47.5019591165166
+      },
+      {
+        "id": "precio",
+        "label": "Precio",
+        "type": "precio",
+        "x": 151.8487210898248,
+        "y": 120.81827547141555,
+        "w": 47.44007819597731,
+        "h": 15.431239812186552
+      },
+      {
+        "id": "stock-section",
+        "label": "Tabla / Uniforme",
+        "type": "stock",
+        "x": 18.72890194978715,
+        "y": 204.02647844936098,
+        "w": 174,
+        "h": 56.515766587080364
+      },
+      {
+        "id": "footer",
+        "label": "Footer (vendor + web)",
+        "type": "footer",
+        "x": 18,
+        "y": 270,
+        "w": 174,
+        "h": 8
+      }
+    ]
+  },
+  "surtido-grande": {
+    "pageW": 210,
+    "pageH": 297,
+    "blocks": [
+      {
+        "id": "brand-img",
+        "label": "Logo MAXIFER",
+        "type": "brand-img",
+        "x": 56.168955677756756,
+        "y": 24,
+        "w": 16.831044322243233,
+        "h": 14.644399642901062
+      },
+      {
+        "id": "brand-name",
+        "label": "Nombre marca",
+        "type": "text",
+        "x": 75,
+        "y": 23.5,
+        "w": 32,
+        "h": 5,
+        "fontSize": 20,
+        "color": "navy",
+        "weight": 900,
+        "family": "Montserrat"
+      },
+      {
+        "id": "brand-sub",
+        "label": "Subtítulo marca",
+        "type": "text",
+        "x": 75,
+        "y": 30,
+        "w": 32,
+        "h": 6.644399642901057,
+        "fontSize": 9,
+        "color": "muted",
+        "weight": 700,
+        "family": "Inter",
+        "upper": true,
+        "letterSpacing": 0.18
+      },
+      {
+        "id": "vendor-name",
+        "label": "Nombre vendedor",
+        "type": "text",
+        "x": 142,
+        "y": 25,
+        "w": 50,
+        "h": 4.5,
+        "fontSize": 13,
+        "color": "navy",
+        "weight": 800,
+        "family": "Montserrat",
+        "align": "right"
+      },
+      {
+        "id": "vendor-wa",
+        "label": "WhatsApp vendedor",
+        "type": "text",
+        "x": 142,
+        "y": 30,
+        "w": 50,
+        "h": 4,
+        "fontSize": 11,
+        "color": "green-dark",
+        "weight": 700,
+        "family": "mono",
+        "align": "right"
+      },
+      {
+        "id": "header-line",
+        "label": "Línea bajo header",
+        "type": "line",
+        "x": 18,
+        "y": 39,
+        "w": 174,
+        "h": 0.3
+      },
+      {
+        "id": "codigo-pill",
+        "label": "Código pill",
+        "type": "pill",
+        "x": 18,
+        "y": 46,
+        "w": 32,
+        "h": 9,
+        "fontSize": 13
+      },
+      {
+        "id": "title",
+        "label": "Título del surtido",
+        "type": "text",
+        "x": 54,
+        "y": 41.62672287531952,
+        "w": 138,
+        "h": 13.373277124680504,
+        "fontSize": 21,
+        "color": "navy",
+        "weight": 800,
+        "family": "Montserrat",
+        "upper": true,
+        "letterSpacing": 0.02
+      },
+      {
+        "id": "foto-exhibidor",
+        "label": "Foto Exhibidor (full-width)",
+        "type": "photo",
+        "x": 18,
+        "y": 60,
+        "w": 110.22301236623338,
+        "h": 146.64829340792664,
+        "photoKey": "foto_exhibidor",
+        "photoLabel": "Exhibidor",
+        "noBg": true
+      },
+      {
+        "id": "foto-gaveta",
+        "label": "Foto Gaveta (centrada)",
+        "type": "photo",
+        "x": 130.701335944675,
+        "y": 62.33012382546248,
+        "w": 68.49805311748732,
+        "h": 76.97737861365322,
+        "photoKey": "foto_gavetas",
+        "photoLabel": "Gaveta"
+      },
+      {
+        "id": "spec-piezas",
+        "label": "Spec: Piezas totales",
+        "type": "spec",
+        "x": 131.3407787348071,
+        "y": 144.22302460023718,
+        "w": 56,
+        "h": 13,
+        "label_text": "Piezas totales",
+        "valueKey": "piezas"
+      },
+      {
+        "id": "spec-modelos",
+        "label": "Spec: Modelos",
+        "type": "spec",
+        "x": 131.66598240951205,
+        "y": 162.35169435806955,
+        "w": 56,
+        "h": 13,
+        "label_text": "Modelos diferentes",
+        "valueKey": "modelos"
+      },
+      {
+        "id": "spec-stock",
+        "label": "Spec: Stock en gaveta",
+        "type": "spec",
+        "x": 130.99116161620918,
+        "y": 180.93813131346448,
+        "w": 56,
+        "h": 13,
+        "label_text": "Stock en gaveta",
+        "valueKey": "stockGav"
+      },
+      {
+        "id": "incluye",
+        "label": "Cuadro Incluye (lista)",
+        "type": "incluye",
+        "x": 19,
+        "y": 208.49805311748716,
+        "w": 108.71120071419794,
+        "h": 22
+      },
+      {
+        "id": "precio",
+        "label": "Precio",
+        "type": "precio",
+        "x": 133.99116161620918,
+        "y": 209.04029815392838,
+        "w": 54,
+        "h": 22
+      },
+      {
+        "id": "stock-section",
+        "label": "Tabla / Uniforme",
+        "type": "stock",
+        "x": 19,
+        "y": 232.48921473369637,
+        "w": 174,
+        "h": 42.41745680963054
+      },
+      {
+        "id": "footer",
+        "label": "Footer (vendor + web)",
+        "type": "footer",
+        "x": 18,
+        "y": 280,
+        "w": 174,
+        "h": 8
+      }
+    ]
+  },
+  "portada": {
+    "pageW": 210,
+    "pageH": 297,
+    "blocks": [
+      {
+        "id": "cover-logo",
+        "label": "Logo grande",
+        "type": "cover-logo",
+        "x": 73.51572988506882,
+        "y": 34.85365959158809,
+        "w": 65.88407462498792,
+        "h": 65.8840623909841
+      },
+      {
+        "id": "cover-brand",
+        "label": "MAXIFER (grande)",
+        "type": "text",
+        "x": 20,
+        "y": 110,
+        "w": 170,
+        "h": 14,
+        "fontSize": 46,
+        "color": "navy",
+        "weight": 900,
+        "family": "Montserrat",
+        "align": "center",
+        "letterSpacing": 0.14,
+        "text": "MAXIFER"
+      },
+      {
+        "id": "cover-tagline",
+        "label": "Tagline \"Fábrica · Importadora\"",
+        "type": "text",
+        "x": 20,
+        "y": 128,
+        "w": 170,
+        "h": 4,
+        "fontSize": 12,
+        "color": "muted",
+        "weight": 700,
+        "family": "Inter",
+        "align": "center",
+        "upper": true,
+        "letterSpacing": 0.3,
+        "text": "Fábrica · Importadora"
+      },
+      {
+        "id": "cover-title",
+        "label": "Título Catálogo",
+        "type": "text",
+        "x": 20,
+        "y": 148,
+        "w": 170,
+        "h": 10,
+        "fontSize": 28,
+        "color": "navy",
+        "weight": 800,
+        "family": "Montserrat",
+        "align": "center",
+        "text": "Catálogo de Surtidos 2026"
+      },
+      {
+        "id": "cover-sub",
+        "label": "Subtítulo descripción",
+        "type": "text",
+        "x": 30,
+        "y": 165,
+        "w": 150,
+        "h": 8,
+        "fontSize": 14,
+        "color": "text",
+        "weight": 400,
+        "family": "Inter",
+        "align": "center",
+        "text": "Exhibidores con gavetas codificadas para tu ferretería"
+      },
+      {
+        "id": "cover-stats",
+        "label": "Stats (3 números)",
+        "type": "cover-stats",
+        "x": 30,
+        "y": 184,
+        "w": 150,
+        "h": 22
+      },
+      {
+        "id": "cover-vendor",
+        "label": "Card vendedor",
+        "type": "cover-vendor",
+        "x": 65,
+        "y": 220,
+        "w": 80,
+        "h": 26
+      }
+    ]
+  },
+  "indice": {
+    "pageW": 210,
+    "pageH": 297,
+    "blocks": [
+      {
+        "id": "idx-title",
+        "label": "Título \"Índice\"",
+        "type": "text",
+        "x": 62,
+        "y": 24,
+        "w": 130,
+        "h": 12,
+        "fontSize": 30,
+        "color": "navy",
+        "weight": 900,
+        "family": "Montserrat",
+        "upper": true,
+        "letterSpacing": 0.12,
+        "text": "Índice"
+      },
+      {
+        "id": "idx-sub",
+        "label": "Subtítulo del índice",
+        "type": "text",
+        "x": 62,
+        "y": 38,
+        "w": 130,
+        "h": 4,
+        "fontSize": 11,
+        "color": "muted",
+        "weight": 700,
+        "family": "Inter",
+        "upper": true,
+        "letterSpacing": 0.16,
+        "text": "59 surtidos · Catálogo MAXIFER 2026"
+      },
+      {
+        "id": "idx-content",
+        "label": "Listado (2 cols, auto)",
+        "type": "idx-content",
+        "x": 22,
+        "y": 50,
+        "w": 166,
+        "h": 220
+      }
+    ]
+  },
+  "contratapa": {
+    "pageW": 210,
+    "pageH": 297,
+    "blocks": [
+      {
+        "id": "bcover-logo",
+        "label": "Logo",
+        "type": "cover-logo",
+        "x": 77.52454380085193,
+        "y": 29.22693059926666,
+        "w": 58.595250871178074,
+        "h": 59.88406850798594
+      },
+      {
+        "id": "bcover-thanks",
+        "label": "\"¡Gracias!\" (italic serif)",
+        "type": "text",
+        "x": 20,
+        "y": 96,
+        "w": 170,
+        "h": 22,
+        "fontSize": 54,
+        "color": "navy",
+        "weight": 800,
+        "family": "Playfair",
+        "align": "center",
+        "italic": true,
+        "text": "¡Gracias!"
+      },
+      {
+        "id": "bcover-msg",
+        "label": "Mensaje principal",
+        "type": "text",
+        "x": 30,
+        "y": 132,
+        "w": 150,
+        "h": 22,
+        "fontSize": 14,
+        "color": "text",
+        "weight": 400,
+        "family": "Inter",
+        "align": "center",
+        "text": "Confiá en MAXIFER para abastecer tu ferretería con surtidos completos, exhibidores listos para vender y reposición libre. Hacé tu pedido directo con tu vendedor:"
+      },
+      {
+        "id": "bcover-cta",
+        "label": "Caja verde (vendedor)",
+        "type": "bcover-cta",
+        "x": 60,
+        "y": 168,
+        "w": 90,
+        "h": 28
+      },
+      {
+        "id": "bcover-foot",
+        "label": "Footer (web + año)",
+        "type": "text",
+        "x": 20,
+        "y": 220,
+        "w": 170,
+        "h": 4,
+        "fontSize": 11,
+        "color": "muted",
+        "weight": 700,
+        "family": "Inter",
+        "upper": true,
+        "letterSpacing": 0.18,
+        "align": "center",
+        "text": "www.fabricamaxifer.com · MAXIFER · Fábrica Importadora · 2026"
+      }
+    ]
+  }
+}
