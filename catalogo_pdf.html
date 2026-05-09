@@ -993,7 +993,9 @@ function render(){
             renderPageFromLayout('portada', null, ctx, 1, v),
             renderPageFromLayout('indice', null, idxCtx, 2, v),
             ...surtidos.map((s, i) => {
-                const pageType = s.tamano === 'grande' ? 'surtido-grande' : 'surtido-normal';
+                const pageType = s.tamano === 'grande'
+                    ? 'surtido-grande'
+                    : (s.tabla && s.tabla.length ? 'surtido-normal' : 'surtido-chico-uniforme');
                 return renderPageFromLayout(pageType, s, ctx, inicioSurtidos + i, v);
             }),
             renderPageFromLayout('contratapa', null, ctx, pageContratapa, v)

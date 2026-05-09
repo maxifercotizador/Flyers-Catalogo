@@ -78,6 +78,45 @@ const LAYOUT_DEFAULTS = {
               x: 18, y: 280, w: 174, h: 8 }
         ]
     },
+    'surtido-chico-uniforme': {
+        pageW: 210, pageH: 297,
+        blocks: [
+            { id:'brand-img', label:'Logo MAXIFER', type:'brand-img',
+              x: 62, y: 24, w: 11, h: 11 },
+            { id:'brand-name', label:'Nombre marca', type:'text',
+              x: 75, y: 23.5, w: 32, h: 5, fontSize: 16, color:'navy', weight: 900, family:'Montserrat', upper:false },
+            { id:'brand-sub', label:'Subtítulo marca', type:'text',
+              x: 75, y: 30, w: 32, h: 3, fontSize: 9, color:'muted', weight: 700, family:'Inter', upper:true, letterSpacing:0.18 },
+            { id:'vendor-name', label:'Nombre vendedor', type:'text',
+              x: 142, y: 25, w: 50, h: 4.5, fontSize: 13, color:'navy', weight: 800, family:'Montserrat', align:'right' },
+            { id:'vendor-wa', label:'WhatsApp vendedor', type:'text',
+              x: 142, y: 30, w: 50, h: 4, fontSize: 11, color:'green-dark', weight: 700, family:'mono', align:'right' },
+            { id:'header-line', label:'Línea bajo header', type:'line',
+              x: 18, y: 39, w: 174, h: 0.3 },
+            { id:'codigo-pill', label:'Código pill', type:'pill',
+              x: 18, y: 46, w: 32, h: 9, fontSize: 13 },
+            { id:'title', label:'Título del surtido', type:'text',
+              x: 54, y: 46, w: 138, h: 9, fontSize: 21, color:'navy', weight: 800, family:'Montserrat', upper:true, letterSpacing:0.02 },
+            { id:'foto-exhibidor', label:'Foto Exhibidor', type:'photo',
+              x: 18, y: 60, w: 84, h: 80, photoKey:'foto_exhibidor', photoLabel:'Exhibidor' },
+            { id:'foto-gaveta', label:'Foto Gaveta', type:'photo',
+              x: 108, y: 60, w: 84, h: 80, photoKey:'foto_gavetas', photoLabel:'Gaveta' },
+            { id:'spec-piezas', label:'Spec: Piezas totales', type:'spec',
+              x: 18, y: 145, w: 56, h: 13, label_text:'Piezas totales', valueKey:'piezas' },
+            { id:'spec-modelos', label:'Spec: Modelos', type:'spec',
+              x: 77, y: 145, w: 56, h: 13, label_text:'Modelos diferentes', valueKey:'modelos' },
+            { id:'spec-stock', label:'Spec: Stock en gaveta', type:'spec',
+              x: 136, y: 145, w: 56, h: 13, label_text:'Stock en gaveta', valueKey:'stockGav' },
+            { id:'incluye', label:'Cuadro Incluye (lista)', type:'incluye',
+              x: 18, y: 162, w: 116, h: 26 },
+            { id:'precio', label:'Precio', type:'precio',
+              x: 138, y: 162, w: 54, h: 26 },
+            { id:'stock-section', label:'Cantidades por modelo (compacto)', type:'stock',
+              x: 18, y: 246, w: 174, h: 18 },
+            { id:'footer', label:'Footer (vendor + web)', type:'footer',
+              x: 18, y: 270, w: 174, h: 8 }
+        ]
+    },
     'portada': {
         pageW: 210, pageH: 297,
         blocks: [
