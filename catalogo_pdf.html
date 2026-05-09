@@ -993,9 +993,10 @@ function render(){
             renderPageFromLayout('portada', null, ctx, 1, v),
             renderPageFromLayout('indice', null, idxCtx, 2, v),
             ...surtidos.map((s, i) => {
+                const conTabla = s.tabla && s.tabla.length;
                 const pageType = s.tamano === 'grande'
-                    ? 'surtido-grande'
-                    : (s.tabla && s.tabla.length ? 'surtido-normal' : 'surtido-chico-uniforme');
+                    ? (conTabla ? 'surtido-grande' : 'surtido-grande-uniforme')
+                    : (conTabla ? 'surtido-normal' : 'surtido-chico-uniforme');
                 return renderPageFromLayout(pageType, s, ctx, inicioSurtidos + i, v);
             }),
             renderPageFromLayout('contratapa', null, ctx, pageContratapa, v)

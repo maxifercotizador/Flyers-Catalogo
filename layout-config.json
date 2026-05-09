@@ -393,6 +393,203 @@
       }
     ]
   },
+  "surtido-grande-uniforme": {
+    "pageW": 210,
+    "pageH": 297,
+    "blocks": [
+      {
+        "id": "brand-img",
+        "label": "Logo MAXIFER",
+        "type": "brand-img",
+        "x": 56.168955677756756,
+        "y": 24,
+        "w": 16.831044322243233,
+        "h": 14.644399642901062
+      },
+      {
+        "id": "brand-name",
+        "label": "Nombre marca",
+        "type": "text",
+        "x": 75,
+        "y": 23.5,
+        "w": 32,
+        "h": 5,
+        "fontSize": 20,
+        "color": "navy",
+        "weight": 900,
+        "family": "Montserrat"
+      },
+      {
+        "id": "brand-sub",
+        "label": "Subtítulo marca",
+        "type": "text",
+        "x": 75,
+        "y": 30,
+        "w": 32,
+        "h": 6.644399642901057,
+        "fontSize": 9,
+        "color": "muted",
+        "weight": 700,
+        "family": "Inter",
+        "upper": true,
+        "letterSpacing": 0.18
+      },
+      {
+        "id": "vendor-name",
+        "label": "Nombre vendedor",
+        "type": "text",
+        "x": 142,
+        "y": 25,
+        "w": 50,
+        "h": 4.5,
+        "fontSize": 13,
+        "color": "navy",
+        "weight": 800,
+        "family": "Montserrat",
+        "align": "right"
+      },
+      {
+        "id": "vendor-wa",
+        "label": "WhatsApp vendedor",
+        "type": "text",
+        "x": 142,
+        "y": 30,
+        "w": 50,
+        "h": 4,
+        "fontSize": 11,
+        "color": "green-dark",
+        "weight": 700,
+        "family": "mono",
+        "align": "right"
+      },
+      {
+        "id": "header-line",
+        "label": "Línea bajo header",
+        "type": "line",
+        "x": 18,
+        "y": 39,
+        "w": 174,
+        "h": 0.3
+      },
+      {
+        "id": "codigo-pill",
+        "label": "Código pill",
+        "type": "pill",
+        "x": 18,
+        "y": 46,
+        "w": 32,
+        "h": 9,
+        "fontSize": 13
+      },
+      {
+        "id": "title",
+        "label": "Título del surtido",
+        "type": "text",
+        "x": 54,
+        "y": 41.62672287531952,
+        "w": 138,
+        "h": 13.373277124680504,
+        "fontSize": 21,
+        "color": "navy",
+        "weight": 800,
+        "family": "Montserrat",
+        "upper": true,
+        "letterSpacing": 0.02
+      },
+      {
+        "id": "foto-exhibidor",
+        "label": "Foto Exhibidor (full-width)",
+        "type": "photo",
+        "x": 18,
+        "y": 60,
+        "w": 110.22301236623338,
+        "h": 146.64829340792664,
+        "photoKey": "foto_exhibidor",
+        "photoLabel": "Exhibidor",
+        "noBg": true
+      },
+      {
+        "id": "foto-gaveta",
+        "label": "Foto Gaveta (centrada)",
+        "type": "photo",
+        "x": 130.701335944675,
+        "y": 62.33012382546248,
+        "w": 68.49805311748732,
+        "h": 76.97737861365322,
+        "photoKey": "foto_gavetas",
+        "photoLabel": "Gaveta"
+      },
+      {
+        "id": "spec-piezas",
+        "label": "Spec: Piezas totales",
+        "type": "spec",
+        "x": 131.3407787348071,
+        "y": 144.22302460023718,
+        "w": 56,
+        "h": 13,
+        "label_text": "Piezas totales",
+        "valueKey": "piezas"
+      },
+      {
+        "id": "spec-modelos",
+        "label": "Spec: Modelos",
+        "type": "spec",
+        "x": 131.66598240951205,
+        "y": 162.35169435806955,
+        "w": 56,
+        "h": 13,
+        "label_text": "Modelos diferentes",
+        "valueKey": "modelos"
+      },
+      {
+        "id": "spec-stock",
+        "label": "Spec: Stock en gaveta",
+        "type": "spec",
+        "x": 130.99116161620918,
+        "y": 180.93813131346448,
+        "w": 56,
+        "h": 13,
+        "label_text": "Stock en gaveta",
+        "valueKey": "stockGav"
+      },
+      {
+        "id": "incluye",
+        "label": "Cuadro Incluye (lista)",
+        "type": "incluye",
+        "x": 19,
+        "y": 208.49805311748716,
+        "w": 108.71120071419794,
+        "h": 22
+      },
+      {
+        "id": "precio",
+        "label": "Precio",
+        "type": "precio",
+        "x": 133.99116161620918,
+        "y": 209.04029815392838,
+        "w": 54,
+        "h": 22
+      },
+      {
+        "id": "stock-section",
+        "label": "Tabla / Uniforme",
+        "type": "stock",
+        "x": 19,
+        "y": 256.5,
+        "w": 174,
+        "h": 18
+      },
+      {
+        "id": "footer",
+        "label": "Footer (vendor + web)",
+        "type": "footer",
+        "x": 18,
+        "y": 280,
+        "w": 174,
+        "h": 8
+      }
+    ]
+  },
   "surtido-chico-uniforme": {
     "pageW": 210,
     "pageH": 297,
