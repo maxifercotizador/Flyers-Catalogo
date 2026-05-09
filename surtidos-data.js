@@ -402,7 +402,7 @@ const SURTIDOS = [
     piezas: 89,
     foto_exhibidor: "./img/s67_exhibidor.webp",
     foto_card: "./img/s67_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0104-Photoroom.png",
+    foto_gavetas: "./img/s67_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "89 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 - 1 piezas de c/u"
@@ -415,7 +415,7 @@ const SURTIDOS = [
     piezas: 106,
     foto_exhibidor: "./img/s65_exhibidor.webp",
     foto_card: "./img/s65_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0091-Photoroom.png",
+    foto_gavetas: "./img/s65_gavetas.webp",
     incluye: ["1 exhibidor", "1 gaveta", "106 piezas totales", "10 m de cada manguera", "Libre reposición"],
     tabla: null,
     cant_uniforme: "4 piezas de c/u"
@@ -534,7 +534,7 @@ const SURTIDOS = [
     piezas: 60,
     foto_exhibidor: "./img/s72_exhibidor.webp",
     foto_card: "./img/s72_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0099-Photoroom.png",
+    foto_gavetas: "./img/s72_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "60 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
@@ -547,7 +547,7 @@ const SURTIDOS = [
     piezas: 56,
     foto_exhibidor: "./img/s73_exhibidor.webp",
     foto_card: "./img/s73_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0097-Photoroom.png",
+    foto_gavetas: "./img/s73_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "56 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
@@ -771,7 +771,7 @@ const SURTIDOS = [
     piezas: 39,
     foto_exhibidor: "./img/s78_exhibidor.webp",
     foto_card: "./img/s78_card.webp",
-    foto_gavetas: "",
+    foto_gavetas: "./img/s78_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "39 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "3 piezas de c/u"
@@ -784,7 +784,7 @@ const SURTIDOS = [
     piezas: 49,
     foto_exhibidor: "./img/s69_exhibidor.webp",
     foto_card: "./img/s69_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0095-Photoroom.png",
+    foto_gavetas: "./img/s69_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "49 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
@@ -928,7 +928,7 @@ const SURTIDOS = [
     piezas: 82,
     foto_exhibidor: "./img/s70_exhibidor.webp",
     foto_card: "./img/s70_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0101-Photoroom.png",
+    foto_gavetas: "./img/s70_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "82 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
@@ -941,7 +941,7 @@ const SURTIDOS = [
     piezas: 55,
     foto_exhibidor: "./img/s71_exhibidor.webp",
     foto_card: "./img/s71_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0103-Photoroom.png",
+    foto_gavetas: "./img/s71_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "55 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "2 piezas de c/u"
@@ -967,7 +967,7 @@ const SURTIDOS = [
     piezas: 125,
     foto_exhibidor: "./img/s76_exhibidor.webp",
     foto_card: "./img/s76_card.webp",
-    foto_gavetas: "./img/IMG-20260508-WA0093-Photoroom.png",
+    foto_gavetas: "./img/s76_gavetas.webp",
     incluye: ["1 exhibidor con su protector", "1 gaveta codificada", "125 piezas totales", "Libre reposición"],
     tabla: null,
     cant_uniforme: "4 - 3 piezas de c/u"
