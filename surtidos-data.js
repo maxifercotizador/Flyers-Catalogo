@@ -76,7 +76,7 @@ const SURTIDOS = [
     codigo: "RES. LP",
     precio: 0,
     piezas: 114,
-    foto_exhibidor: "",
+    foto_exhibidor: "./img/s7_exhibidor.webp",
     foto_card: "./img/s7_card.webp",
     foto_gavetas: "./img/IMG-20260508-WA0085-Photoroom.png",
     incluye: ["1 exhibidor con su protector", "3 gavetas codificadas", "114 piezas totales", "Libre reposición"],
