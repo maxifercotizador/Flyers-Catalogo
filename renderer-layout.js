@@ -185,7 +185,7 @@ function rlFrameSVG(pageNum, opts){
 }
 
 // Render una página completa usando el LAYOUT_CONFIG.
-// pageType: 'surtido-normal' | 'surtido-grande' | 'surtido-chico-uniforme' | 'portada' | 'indice' | 'contratapa'
+// pageType: 'surtido-normal' | 'surtido-grande' | 'surtido-grande-uniforme' | 'surtido-chico-uniforme' | 'portada' | 'indice' | 'contratapa'
 function renderPageFromLayout(pageType, surtido, ctx, pageNum, vendor){
     if (!LAYOUT_CONFIG || !LAYOUT_CONFIG[pageType]) return '';
     const layout = LAYOUT_CONFIG[pageType];
