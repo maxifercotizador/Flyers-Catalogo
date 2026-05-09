@@ -141,6 +141,7 @@ const SURTIDOS = [
   },
 {
     id: 9,
+    tamano: "grande",
     nombre: "Chavetas Tipo R - Alfiler - Traba G",
     codigo: "CHA. CH.",
     precio: 0,
@@ -154,6 +155,7 @@ const SURTIDOS = [
   },
 {
     id: 55,
+    tamano: "grande",
     nombre: "Ganchos/Chavetas Tipo R, Alfiler, Traba G",
     codigo: "GA+CH COMP.",
     precio: 0,
