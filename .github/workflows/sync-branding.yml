@@ -1,0 +1,63 @@
+name: Sync branding to other repos
+
+# Cuando cambia maxifer-branding.css o maxifer-branding.js en este repo,
+# copiar los archivos a Presupuestador, Proyecto-Privado y Temporales.
+# Este repo (Flyers-Catalogo) es la fuente de verdad del branding.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "maxifer-branding.css"
+      - "maxifer-branding.js"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: [Presupuestador, Proyecto-Privado, Temporales]
+    steps:
+      - name: Checkout source (Flyers-Catalogo)
+        uses: actions/checkout@v4
+        with:
+          path: source
+
+      - name: Checkout target (${{ matrix.repo }})
+        uses: actions/checkout@v4
+        with:
+          repository: maxifercotizador/${{ matrix.repo }}
+          token: ${{ secrets.ARCHITECTURE_MAP_PAT }}
+          path: target
+          ref: main
+
+      - name: Copy branding files
+        run: |
+          cp source/maxifer-branding.css target/maxifer-branding.css
+          cp source/maxifer-branding.js  target/maxifer-branding.js
+
+      - name: Detect changes
+        id: diff
+        working-directory: target
+        run: |
+          if git diff --quiet -- maxifer-branding.css maxifer-branding.js; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No hay cambios reales en ${{ matrix.repo }} — skip."
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.diff.outputs.changed == 'true'
+        working-directory: target
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add maxifer-branding.css maxifer-branding.js
+          git commit -m "chore(branding): sync from Flyers-Catalogo (${{ github.sha }})"
+          git push
