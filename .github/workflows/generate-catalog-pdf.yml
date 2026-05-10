@@ -1,0 +1,92 @@
+name: Generate static catalog PDF
+on:
+  schedule:
+    - cron: '0 6 * * *'  # 06:00 UTC = 03:00 ART, 1x al día
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'catalogo_pdf.html'
+      - 'catalogo-data.js'
+      - 'surtidos-data.js'
+      - 'renderer-layout.js'
+      - 'layout-config.json'
+      - 'img/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalog-pdf-generate
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-v1
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm init -y >/dev/null
+          npm install --no-save playwright@latest
+          npx playwright install --with-deps chromium
+
+      - name: Start static HTTP server
+        run: |
+          python3 -m http.server 8000 >/tmp/server.log 2>&1 &
+          for i in 1 2 3 4 5; do
+            curl -sf http://127.0.0.1:8000/catalogo_pdf.html >/dev/null && break
+            sleep 1
+          done
+
+      - name: Generate PDF via headless Chromium
+        env:
+          NODE_PATH: ./node_modules
+        run: |
+          cat > /tmp/gen.js <<'EOF'
+          const { chromium } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch();
+            const ctx = await browser.newContext({
+              viewport: { width: 1280, height: 1800 },
+              acceptDownloads: true,
+            });
+            const page = await ctx.newPage();
+            page.on('console', m => console.log('[browser]', m.type(), m.text()));
+            page.on('pageerror', e => console.log('[pageerror]', e.message));
+            const url = 'http://127.0.0.1:8000/catalogo_pdf.html#wa=Maxi&precio=lista&autodl=1';
+            await page.goto(url, { waitUntil: 'networkidle', timeout: 120000 });
+            const download = await page.waitForEvent('download', { timeout: 300000 });
+            await download.saveAs('catalogo_lista.pdf');
+            const fs = require('fs');
+            const size = fs.statSync('catalogo_lista.pdf').size;
+            console.log('PDF generado:', size, 'bytes');
+            if (size < 50000) throw new Error('PDF demasiado chico (<50KB), algo falló');
+            await browser.close();
+          })().catch(e => { console.error(e); process.exit(1); });
+          EOF
+          node /tmp/gen.js
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalogo_lista.pdf
+          if git diff --cached --quiet; then
+            echo "Sin cambios en catalogo_lista.pdf — skip commit"
+          else
+            git commit -m "chore: regenera catalogo_lista.pdf (trigger: ${{ github.event_name }})"
+            git push
+          fi
