@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// Modo embed (cuando el catálogo se carga dentro de un iframe en otra app):
+// hide-toolbar + viewport ajustado para que el contenido entre en mobile sin zoom.
+(function(){
+    var p = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+    if (p.get('embed') === '1') {
+        document.documentElement.setAttribute('data-embed', '1');
+        var m = document.querySelector('meta[name="viewport"]');
+        if (m) m.setAttribute('content', 'width=900, initial-scale=1, maximum-scale=2, user-scalable=yes');
+    }
+})();
+</script>
+<style id="embed-mode-css">html[data-embed="1"] .toolbar{display:none !important}</style>
 <title>MAXIFER · Catálogo Imprimible</title>
 <meta name="description" content="Catálogo MAXIFER · Versión imprimible (PDF)">
 <meta name="robots" content="noindex,nofollow">
@@ -1036,10 +1049,15 @@ async function descargarPDF(){
         const pdf = new JsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
 
         const pages = document.querySelectorAll('#book .page');
+        // Scale adaptativo: en mobile bajamos a 1.4 (mucho más rápido, calidad
+        // suficiente para A4) y damos yield entre páginas para que el UI thread
+        // no quede congelado durante la generación.
+        const isSmallScreen = window.innerWidth < 900;
+        const renderScale = isSmallScreen ? 1.4 : 1.8;
         for (let i = 0; i < pages.length; i++){
             btn.innerHTML = `⏳ Página ${i+1}/${pages.length}…`;
             const canvas = await html2canvas(pages[i], {
-                scale: 2,
+                scale: renderScale,
                 useCORS: true,
                 allowTaint: false,
                 letterRendering: true,
@@ -1050,9 +1068,10 @@ async function descargarPDF(){
                 windowWidth: pages[i].offsetWidth,
                 windowHeight: pages[i].offsetHeight,
             });
-            const imgData = canvas.toDataURL('image/jpeg', 0.88);
+            const imgData = canvas.toDataURL('image/jpeg', 0.85);
             if (i > 0) pdf.addPage();
             pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+            await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
         }
 
         pdf.save(fname);
