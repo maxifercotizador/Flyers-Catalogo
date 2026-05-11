@@ -216,6 +216,28 @@ function aplicarDescuento() {
 }
 let surtidoActual = null;
 
+// Construye un item con la forma estándar de GA4 ecommerce a partir de un surtido.
+// item_list_name e item_list_id salen del grupo/lista en que aparece el surtido,
+// de manera que en GA4 la dimensión "Nombre del surtido" deje de venir (not set).
+function ga4ItemFromSurtido(s, extra) {
+  if (!s) return null;
+  var g = (typeof getGrupo === 'function') ? getGrupo(s) : null;
+  var listName = (extra && extra.list_name) || (g && g.label) || 'Catálogo MAXIFER';
+  var listId   = (extra && extra.list_id)   || (g && g.key)   || 'catalogo';
+  var item = {
+    item_id: String(s.codigo || s.id),
+    item_name: s.nombre,
+    item_brand: 'MAXIFER',
+    item_category: listName,
+    item_list_name: listName,
+    item_list_id: listId,
+    price: (extra && extra.price != null) ? extra.price : (s.precio || 0),
+    quantity: (extra && extra.quantity != null) ? extra.quantity : 1
+  };
+  if (extra && extra.index != null) item.index = extra.index;
+  return item;
+}
+
 function formatPrecio(n) {
   return '$ ' + Math.round(n).toLocaleString('es-AR').replace(/,/g, '.');
 }
@@ -233,6 +255,18 @@ function renderGrid(lista) {
   const q = normalizar(document.getElementById('searchInput')?.value?.trim() || '');
   if (q && q.length > 0) {
     grid.innerHTML = `<div class="grupo-grid">${lista.map(cardHTML).join('')}</div>`;
+    if (window.gtag && lista.length > 0) {
+      const itemsBusqueda = lista.slice(0, 20).map((s, i) => ga4ItemFromSurtido(s, {
+        list_name: 'Resultados búsqueda: ' + q,
+        list_id: 'search_' + q,
+        index: i
+      })).filter(Boolean);
+      gtag('event', 'view_item_list', {
+        item_list_name: 'Resultados búsqueda: ' + q,
+        item_list_id: 'search_' + q,
+        items: itemsBusqueda
+      });
+    }
     return;
   }
 
@@ -258,6 +292,22 @@ function renderGrid(lista) {
       <div class="grupo-grid">${items.map(cardHTML).join('')}</div>
     </div>`;
   }).join('');
+
+  if (window.gtag) {
+    gruposUsados.forEach(key => {
+      const { grupo: g, items } = porGrupo[key];
+      const ga4Items = items.slice(0, 20).map((s, i) => ga4ItemFromSurtido(s, {
+        list_name: g.label,
+        list_id: g.key,
+        index: i
+      })).filter(Boolean);
+      gtag('event', 'view_item_list', {
+        item_list_name: g.label,
+        item_list_id: g.key,
+        items: ga4Items
+      });
+    });
+  }
 }
 
 function getGrupo(s) {
@@ -681,10 +731,30 @@ function toggleCarritoCard(id, event) {
   const idx = carrito.findIndex(c => c.id === id);
   if (idx >= 0) {
     carrito.splice(idx, 1);
-    if (window.gtag) gtag('event', 'pedido_remove', { surtido_id: s.id, codigo: s.codigo });
+    if (window.gtag) {
+      gtag('event', 'pedido_remove', { surtido_id: s.id, codigo: s.codigo });
+      var itemRm = ga4ItemFromSurtido(s);
+      gtag('event', 'remove_from_cart', {
+        currency: 'ARS',
+        value: itemRm ? itemRm.price : 0,
+        item_list_name: itemRm ? itemRm.item_list_name : undefined,
+        item_list_id:   itemRm ? itemRm.item_list_id   : undefined,
+        items: itemRm ? [itemRm] : []
+      });
+    }
   } else {
     carrito.push(s); vibrar(); mostrarToast('✅ ' + s.nombre + ' agregado');
-    if (window.gtag) gtag('event', 'pedido_add', { surtido_id: s.id, codigo: s.codigo, nombre: s.nombre });
+    if (window.gtag) {
+      gtag('event', 'pedido_add', { surtido_id: s.id, codigo: s.codigo, nombre: s.nombre });
+      var itemAdd = ga4ItemFromSurtido(s);
+      gtag('event', 'add_to_cart', {
+        currency: 'ARS',
+        value: itemAdd ? itemAdd.price : 0,
+        item_list_name: itemAdd ? itemAdd.item_list_name : undefined,
+        item_list_id:   itemAdd ? itemAdd.item_list_id   : undefined,
+        items: itemAdd ? [itemAdd] : []
+      });
+    }
   }
   actualizarFab();
   const enCarrito = carrito.some(c => c.id === id);
@@ -911,6 +981,17 @@ function enviarWhatsApp() {
   if (window.gtag) {
     var totalLista = carrito.reduce(function(s, c){ return s + (getPrecio(c) || 0); }, 0);
     gtag('event', 'pedido_whatsapp', { items: carrito.length, total_lista: totalLista, descuento_pct: descuentoPct });
+    var ga4Items = carrito.map(function(c, i) {
+      var item = ga4ItemFromSurtido(c, { price: getPrecio(c), index: i });
+      if (c._reducido && item) item.item_variant = 'reducido';
+      return item;
+    }).filter(Boolean);
+    gtag('event', 'begin_checkout', {
+      currency: 'ARS',
+      value: totalLista,
+      coupon: descuentoPct > 0 ? ('descuento_' + descuentoPct) : undefined,
+      items: ga4Items
+    });
   }
   var ahora = new Date();
   var fecha = ahora.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
@@ -1428,7 +1509,19 @@ function toggleCarritoVista(id) {
   var s = SURTIDOS.find(function(x){ return x.id === id; });
   if (!s) return;
   var idx = carrito.findIndex(function(c){ return c.id === id; });
-  if (idx >= 0) { carrito.splice(idx, 1); } else { carrito.push(s); vibrar(); mostrarToast('✅ ' + s.nombre + ' agregado'); }
+  var fueAgregado;
+  if (idx >= 0) { carrito.splice(idx, 1); fueAgregado = false; }
+  else { carrito.push(s); vibrar(); mostrarToast('✅ ' + s.nombre + ' agregado'); fueAgregado = true; }
+  if (window.gtag) {
+    var itemTV = ga4ItemFromSurtido(s);
+    gtag('event', fueAgregado ? 'add_to_cart' : 'remove_from_cart', {
+      currency: 'ARS',
+      value: itemTV ? itemTV.price : 0,
+      item_list_name: itemTV ? itemTV.item_list_name : undefined,
+      item_list_id:   itemTV ? itemTV.item_list_id   : undefined,
+      items: itemTV ? [itemTV] : []
+    });
+  }
   actualizarFab();
   var enCarrito = carrito.some(function(c){ return c.id === id; });
   var btnRev = document.getElementById('revBtn' + id);
@@ -1458,8 +1551,10 @@ function toggleCarritoVistaConVersion(id, reducido, btn) {
   var s = SURTIDOS.find(function(x){ return x.id === id; });
   if (!s) return;
   var idx = carrito.findIndex(function(c){ return c.id === id && !!c._reducido === !!reducido; });
+  var fueAgregadoV;
   if (idx >= 0) {
     carrito.splice(idx, 1);
+    fueAgregadoV = false;
   } else {
     if (reducido) {
       var red = VERSION_REDUCIDA[s.codigo];
@@ -1471,6 +1566,19 @@ function toggleCarritoVistaConVersion(id, reducido, btn) {
     }
     vibrar();
     mostrarToast('✅ ' + s.nombre + (reducido ? ' (reducido) ' : ' ') + 'agregado');
+    fueAgregadoV = true;
+  }
+  if (window.gtag) {
+    var precioVer = reducido && VERSION_REDUCIDA[s.codigo] ? VERSION_REDUCIDA[s.codigo].precio : s.precio;
+    var itemTVV = ga4ItemFromSurtido(s, { price: precioVer });
+    if (itemTVV && reducido) itemTVV.item_variant = 'reducido';
+    gtag('event', fueAgregadoV ? 'add_to_cart' : 'remove_from_cart', {
+      currency: 'ARS',
+      value: itemTVV ? itemTVV.price : 0,
+      item_list_name: itemTVV ? itemTVV.item_list_name : undefined,
+      item_list_id:   itemTVV ? itemTVV.item_list_id   : undefined,
+      items: itemTVV ? [itemTVV] : []
+    });
   }
   actualizarFab();
   var enCarritoAhora = carrito.some(function(c){ return c.id === id && !!c._reducido === !!reducido; });
@@ -1593,7 +1701,17 @@ function maxiferIniciarCatalogo() {
       hPush('modal');
       if (window.gtag) {
         var s = SURTIDOS.find(function(x){ return x.id === id; });
-        if (s) gtag('event', 'surtido_view', { surtido_id: s.id, codigo: s.codigo, nombre: s.nombre });
+        if (s) {
+          gtag('event', 'surtido_view', { surtido_id: s.id, codigo: s.codigo, nombre: s.nombre });
+          var itemView = ga4ItemFromSurtido(s);
+          gtag('event', 'view_item', {
+            currency: 'ARS',
+            value: itemView ? itemView.price : 0,
+            item_list_name: itemView ? itemView.item_list_name : undefined,
+            item_list_id:   itemView ? itemView.item_list_id   : undefined,
+            items: itemView ? [itemView] : []
+          });
+        }
       }
     };
     var _origAbrirCarrito = abrirCarrito;
