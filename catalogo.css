@@ -553,48 +553,83 @@
   .trust-icon { font-size: 22px; }
 }
 
-/* CARRUSEL MÁS VENDIDOS */
-.destacados { margin-bottom: 22px; }
-.destacados-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 0 2px; }
-.destacados-icon { font-size: 20px; }
-.destacados-titulo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--azul); }
-.destacados-viewport { position: relative; }
-.destacados-track {
-  display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 4px;
+/* CAMPAÑAS / CARRUSELES / PROMOS (dinámicas desde el admin) */
+.campanas { display: flex; flex-direction: column; gap: 24px; margin-bottom: 22px; }
+.campana { --cc: var(--naranja); }
+.campana-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 0 2px; }
+.campana-icon { font-size: 20px; }
+.campana-titulo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--azul); }
+.campana-desc-tag {
+  background: var(--cc); color: #fff; font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 14px; padding: 2px 9px; border-radius: 20px; margin-left: auto;
 }
-.destacados-track::-webkit-scrollbar { display: none; }
-.destacados-slide {
-  scroll-snap-align: center; flex: 0 0 100%; position: relative;
-  border-radius: 14px; overflow: hidden; cursor: pointer;
+
+/* tracks comunes */
+.campana-track, .campana-fila-track {
+  display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 4px;
+}
+.campana-track::-webkit-scrollbar, .campana-fila-track::-webkit-scrollbar { display: none; }
+
+/* slides comunes */
+.camp-slide {
+  position: relative; border-radius: 14px; overflow: hidden; cursor: pointer;
   background: var(--gris-card); border: 1.5px solid var(--gris-border);
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
-.destacados-slide img { width: 100%; height: 220px; object-fit: contain; display: block; background: #fff; }
-.destacados-slide-info {
+.camp-slide-info {
   position: absolute; left: 0; right: 0; bottom: 0;
   background: linear-gradient(to top, rgba(26,58,122,0.95), rgba(26,58,122,0));
-  color: #fff; padding: 28px 14px 12px;
+  color: #fff; padding: 28px 12px 11px;
 }
-.destacados-slide-nombre { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; line-height: 1.1; }
-.destacados-slide-cod { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-.destacados-slide-badge {
-  position: absolute; top: 10px; left: 10px; background: var(--naranja);
+.camp-slide-nombre { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; line-height: 1.08; }
+.camp-slide-cod { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+.camp-slide-badge {
+  position: absolute; top: 10px; left: 10px; background: var(--cc);
   color: #fff; font-size: 11px; font-weight: 700; padding: 4px 9px;
-  border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px;
+  border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px; z-index: 1;
 }
-.destacados-arrow {
+.camp-slide-promo {
+  position: absolute; top: 10px; right: 10px; background: #dc2626;
+  color: #fff; font-size: 12px; font-weight: 800; padding: 4px 10px;
+  border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); z-index: 1;
+}
+
+/* tipo carrusel (Hero a pantalla completa) */
+.campana-viewport { position: relative; }
+.campana-carrusel .campana-track { gap: 12px; scroll-snap-type: x mandatory; }
+.campana-carrusel .camp-slide { scroll-snap-align: center; flex: 0 0 100%; }
+.campana-carrusel .camp-slide img { width: 100%; height: 220px; object-fit: contain; display: block; background: #fff; }
+.campana-carrusel .camp-slide-nombre { font-size: 18px; }
+.campana-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 38px; height: 38px; border-radius: 50%; border: none;
   background: rgba(255,255,255,0.92); color: var(--azul); font-size: 24px;
   line-height: 1; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
   display: flex; align-items: center; justify-content: center; z-index: 2;
 }
-.destacados-arrow.prev { left: 8px; }
-.destacados-arrow.next { right: 8px; }
-.destacados-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
-.destacados-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gris-border); transition: background 0.2s, width 0.2s; }
-.destacados-dot.active { background: var(--naranja); width: 18px; border-radius: 4px; }
+.campana-arrow.prev { left: 8px; }
+.campana-arrow.next { right: 8px; }
+.campana-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+.camp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gris-border); transition: background 0.2s, width 0.2s; }
+.camp-dot.active { background: var(--cc); width: 18px; border-radius: 4px; }
+
+/* tipo fila (tira compacta horizontal) */
+.campana-fila-track { gap: 10px; scroll-snap-type: x proximity; }
+.campana-fila .camp-slide { scroll-snap-align: start; flex: 0 0 46%; max-width: 230px; }
+.campana-fila .camp-slide img { width: 100%; height: 135px; object-fit: contain; display: block; background: #fff; }
+.campana-fila .camp-slide-info { padding: 22px 10px 9px; }
+.campana-fila .camp-slide-nombre { font-size: 15px; }
+
+/* precio promo en cards y modal */
+.card-precio-tachado { color: var(--gris-muted); text-decoration: line-through; font-size: 13px; margin-right: 6px; }
+.card-precio-promo { color: #dc2626; font-weight: 800; }
+.promo-banner-modal {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: #fef2f2; border: 1.5px solid #fecaca; color: #b91c1c;
+  font-weight: 700; font-size: 13px; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px;
+}
+.promo-banner-tachado { color: var(--gris-muted); text-decoration: line-through; font-weight: 600; margin-left: auto; }
 
 @media (max-width: 640px) {
   .modal-close { width: 44px; height: 44px; font-size: 20px; }

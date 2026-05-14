@@ -29,8 +29,8 @@ async function maxiferCargarDatos() {
       if (typeof renderGrid === 'function' && typeof SURTIDOS_ACTIVOS !== 'undefined') {
         renderGrid(SURTIDOS_ACTIVOS);
       }
-      if (typeof renderDestacados === 'function' && typeof SURTIDOS_ACTIVOS !== 'undefined') {
-        renderDestacados();
+      if (typeof renderCampanas === 'function' && typeof SURTIDOS_ACTIVOS !== 'undefined') {
+        renderCampanas();
       }
       if (typeof refrescarVistaActiva === 'function') {
         refrescarVistaActiva();
@@ -325,8 +325,9 @@ function cardHTML(s) {
   const enCarrito = carrito.some(c => c.id === s.id);
   const esFav = esFavorito(s.id);
   const badge = BADGES[s.id];
+  const badgeTxt = badge === 'top' ? '⭐ Más vendido' : badge === 'oferta' ? '🔥 Oferta' : '✨ Nuevo';
   const badgeHtml = badge
-    ? `<div class="card-badge badge-${badge}">${badge === 'top' ? '⭐ Más vendido' : '✨ Nuevo'}</div>`
+    ? `<div class="card-badge badge-${badge}">${badgeTxt}</div>`
     : '';
   return `<div class="surtido-card">
     <div class="card-titulo" onclick="abrirModal(${s.id})">${s.nombre}${s.codigo && s.codigo.startsWith('RE-') ? '<span class="reducido-tag">(Reducido)</span>' : ''}</div>
@@ -339,7 +340,7 @@ function cardHTML(s) {
     <div class="card-content" onclick="abrirModal(${s.id})">
       <div class="card-codigo">Cód: ${s.codigo}</div>
       ${s.piezas ? `<div class="card-piezas">📌 ${s.piezas} piezas</div>` : ''}
-      <div class="card-precio-inline">${formatPrecio(precioConDescuento(s.precio, s.codigo))}</div>
+      <div class="card-precio-inline">${precioInlineHTML(s)}</div>
     </div>
     <div class="card-footer">
       <button class="btn-card-agregar ${enCarrito ? 'agregado' : ''}" id="cardBtn${s.id}"
@@ -435,8 +436,8 @@ function buscarSurtidos(arr, q) {
 
 function filtrar() {
   const q = normalizar(document.getElementById('searchInput').value.trim());
-  const dest = document.getElementById('destacados');
-  if (dest) dest.style.display = (!q && _destacadosCount > 0) ? '' : 'none';
+  const camps = document.getElementById('campanas');
+  if (camps) camps.style.display = q ? 'none' : '';
   renderGrid(buscarSurtidos(SURTIDOS, q));
 }
 
@@ -537,7 +538,11 @@ function abrirModal(id) {
 
   const tieneDescuentoAplicado = (descuentoPct > 0) || !!DESCUENTOS_FIJOS[s.codigo];
   const precioLabelBase = tieneDescuentoAplicado ? 'Precio Neto Final' : 'Precio de Lista';
-  const precioHtml = `
+  const promoModal = (window.MaxiPromos && MaxiPromos.promoPorCodigo[s.codigo]) || null;
+  const promoBannerHtml = promoModal
+    ? `<div class="promo-banner-modal">${promoModal.etiqueta}${promoModal.nombre ? ' · ' + promoModal.nombre : ''}${precioBase ? `<span class="promo-banner-tachado">antes ${formatPrecio(precioBase)}</span>` : ''}</div>`
+    : '';
+  const precioHtml = promoBannerHtml + `
     <div class="precio-modal${modoReducido && red ? ' reducido' : ''}">
       <span class="precio-label">${precioLabelBase}${modoReducido && red ? ' (stock red.)' : ''}</span>
       <div><span class="precio-valor">${formatPrecio(precioFinal)}</span><span class="precio-iva">+ IVA</span></div>
@@ -1492,78 +1497,123 @@ function cerrarCompBtn() {
   document.body.style.overflow = '';
 }
 
+// Fallback de badges si catalogo-promos.js / Firebase no cargan.
+// En operación normal, MaxiPromos.badgePorId lo extiende (ver _aplicarPromos).
 var BADGES = {
   1:  'top', 61: 'top', 2:  'top', 3:  'top', 49: 'top', 26: 'top',
 };
 
-// ── CARRUSEL "MÁS VENDIDOS" ──
-var _destacadosIdx = 0;
-var _destacadosCount = 0;
-var _destacadosTimer = null;
-var _destacadosScrollTimer = null;
+// ── CAMPAÑAS DINÁMICAS (carruseles / promos del community manager) ──
+// Se renderizan desde la config de Firebase (window.MaxiPromos). Puede
+// haber varias campañas vigentes a la vez; cada una es un carrusel Hero
+// o una fila compacta. Ver catalogo-promos.js.
+var _campAutoTimers = {};
 
-function renderDestacados() {
-  var cont = document.getElementById('destacados');
-  var track = document.getElementById('destacadosTrack');
-  var dots = document.getElementById('destacadosDots');
-  if (!cont || !track) return;
-  var lista = SURTIDOS_ACTIVOS.filter(function(s){ return BADGES[s.id] === 'top'; });
-  _destacadosCount = lista.length;
-  if (lista.length === 0) { cont.style.display = 'none'; return; }
-  cont.style.display = '';
-  track.innerHTML = lista.map(function(s) {
-    var foto = s.foto_exhibidor || s.foto_card;
-    return '<div class="destacados-slide" onclick="abrirModal(' + s.id + ')">' +
-      '<div class="destacados-slide-badge">⭐ Más vendido</div>' +
-      (foto ? '<img src="' + foto + '" alt="Surtido ' + s.nombre + ' — MAXIFER" loading="lazy">' : '') +
-      '<div class="destacados-slide-info">' +
-        '<div class="destacados-slide-nombre">' + s.nombre + '</div>' +
-        '<div class="destacados-slide-cod">Cód: ' + s.codigo + '</div>' +
-      '</div></div>';
+function precioInlineHTML(s) {
+  var promo = window.MaxiPromos && MaxiPromos.promoPorCodigo[s.codigo];
+  var final = precioConDescuento(s.precio, s.codigo);
+  if (promo && s.precio) {
+    return '<span class="card-precio-tachado">' + formatPrecio(s.precio) + '</span>' +
+           '<span class="card-precio-promo">' + formatPrecio(final) + '</span>';
+  }
+  return formatPrecio(final);
+}
+
+function _campSlideHTML(s, etiqueta) {
+  var foto = s.foto_exhibidor || s.foto_card || '';
+  var promo = (window.MaxiPromos && MaxiPromos.promoPorCodigo[s.codigo]) || null;
+  return '<div class="camp-slide" onclick="abrirModal(' + s.id + ')">' +
+    (etiqueta ? '<div class="camp-slide-badge">' + etiqueta + '</div>' : '') +
+    (promo ? '<div class="camp-slide-promo">' + promo.etiqueta + '</div>' : '') +
+    (foto ? '<img src="' + foto + '" alt="Surtido ' + s.nombre + ' — MAXIFER" loading="lazy">' : '') +
+    '<div class="camp-slide-info">' +
+      '<div class="camp-slide-nombre">' + s.nombre + '</div>' +
+      '<div class="camp-slide-cod">Cód: ' + s.codigo + '</div>' +
+    '</div></div>';
+}
+
+function renderCampanas() {
+  var cont = document.getElementById('campanas');
+  if (!cont) return;
+  Object.keys(_campAutoTimers).forEach(function(k){ clearInterval(_campAutoTimers[k]); });
+  _campAutoTimers = {};
+
+  var camps = (window.MaxiPromos && MaxiPromos.campanas) ? MaxiPromos.campanas : [];
+  var porId = {};
+  SURTIDOS.forEach(function(s){ porId[s.id] = s; });
+
+  var html = camps.map(function(c) {
+    var items = (c.surtidos || []).map(function(id){ return porId[id]; }).filter(Boolean);
+    if (items.length === 0) return '';
+    var color = c.color || '#e8510a';
+    var slides = items.map(function(s){ return _campSlideHTML(s, c.etiqueta); }).join('');
+    var head = '<div class="campana-head"><span class="campana-icon">' + (c.icono || '') + '</span>' +
+      '<span class="campana-titulo">' + (c.titulo || '') + '</span>' +
+      (c.descuento > 0 ? '<span class="campana-desc-tag">-' + c.descuento + '%</span>' : '') + '</div>';
+    if (c.tipo === 'fila') {
+      return '<div class="campana campana-fila" style="--cc:' + color + '">' + head +
+        '<div class="campana-fila-track">' + slides + '</div></div>';
+    }
+    var dots = items.map(function(_, i){ return '<div class="camp-dot' + (i === 0 ? ' active' : '') + '"></div>'; }).join('');
+    return '<div class="campana campana-carrusel" id="camp_' + c.id + '" style="--cc:' + color + '">' + head +
+      '<div class="campana-viewport">' +
+        '<div class="campana-track">' + slides + '</div>' +
+        '<button class="campana-arrow prev" onclick="campNav(\'' + c.id + '\',-1)" aria-label="Anterior">‹</button>' +
+        '<button class="campana-arrow next" onclick="campNav(\'' + c.id + '\',1)" aria-label="Siguiente">›</button>' +
+      '</div><div class="campana-dots">' + dots + '</div></div>';
   }).join('');
-  dots.innerHTML = lista.map(function(_, i) {
-    return '<div class="destacados-dot' + (i === 0 ? ' active' : '') + '"></div>';
-  }).join('');
-  _destacadosIdx = 0;
-  track.removeEventListener('scroll', _destacadosOnScroll);
-  track.addEventListener('scroll', _destacadosOnScroll, { passive: true });
-  _destacadosAutoplay();
+  cont.innerHTML = html;
+
+  camps.forEach(function(c){
+    if (c.tipo === 'fila') return;
+    var el = document.getElementById('camp_' + c.id);
+    if (!el) return;
+    var track = el.querySelector('.campana-track');
+    track.addEventListener('scroll', function(){ _campSyncDots(c.id); }, { passive: true });
+    _campAutoTimers[c.id] = setInterval(function(){
+      if (el.offsetParent) campNav(c.id, 1);
+    }, 4500);
+  });
 }
 
-function _destacadosOnScroll() {
-  clearTimeout(_destacadosScrollTimer);
-  _destacadosScrollTimer = setTimeout(function() {
-    var track = document.getElementById('destacadosTrack');
-    if (!track) return;
-    var i = Math.round(track.scrollLeft / track.clientWidth);
-    if (i !== _destacadosIdx) { _destacadosIdx = i; _destacadosSyncDots(); }
-  }, 80);
+function _campTrack(id) {
+  var el = document.getElementById('camp_' + id);
+  return el ? el.querySelector('.campana-track') : null;
 }
 
-function _destacadosSyncDots() {
-  var dots = document.querySelectorAll('#destacadosDots .destacados-dot');
-  dots.forEach(function(d, i) { d.classList.toggle('active', i === _destacadosIdx); });
+function _campSyncDots(id) {
+  var el = document.getElementById('camp_' + id);
+  if (!el) return;
+  var track = el.querySelector('.campana-track');
+  var idx = Math.round(track.scrollLeft / track.clientWidth);
+  el.querySelectorAll('.camp-dot').forEach(function(d, i){ d.classList.toggle('active', i === idx); });
 }
 
-function destacadosNav(dir) {
-  var track = document.getElementById('destacadosTrack');
+function campNav(id, dir) {
+  var track = _campTrack(id);
   if (!track) return;
   var total = track.children.length;
   if (!total) return;
-  _destacadosIdx = (_destacadosIdx + dir + total) % total;
-  track.scrollTo({ left: _destacadosIdx * track.clientWidth, behavior: 'smooth' });
-  _destacadosSyncDots();
-  _destacadosAutoplay();
+  var idx = (Math.round(track.scrollLeft / track.clientWidth) + dir + total) % total;
+  track.scrollTo({ left: idx * track.clientWidth, behavior: 'smooth' });
+  setTimeout(function(){ _campSyncDots(id); }, 60);
 }
 
-function _destacadosAutoplay() {
-  clearInterval(_destacadosTimer);
-  _destacadosTimer = setInterval(function() {
-    var cont = document.getElementById('destacados');
-    if (!cont || cont.style.display === 'none' || !cont.offsetParent) return;
-    destacadosNav(1);
-  }, 4500);
+// Aplica la config de Firebase: descuentos de promo → DESCUENTOS_FIJOS,
+// badges de campaña → BADGES, y re-renderiza campañas + grilla.
+function _aplicarPromos() {
+  if (!window.MaxiPromos) return;
+  Object.keys(MaxiPromos.promoPorCodigo).forEach(function(cod){
+    DESCUENTOS_FIJOS[cod] = MaxiPromos.promoPorCodigo[cod].descuento;
+  });
+  Object.keys(MaxiPromos.badgePorId).forEach(function(id){
+    BADGES[id] = MaxiPromos.badgePorId[id];
+  });
+  renderCampanas();
+  renderGrid(SURTIDOS_ACTIVOS);
 }
+if (window.MaxiPromos && window.MaxiPromos.cargado) _aplicarPromos();
+else document.addEventListener('maxi-promos-ready', _aplicarPromos);
 
 var _toastTimer = null;
 function mostrarToast(txt) {
@@ -1576,7 +1626,7 @@ function mostrarToast(txt) {
 }
 
 renderGrid(SURTIDOS_ACTIVOS);
-renderDestacados();
+renderCampanas();
 actualizarFavBadge();
 actualizarFab();
 
