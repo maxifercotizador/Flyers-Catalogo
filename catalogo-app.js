@@ -29,6 +29,9 @@ async function maxiferCargarDatos() {
       if (typeof renderGrid === 'function' && typeof SURTIDOS_ACTIVOS !== 'undefined') {
         renderGrid(SURTIDOS_ACTIVOS);
       }
+      if (typeof renderDestacados === 'function' && typeof SURTIDOS_ACTIVOS !== 'undefined') {
+        renderDestacados();
+      }
       if (typeof refrescarVistaActiva === 'function') {
         refrescarVistaActiva();
       }
@@ -432,6 +435,8 @@ function buscarSurtidos(arr, q) {
 
 function filtrar() {
   const q = normalizar(document.getElementById('searchInput').value.trim());
+  const dest = document.getElementById('destacados');
+  if (dest) dest.style.display = (!q && _destacadosCount > 0) ? '' : 'none';
   renderGrid(buscarSurtidos(SURTIDOS, q));
 }
 
@@ -1491,6 +1496,75 @@ var BADGES = {
   1:  'top', 61: 'top', 2:  'top', 3:  'top', 49: 'top',
 };
 
+// ── CARRUSEL "MÁS VENDIDOS" ──
+var _destacadosIdx = 0;
+var _destacadosCount = 0;
+var _destacadosTimer = null;
+var _destacadosScrollTimer = null;
+
+function renderDestacados() {
+  var cont = document.getElementById('destacados');
+  var track = document.getElementById('destacadosTrack');
+  var dots = document.getElementById('destacadosDots');
+  if (!cont || !track) return;
+  var lista = SURTIDOS_ACTIVOS.filter(function(s){ return BADGES[s.id] === 'top'; });
+  _destacadosCount = lista.length;
+  if (lista.length === 0) { cont.style.display = 'none'; return; }
+  cont.style.display = '';
+  track.innerHTML = lista.map(function(s) {
+    var foto = s.foto_exhibidor || s.foto_card;
+    return '<div class="destacados-slide" onclick="abrirModal(' + s.id + ')">' +
+      '<div class="destacados-slide-badge">⭐ Más vendido</div>' +
+      (foto ? '<img src="' + foto + '" alt="Surtido ' + s.nombre + ' — MAXIFER" loading="lazy">' : '') +
+      '<div class="destacados-slide-info">' +
+        '<div class="destacados-slide-nombre">' + s.nombre + '</div>' +
+        '<div class="destacados-slide-cod">Cód: ' + s.codigo + '</div>' +
+      '</div></div>';
+  }).join('');
+  dots.innerHTML = lista.map(function(_, i) {
+    return '<div class="destacados-dot' + (i === 0 ? ' active' : '') + '"></div>';
+  }).join('');
+  _destacadosIdx = 0;
+  track.removeEventListener('scroll', _destacadosOnScroll);
+  track.addEventListener('scroll', _destacadosOnScroll, { passive: true });
+  _destacadosAutoplay();
+}
+
+function _destacadosOnScroll() {
+  clearTimeout(_destacadosScrollTimer);
+  _destacadosScrollTimer = setTimeout(function() {
+    var track = document.getElementById('destacadosTrack');
+    if (!track) return;
+    var i = Math.round(track.scrollLeft / track.clientWidth);
+    if (i !== _destacadosIdx) { _destacadosIdx = i; _destacadosSyncDots(); }
+  }, 80);
+}
+
+function _destacadosSyncDots() {
+  var dots = document.querySelectorAll('#destacadosDots .destacados-dot');
+  dots.forEach(function(d, i) { d.classList.toggle('active', i === _destacadosIdx); });
+}
+
+function destacadosNav(dir) {
+  var track = document.getElementById('destacadosTrack');
+  if (!track) return;
+  var total = track.children.length;
+  if (!total) return;
+  _destacadosIdx = (_destacadosIdx + dir + total) % total;
+  track.scrollTo({ left: _destacadosIdx * track.clientWidth, behavior: 'smooth' });
+  _destacadosSyncDots();
+  _destacadosAutoplay();
+}
+
+function _destacadosAutoplay() {
+  clearInterval(_destacadosTimer);
+  _destacadosTimer = setInterval(function() {
+    var cont = document.getElementById('destacados');
+    if (!cont || cont.style.display === 'none' || !cont.offsetParent) return;
+    destacadosNav(1);
+  }, 4500);
+}
+
 var _toastTimer = null;
 function mostrarToast(txt) {
   var el = document.getElementById('toast');
@@ -1502,6 +1576,7 @@ function mostrarToast(txt) {
 }
 
 renderGrid(SURTIDOS_ACTIVOS);
+renderDestacados();
 actualizarFavBadge();
 actualizarFab();
 

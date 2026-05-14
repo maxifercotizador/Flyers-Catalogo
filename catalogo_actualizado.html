@@ -147,6 +147,19 @@
 
 <!-- BODY -->
 <div class="body" id="appBody">
+  <!-- CARRUSEL MÁS VENDIDOS -->
+  <div class="destacados" id="destacados" style="display:none">
+    <div class="destacados-head">
+      <span class="destacados-icon">⭐</span>
+      <span class="destacados-titulo">Los más vendidos</span>
+    </div>
+    <div class="destacados-viewport">
+      <div class="destacados-track" id="destacadosTrack"></div>
+      <button class="destacados-arrow prev" id="destacadosPrev" onclick="destacadosNav(-1)" aria-label="Anterior">‹</button>
+      <button class="destacados-arrow next" id="destacadosNext" onclick="destacadosNav(1)" aria-label="Siguiente">›</button>
+    </div>
+    <div class="destacados-dots" id="destacadosDots"></div>
+  </div>
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input class="search-input" type="text" placeholder="Buscar surtido..." id="searchInput" oninput="filtrar()" />
