@@ -984,15 +984,12 @@ function renderContratapa(ctx, pageNum){
     </section>`;
 }
 
-function render(){
+// Devuelve un array con el HTML de cada página por separado.
+// Se usa tanto para el render en pantalla (join) como para la generación
+// del PDF página por página.
+function buildPagesHTML(){
     const ctx = leerParams();
     const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
-    document.getElementById('metaVendor').textContent = v.nombre;
-    let modeText = 'Precio Lista';
-    if (ctx.precio === 'sin') modeText = 'Sin precios';
-    else if (ctx.desc) modeText = `Con −${ctx.desc}%`;
-    document.getElementById('metaMode').textContent = modeText;
-
     const surtidos = SURTIDOS;
     const inicioSurtidos = 3;
     const totalSurt = surtidos.length;
@@ -1002,7 +999,7 @@ function render(){
     // basado en posiciones absolutas. Si no, fallback al renderer viejo.
     if (LAYOUT_CONFIG){
         const idxCtx = { ...ctx, surtidos, paginaInicio: inicioSurtidos };
-        const html = [
+        return [
             renderPageFromLayout('portada', null, ctx, 1, v),
             renderPageFromLayout('indice', null, idxCtx, 2, v),
             ...surtidos.map((s, i) => {
@@ -1013,18 +1010,27 @@ function render(){
                 return renderPageFromLayout(pageType, s, ctx, inicioSurtidos + i, v);
             }),
             renderPageFromLayout('contratapa', null, ctx, pageContratapa, v)
-        ].join('');
-        document.getElementById('book').innerHTML = html;
-    } else {
-        // Fallback (renderer viejo flex/flow)
-        const html = [
-            renderPortada(ctx, totalSurt),
-            renderIndice(surtidos, inicioSurtidos),
-            ...surtidos.map((s, i) => renderPagina(s, ctx, inicioSurtidos + i)),
-            renderContratapa(ctx, pageContratapa)
-        ].join('');
-        document.getElementById('book').innerHTML = html;
+        ];
     }
+    // Fallback (renderer viejo flex/flow)
+    return [
+        renderPortada(ctx, totalSurt),
+        renderIndice(surtidos, inicioSurtidos),
+        ...surtidos.map((s, i) => renderPagina(s, ctx, inicioSurtidos + i)),
+        renderContratapa(ctx, pageContratapa)
+    ];
+}
+
+function render(){
+    const ctx = leerParams();
+    const v = VENDEDORES[ctx.vendor] || VENDEDORES.Maxi;
+    document.getElementById('metaVendor').textContent = v.nombre;
+    let modeText = 'Precio Lista';
+    if (ctx.precio === 'sin') modeText = 'Sin precios';
+    else if (ctx.desc) modeText = `Con −${ctx.desc}%`;
+    document.getElementById('metaMode').textContent = modeText;
+
+    document.getElementById('book').innerHTML = buildPagesHTML().join('');
 }
 
 async function descargarPDF(){
@@ -1033,12 +1039,18 @@ async function descargarPDF(){
     btn.disabled = true;
     btn.innerHTML = '⏳ Generando PDF…';
 
+    // html2canvas clona TODO el documento en cada llamada. Si dejamos las ~77
+    // páginas del catálogo en el DOM, cada una de las 77 capturas clona las 77
+    // páginas enteras (con todas sus imágenes) → coste O(n²) y descarga lentísima.
+    // Solución: vaciar #book y capturar de a una página por vez en un contenedor
+    // aislado, de modo que el DOM sólo contenga 1 página durante cada captura.
+    const book = document.getElementById('book');
+    const bookBackup = book.innerHTML;
+    const stage = document.createElement('div');
+    stage.style.cssText = 'position:fixed;left:-9999px;top:0;width:210mm;background:#fff';
+
     try {
         if (document.fonts && document.fonts.ready) await document.fonts.ready;
-        const imgs = Array.from(document.querySelectorAll('#book img'));
-        await Promise.all(imgs.map(img => img.complete ? Promise.resolve() :
-            new Promise(r => { img.onload = img.onerror = r; })));
-        await new Promise(r => setTimeout(r, 200));
 
         const ctx = leerParams();
         const fname = `MAXIFER_Catalogo_${ctx.vendor || 'Maxi'}_${(ctx.precio||'lista')}${ctx.desc?('-'+ctx.desc):''}.pdf`;
@@ -1048,29 +1060,43 @@ async function descargarPDF(){
         if (typeof window.html2canvas !== 'function') throw new Error('html2canvas no se cargó');
         const pdf = new JsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
 
-        const pages = document.querySelectorAll('#book .page');
+        const pagesHTML = buildPagesHTML();
+
+        // Mientras generamos, el DOM visible queda vacío y montamos el stage aislado.
+        book.innerHTML = '';
+        document.body.appendChild(stage);
+
         // Scale adaptativo: en mobile bajamos a 1.4 (mucho más rápido, calidad
         // suficiente para A4) y damos yield entre páginas para que el UI thread
         // no quede congelado durante la generación.
         const isSmallScreen = window.innerWidth < 900;
         const renderScale = isSmallScreen ? 1.4 : 1.8;
-        for (let i = 0; i < pages.length; i++){
-            btn.innerHTML = `⏳ Página ${i+1}/${pages.length}…`;
-            const canvas = await html2canvas(pages[i], {
+        for (let i = 0; i < pagesHTML.length; i++){
+            btn.innerHTML = `⏳ Página ${i+1}/${pagesHTML.length}…`;
+            stage.innerHTML = pagesHTML[i];
+            const pageEl = stage.querySelector('.page');
+
+            // Esperar SÓLO las imágenes de esta página.
+            const imgs = Array.from(stage.querySelectorAll('img'));
+            await Promise.all(imgs.map(img => img.complete ? Promise.resolve() :
+                new Promise(r => { img.onload = img.onerror = r; })));
+
+            const canvas = await html2canvas(pageEl, {
                 scale: renderScale,
                 useCORS: true,
                 allowTaint: false,
                 letterRendering: true,
                 backgroundColor: '#ffffff',
                 logging: false,
-                width: pages[i].offsetWidth,
-                height: pages[i].offsetHeight,
-                windowWidth: pages[i].offsetWidth,
-                windowHeight: pages[i].offsetHeight,
+                width: pageEl.offsetWidth,
+                height: pageEl.offsetHeight,
+                windowWidth: pageEl.offsetWidth,
+                windowHeight: pageEl.offsetHeight,
             });
             const imgData = canvas.toDataURL('image/jpeg', 0.85);
             if (i > 0) pdf.addPage();
             pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+            stage.innerHTML = '';
             await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
         }
 
@@ -1079,6 +1105,8 @@ async function descargarPDF(){
         console.error(err);
         alert('Hubo un error al generar el PDF: ' + (err && err.message || err));
     } finally {
+        stage.remove();
+        book.innerHTML = bookBackup;
         btn.disabled = false;
         btn.innerHTML = original;
     }
@@ -1094,9 +1122,11 @@ async function init(){
     const layoutPromise = (typeof cargarLayoutConfig === 'function') ? cargarLayoutConfig() : Promise.resolve(null);
 
     try {
-        const wbListas = await maxiferLeerExcel(MAXIFER_EXCEL_URLS.listas);
-        loadingText.textContent = 'Descargando composición de surtidos…';
-        const wbSurtidos = await maxiferLeerExcel(MAXIFER_EXCEL_URLS.surtidos);
+        // Descargamos ambos Excel en paralelo (antes era secuencial).
+        const [wbListas, wbSurtidos] = await Promise.all([
+            maxiferLeerExcel(MAXIFER_EXCEL_URLS.listas),
+            maxiferLeerExcel(MAXIFER_EXCEL_URLS.surtidos)
+        ]);
         loadingText.textContent = 'Procesando precios…';
         const mapaListas = maxiferMapListas(wbListas);
         COMPOSICION_DATA = maxiferConstruirComposicion(wbSurtidos, mapaListas);
@@ -1110,19 +1140,23 @@ async function init(){
 
     // Esperamos el layout antes de renderizar
     await layoutPromise;
-    render();
-
-    await new Promise(r => setTimeout(r, 300));
-    overlay.classList.add('gone');
-    btn.disabled = false;
 
     const ctx = leerParams();
     if (ctx.autodl){
-        await Promise.all(Array.from(document.querySelectorAll('#book img')).map(img =>
-            img.complete ? Promise.resolve() : new Promise(r => { img.onload = img.onerror = r; })
-        ));
-        await new Promise(r => setTimeout(r, 400));
-        descargarPDF();
+        // En modo autodescarga NO renderizamos las 77 páginas en pantalla:
+        // descargarPDF() ya genera cada página por separado. Renderizar el
+        // catálogo completo acá sólo duplicaría la descarga de imágenes.
+        // Mantenemos el overlay de carga visible mientras se genera el PDF
+        // (si no, el usuario vería una página en blanco).
+        loadingText.textContent = 'Generando PDF…';
+        await descargarPDF();
+        overlay.classList.add('gone');
+        render();
+    } else {
+        render();
+        await new Promise(r => setTimeout(r, 300));
+        overlay.classList.add('gone');
+        btn.disabled = false;
     }
 }
 
