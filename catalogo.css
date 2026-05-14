@@ -677,3 +677,24 @@
   .grupo-grid { grid-template-columns: repeat(4, 1fr); }
   .campana-carrusel .camp-slide img { height: 420px; }
 }
+
+/* Header, pestañas y buscador más grandes en escritorio */
+@media (min-width: 980px) {
+  .header-inner { max-width: 1240px; padding: 16px 28px; gap: 16px; }
+  .logo-img { height: 52px; }
+  .header-title h1 { font-size: 26px; }
+  .header-title p { font-size: 13px; }
+  .btn-volver-home { font-size: 14px; padding: 9px 16px; }
+  .btn-volver-icon { font-size: 16px; }
+
+  .vista-tabs { max-width: 1240px; gap: 8px; padding: 4px 28px 12px; }
+  .tab-btn { font-size: 14px; padding: 11px 8px; letter-spacing: 0.4px; }
+
+  .search-wrap { margin-bottom: 26px; }
+  .search-input { font-size: 16px; padding: 15px 18px 15px 48px; border-radius: 12px; }
+  .search-icon { font-size: 19px; left: 18px; }
+}
+
+@media (min-width: 1280px) {
+  .header-inner, .vista-tabs { max-width: 1360px; }
+}
