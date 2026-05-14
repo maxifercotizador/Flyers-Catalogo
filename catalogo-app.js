@@ -1493,7 +1493,7 @@ function cerrarCompBtn() {
 }
 
 var BADGES = {
-  1:  'top', 61: 'top', 2:  'top', 3:  'top', 49: 'top',
+  1:  'top', 61: 'top', 2:  'top', 3:  'top', 49: 'top', 26: 'top',
 };
 
 // ── CARRUSEL "MÁS VENDIDOS" ──
