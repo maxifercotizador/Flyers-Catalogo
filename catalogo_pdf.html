@@ -70,6 +70,15 @@ html,body{
     font-family:'Montserrat',sans-serif;font-size:24px;font-weight:900;letter-spacing:.12em;
 }
 .loading-overlay .lo-text{font-size:13px;opacity:.85;letter-spacing:.06em}
+.loading-overlay .lo-progress{
+    width:220px;height:7px;background:rgba(255,255,255,.22);
+    border-radius:4px;overflow:hidden;display:none;
+}
+.loading-overlay .lo-progress.show{display:block}
+.loading-overlay .lo-bar{
+    height:100%;width:0;background:#fff;border-radius:4px;
+    transition:width .25s ease;
+}
 .loading-overlay .spinner{
     width:34px;height:34px;border:3px solid rgba(255,255,255,.25);
     border-top-color:#fff;border-radius:50%;
@@ -630,6 +639,7 @@ html,body{
     <div class="lo-title">MAXIFER</div>
     <div class="spinner"></div>
     <div class="lo-text" id="loadingText">Descargando lista de precios…</div>
+    <div class="lo-progress" id="loProgress"><div class="lo-bar" id="loBar"></div></div>
 </div>
 
 <!-- Toolbar -->
@@ -1033,11 +1043,36 @@ function render(){
     document.getElementById('book').innerHTML = buildPagesHTML().join('');
 }
 
+// Actualiza el botón y, si el overlay de carga está visible, su barra de progreso.
+function setProgreso(texto, frac){
+    const btn = document.getElementById('btnDescargar');
+    if (btn) btn.innerHTML = '⏳ ' + texto;
+    const loText = document.getElementById('loadingText');
+    const loProg = document.getElementById('loProgress');
+    const loBar  = document.getElementById('loBar');
+    if (loText) loText.textContent = texto;
+    if (loProg && loBar && frac != null){
+        loProg.classList.add('show');
+        loBar.style.width = Math.round(frac * 100) + '%';
+    }
+}
+
+// Espera a que una imagen termine de cargar, pero nunca más de `ms`
+// (evita que una imagen rota o lentísima cuelgue toda la generación).
+function esperarImg(img, ms){
+    if (img.complete) return Promise.resolve();
+    return new Promise(r => {
+        const done = () => { clearTimeout(t); r(); };
+        const t = setTimeout(done, ms);
+        img.onload = img.onerror = done;
+    });
+}
+
 async function descargarPDF(){
     const btn = document.getElementById('btnDescargar');
     const original = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '⏳ Generando PDF…';
+    setProgreso('Preparando PDF…', 0);
 
     // html2canvas clona TODO el documento en cada llamada. Si dejamos las ~77
     // páginas del catálogo en el DOM, cada una de las 77 capturas clona las 77
@@ -1066,20 +1101,46 @@ async function descargarPDF(){
         book.innerHTML = '';
         document.body.appendChild(stage);
 
+        // Pre-cargar TODAS las imágenes del catálogo en paralelo. Antes se
+        // descargaban serialmente (página 1 → render → página 2 → render…),
+        // así que la red quedaba ociosa. Lanzándolas todas juntas el navegador
+        // las baja en paralelo y, cuando html2canvas llega a cada página, las
+        // imágenes ya están en caché → mucho más rápido.
+        const srcSet = new Set();
+        pagesHTML.forEach(html => {
+            const matches = html.match(/<img[^>]+src="([^"]+)"/g) || [];
+            matches.forEach(tag => {
+                const m = tag.match(/src="([^"]+)"/);
+                if (m && m[1]) srcSet.add(m[1]);
+            });
+        });
+        const preloads = Array.from(srcSet).map(src => {
+            const im = new Image();
+            im.src = src;
+            return im;
+        });
+        // Esperamos la precarga (con tope de tiempo) mostrando progreso.
+        let cargadas = 0;
+        await Promise.all(preloads.map(im => esperarImg(im, 15000).then(() => {
+            cargadas++;
+            setProgreso(`Descargando imágenes… ${cargadas}/${preloads.length}`, 0.4 * cargadas / preloads.length);
+        })));
+
         // Scale adaptativo: en mobile bajamos a 1.4 (mucho más rápido, calidad
         // suficiente para A4) y damos yield entre páginas para que el UI thread
         // no quede congelado durante la generación.
         const isSmallScreen = window.innerWidth < 900;
         const renderScale = isSmallScreen ? 1.4 : 1.8;
-        for (let i = 0; i < pagesHTML.length; i++){
-            btn.innerHTML = `⏳ Página ${i+1}/${pagesHTML.length}…`;
+        const total = pagesHTML.length;
+        for (let i = 0; i < total; i++){
+            setProgreso(`Página ${i+1} de ${total}`, 0.4 + 0.6 * (i / total));
             stage.innerHTML = pagesHTML[i];
             const pageEl = stage.querySelector('.page');
 
-            // Esperar SÓLO las imágenes de esta página.
+            // Las imágenes ya deberían estar cacheadas por la precarga; igual
+            // las esperamos con un tope corto por las dudas.
             const imgs = Array.from(stage.querySelectorAll('img'));
-            await Promise.all(imgs.map(img => img.complete ? Promise.resolve() :
-                new Promise(r => { img.onload = img.onerror = r; })));
+            await Promise.all(imgs.map(img => esperarImg(img, 5000)));
 
             const canvas = await html2canvas(pageEl, {
                 scale: renderScale,
@@ -1100,6 +1161,7 @@ async function descargarPDF(){
             await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
         }
 
+        setProgreso('Guardando PDF…', 1);
         pdf.save(fname);
     } catch(err){
         console.error(err);
@@ -1107,6 +1169,8 @@ async function descargarPDF(){
     } finally {
         stage.remove();
         book.innerHTML = bookBackup;
+        const loProg = document.getElementById('loProgress');
+        if (loProg) loProg.classList.remove('show');
         btn.disabled = false;
         btn.innerHTML = original;
     }
