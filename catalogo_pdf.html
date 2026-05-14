@@ -1146,8 +1146,11 @@ async function init(){
         // En modo autodescarga NO renderizamos las 77 páginas en pantalla:
         // descargarPDF() ya genera cada página por separado. Renderizar el
         // catálogo completo acá sólo duplicaría la descarga de imágenes.
-        overlay.classList.add('gone');
+        // Mantenemos el overlay de carga visible mientras se genera el PDF
+        // (si no, el usuario vería una página en blanco).
+        loadingText.textContent = 'Generando PDF…';
         await descargarPDF();
+        overlay.classList.add('gone');
         render();
     } else {
         render();
