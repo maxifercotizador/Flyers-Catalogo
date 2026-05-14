@@ -641,3 +641,39 @@
   .tab-btn { min-height: 44px; }
   .lightbox-arrow { width: 48px; height: 72px; }
 }
+
+/* ═══════════ VISTA DESKTOP / PC ═══════════ */
+/* Una sola página: en pantallas anchas usa todo el ancho, grilla en
+   varias columnas y carrusel/exhibidores grandes. En celular no cambia nada. */
+@media (min-width: 980px) {
+  .header-inner { max-width: 1240px; }
+  .body { max-width: 1240px; padding: 26px 28px 110px; }
+
+  /* grilla de surtidos en 3 columnas */
+  .grid { padding: 0 0 48px; }
+  .grupo-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+  /* carrusel Hero: imagen grande, ocupa el ancho */
+  .campanas { gap: 32px; margin-bottom: 30px; }
+  .campana-titulo { font-size: 26px; }
+  .campana-carrusel .camp-slide img { height: 380px; }
+  .campana-carrusel .camp-slide-info { padding: 40px 20px 16px; }
+  .campana-carrusel .camp-slide-nombre { font-size: 24px; }
+  .campana-carrusel .camp-slide-cod { font-size: 13px; }
+  .campana-arrow { width: 46px; height: 46px; font-size: 28px; }
+  .camp-slide-badge, .camp-slide-promo { font-size: 13px; padding: 5px 12px; }
+
+  /* fila compacta: tarjetas más grandes, varias visibles */
+  .campana-fila .camp-slide { flex: 0 0 220px; max-width: 220px; }
+  .campana-fila .camp-slide img { height: 165px; }
+  .campana-fila .camp-slide-nombre { font-size: 16px; }
+
+  .card-titulo { font-size: 17px; }
+}
+
+@media (min-width: 1280px) {
+  .header-inner, .body { max-width: 1360px; }
+  /* grilla de surtidos en 4 columnas */
+  .grupo-grid { grid-template-columns: repeat(4, 1fr); }
+  .campana-carrusel .camp-slide img { height: 420px; }
+}
