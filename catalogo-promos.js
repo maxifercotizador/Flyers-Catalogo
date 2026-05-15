@@ -96,6 +96,26 @@ const MaxiPromos = {
 };
 window.MaxiPromos = MaxiPromos;
 
+// Vendedores que pueden ver TODAS las campañas (incluyendo promos, descuentos,
+// lanzamientos, etc.). El resto de los vendedores y los visitantes directos solo
+// ven el carrusel "Los más vendidos", sin descuentos aplicados.
+// Se identifica al vendedor por `#wa=<key>` en la URL (ver VENDEDORES en
+// catalogo-app.js: Maxi, Micky, Victor, Nadia, Eduardo, Federico).
+const VENDEDORES_AUTORIZADOS = ['maxi', 'nadia'];
+
+function vendedorAutorizado() {
+  try {
+    const h = (location.hash || '').replace('#', '');
+    const params = {};
+    h.split('&').forEach(p => {
+      const kv = p.split('=');
+      if (kv.length === 2) params[kv[0]] = decodeURIComponent(kv[1]);
+    });
+    const wa = (params.wa || '').toLowerCase().trim();
+    return VENDEDORES_AUTORIZADOS.indexOf(wa) !== -1;
+  } catch (e) { return false; }
+}
+
 function plantillaBadgeTipo(plantilla) {
   if (plantilla === 'lanzamiento') return 'nuevo';
   if (plantilla === 'oferta' || plantilla === 'liquidacion' || plantilla === 'black_friday') return 'oferta';
@@ -105,9 +125,15 @@ function plantillaBadgeTipo(plantilla) {
 // A partir de las campañas vigentes, arma los índices que consume el catálogo.
 function recalcular() {
   const hoy = hoyISO();
-  const vigentes = (MaxiPromos.campanasTodas || [])
+  let vigentes = (MaxiPromos.campanasTodas || [])
     .filter(c => campanaVigente(c, hoy))
     .sort((a, b) => (a.orden || 0) - (b.orden || 0));
+
+  // Filtro por vendedor: los no autorizados solo ven "más vendidos" sin descuento.
+  MaxiPromos.autorizado = vendedorAutorizado();
+  if (!MaxiPromos.autorizado) {
+    vigentes = vigentes.filter(c => c.plantilla === 'mas_vendidos' && !(c.descuento > 0));
+  }
   MaxiPromos.campanas = vigentes;
 
   const promoPorCodigo = {};
