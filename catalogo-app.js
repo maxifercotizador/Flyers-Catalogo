@@ -1522,6 +1522,15 @@ function precioInlineHTML(s) {
 function _campSlideHTML(s, etiqueta) {
   var foto = s.foto_exhibidor || s.foto_card || '';
   var promo = (window.MaxiPromos && MaxiPromos.promoPorCodigo[s.codigo]) || null;
+  var precioH = '';
+  if (s.precio) {
+    var final = precioConDescuento(s.precio, s.codigo);
+    if (promo) {
+      precioH = '<div class="camp-slide-precio"><span class="csp-tachado">' + formatPrecio(s.precio) + '</span> <span class="csp-final">' + formatPrecio(final) + '</span></div>';
+    } else {
+      precioH = '<div class="camp-slide-precio">' + formatPrecio(final) + '</div>';
+    }
+  }
   return '<div class="camp-slide" onclick="abrirModal(' + s.id + ')">' +
     (etiqueta ? '<div class="camp-slide-badge">' + etiqueta + '</div>' : '') +
     (promo ? '<div class="camp-slide-promo">' + promo.etiqueta + '</div>' : '') +
@@ -1529,6 +1538,7 @@ function _campSlideHTML(s, etiqueta) {
     '<div class="camp-slide-info">' +
       '<div class="camp-slide-nombre">' + s.nombre + '</div>' +
       '<div class="camp-slide-cod">Cód: ' + s.codigo + '</div>' +
+      precioH +
     '</div></div>';
 }
 

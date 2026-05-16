@@ -584,6 +584,9 @@
 }
 .camp-slide-nombre { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; line-height: 1.08; }
 .camp-slide-cod { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+.camp-slide-precio { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; margin-top: 6px; color: #fff; }
+.camp-slide-precio .csp-tachado { font-weight: 600; font-size: 14px; opacity: 0.7; text-decoration: line-through; margin-right: 6px; }
+.camp-slide-precio .csp-final { color: #fde047; }
 .camp-slide-badge {
   position: absolute; top: 10px; left: 10px; background: var(--cc);
   color: #fff; font-size: 11px; font-weight: 700; padding: 4px 9px;
@@ -660,6 +663,8 @@
   .campana-carrusel .camp-slide-info { padding: 40px 20px 16px; }
   .campana-carrusel .camp-slide-nombre { font-size: 24px; }
   .campana-carrusel .camp-slide-cod { font-size: 13px; }
+  .campana-carrusel .camp-slide-precio { font-size: 28px; }
+  .campana-carrusel .camp-slide-precio .csp-tachado { font-size: 16px; }
   .campana-arrow { width: 46px; height: 46px; font-size: 28px; }
   .camp-slide-badge, .camp-slide-promo { font-size: 13px; padding: 5px 12px; }
 
